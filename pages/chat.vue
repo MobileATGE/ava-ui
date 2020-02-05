@@ -215,26 +215,28 @@ export default {
       console.log("in avaReopen");
       console.log('this.user=');
       console.log(this.user)
-      let that = this;
-
-      this.$socket.client.emit("reopen", {
-        conversationId: that.CONVERSATION_ID_PREFIX + that.user.id,
+      let options = {
+        conversationId: this.CONVERSATION_ID_PREFIX + this.user.id,
         from: {
-          id: that.user.id,
-          name: that.user.name,
+          id: this.user.id,
+          name: this.user.name,
           company: "ATGE",
           employee_type: "stu",
           department: "CU",
-          email_address: that.user.email
+          email_address: this.user.email
         },
         message: "Hello!"
-      });
+      }
+
+      console.log('options=');
+      console.log(options);
+
+      this.$socket.client.emit("reopen", options);
     },
     avaNormal(message) {
       console.log("in avaNormal");
       let that = this;
-
-      this.$socket.client.emit("normal", {
+      let options = {
         conversationId: that.CONVERSATION_ID_PREFIX + that.user.id,
         from: {
           id: that.user.id,
@@ -245,7 +247,11 @@ export default {
           email_address: that.user.email
         },
         message: message.data.text || ""
-      });
+      }
+      console.log('options=');
+      console.log(options);
+
+      this.$socket.client.emit("normal", options);
     },
     addResponseMessage(message, suggestions) {
       this.messageList.push({
