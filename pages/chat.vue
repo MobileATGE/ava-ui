@@ -214,7 +214,7 @@ export default {
       let parent = this;
 
       this.$socket.client.emit("reopen", {
-        conversationId: this.CONVERSATION_ID_PREFIX + parent.user.id,
+        conversationId: parent.CONVERSATION_ID_PREFIX + parent.user.id,
         from: {
           id: parent.user.id,
           name: parent.user.name,
@@ -231,7 +231,7 @@ export default {
       let parent = this;
 
       this.$socket.client.emit("normal", {
-        conversationId: this.CONVERSATION_ID_PREFIX + parent.user.id,
+        conversationId: parent.CONVERSATION_ID_PREFIX + parent.user.id,
         from: {
           id: parent.user.id,
           name: parent.user.name,
