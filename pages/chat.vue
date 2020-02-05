@@ -125,11 +125,11 @@ export default {
     };
   },
   created: () => {
-    console.log("Created ---");
+    console.log("***Created ---");
     // this.setColor("blue");
   },
   mounted() {
-    console.log("Mounted ---");
+    console.log("***Mounted ---");
     this.user = this.$route.query;
     console.log('this.user=');
     console.log(this.user)
@@ -213,13 +213,12 @@ export default {
     },
     avaReopen() {
       console.log("in avaReopen");
-      let parent = this;
-
       console.log('this.user=');
       console.log(this.user)
+      let that = this;
 
       this.$socket.client.emit("reopen", {
-        conversationId: parent.CONVERSATION_ID_PREFIX + parent.user.id,
+        conversationId: that.CONVERSATION_ID_PREFIX + that.user.id,
         from: {
           id: parent.user.id,
           name: parent.user.name,
