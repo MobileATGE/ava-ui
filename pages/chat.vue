@@ -131,6 +131,8 @@ export default {
   mounted() {
     console.log("Mounted ---");
     this.user = this.$route.query;
+    console.log('this.user=');
+    console.log(this.user)
     let parent = this;
 
     this.resize();
@@ -212,6 +214,9 @@ export default {
     avaReopen() {
       console.log("in avaReopen");
       let parent = this;
+
+      console.log('this.user=');
+      console.log(this.user)
 
       this.$socket.client.emit("reopen", {
         conversationId: parent.CONVERSATION_ID_PREFIX + parent.user.id,
