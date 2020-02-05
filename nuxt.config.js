@@ -1,3 +1,8 @@
+const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES' ? {
+  router: {
+    base: '/ava-ui/'
+  }
+} : {}
 
 export default {
   mode: 'spa',
@@ -5,7 +10,7 @@ export default {
   //   port: 8000,
   //   host: '0.0.0.0'
   // },
-  router: { base: '/ava-ui/' },
+  ...routerBase,
   /*
   ** Headers of the page
   */

@@ -150,8 +150,9 @@ export default {
       this.isConnected = false;
     },
     connected(data) {
-      console.log("serverMessage");
+      console.log("connected response=");
       console.log(data);
+      console.log("end of response");
       if (!this.isConnected) {
         this.isConnected = true;
         this.avaReopen();
@@ -159,6 +160,7 @@ export default {
     },
     reopen(data) {
       console.log("Socket data received:");
+      console.log(data);
       this.socketMessage = data;
       let messages = data.messages;
       let length = messages.length;
