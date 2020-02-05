@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       user: {},
-      CONVERSATION_ID_PREFIX: new Date().getTime(),
+      conversationId: new Date().getTime(),
       isConnected: false,
       socketMessage: "",
       icons: {
@@ -131,10 +131,6 @@ export default {
   mounted() {
     console.log("***Mounted ---");
     this.user = this.$route.query;
-    window.user = this.user;
-    window.conversationId = new Date().getTime();
-    console.log('window.user=');
-    console.log(window.user)
     let parent = this;
 
     this.resize();
@@ -215,17 +211,17 @@ export default {
     },
     avaReopen() {
       console.log("in avaReopen");
-      console.log('window.user=');
-      console.log(window.user)
+      console.log('this.user=');
+      console.log(this.user)
       let options = {
-        conversationId: window.conversationId,
+        conversationId: this.conversationId,
         from: {
-          id: window.user.id,
-          name: window.user.name,
+          id: this.user.id,
+          name: this.user.name,
           company: "ATGE",
           employee_type: "stu",
           department: "CU",
-          email_address: window.user.email
+          email_address: this.user.email
         },
         message: "Hello!"
       }
@@ -238,14 +234,14 @@ export default {
     avaNormal(message) {
       console.log("in avaNormal");
       let options = {
-        conversationId: window.conversationId,
+        conversationId: this.conversationId,
         from: {
-          id: window.user.id,
-          name: window.user.name,
+          id: this.user.id,
+          name: this.user.name,
           company: "ATGE",
           employee_type: "stu",
           department: "CU",
-          email_address: window.user.email
+          email_address: this.user.email
         },
         message: message.data.text || ""
       }
