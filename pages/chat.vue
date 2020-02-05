@@ -58,7 +58,7 @@ export default {
   data() {
     return {
       user: {},
-      conversationId: new Date().getTime(),
+      conversationId: 'mobile' + new Date().getTime(),
       isConnected: false,
       socketMessage: "",
       icons: {
@@ -214,7 +214,7 @@ export default {
       console.log('this.user=');
       console.log(this.user)
       let options = {
-        conversationId: this.conversationId,
+        conversationId: this.conversationId.toString(),
         from: {
           id: this.user.id,
           name: this.user.name,
