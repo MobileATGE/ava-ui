@@ -131,8 +131,10 @@ export default {
   mounted() {
     console.log("***Mounted ---");
     this.user = this.$route.query;
-    console.log('this.user=');
-    console.log(this.user)
+    window.user = this.user;
+    window.conversationId = new Date().getTime();
+    console.log('window.user=');
+    console.log(window.user)
     let parent = this;
 
     this.resize();
@@ -213,17 +215,17 @@ export default {
     },
     avaReopen() {
       console.log("in avaReopen");
-      console.log('this.user=');
-      console.log(this.user)
+      console.log('window.user=');
+      console.log(window.user)
       let options = {
-        conversationId: this.CONVERSATION_ID_PREFIX + this.user.id,
+        conversationId: window.conversationId,
         from: {
-          id: this.user.id,
-          name: this.user.name,
+          id: window.user.id,
+          name: window.user.name,
           company: "ATGE",
           employee_type: "stu",
           department: "CU",
-          email_address: this.user.email
+          email_address: window.user.email
         },
         message: "Hello!"
       }
@@ -235,16 +237,15 @@ export default {
     },
     avaNormal(message) {
       console.log("in avaNormal");
-      let that = this;
       let options = {
-        conversationId: that.CONVERSATION_ID_PREFIX + that.user.id,
+        conversationId: window.conversationId,
         from: {
-          id: that.user.id,
-          name: that.user.name,
+          id: window.user.id,
+          name: window.user.name,
           company: "ATGE",
           employee_type: "stu",
           department: "CU",
-          email_address: that.user.email
+          email_address: window.user.email
         },
         message: message.data.text || ""
       }
