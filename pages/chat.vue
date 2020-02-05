@@ -220,29 +220,29 @@ export default {
       this.$socket.client.emit("reopen", {
         conversationId: that.CONVERSATION_ID_PREFIX + that.user.id,
         from: {
-          id: parent.user.id,
-          name: parent.user.name,
+          id: that.user.id,
+          name: that.user.name,
           company: "ATGE",
           employee_type: "stu",
           department: "CU",
-          email_address: parent.user.email
+          email_address: that.user.email
         },
         message: "Hello!"
       });
     },
     avaNormal(message) {
       console.log("in avaNormal");
-      let parent = this;
+      let that = this;
 
       this.$socket.client.emit("normal", {
-        conversationId: parent.CONVERSATION_ID_PREFIX + parent.user.id,
+        conversationId: that.CONVERSATION_ID_PREFIX + that.user.id,
         from: {
-          id: parent.user.id,
-          name: parent.user.name,
+          id: that.user.id,
+          name: that.user.name,
           company: "ATGE",
           employee_type: "stu",
           department: "CU",
-          email_address: parent.user.email
+          email_address: that.user.email
         },
         message: message.data.text || ""
       });
