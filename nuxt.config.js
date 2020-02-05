@@ -1,10 +1,11 @@
 
 export default {
   mode: 'spa',
-  server: {
-    port: 8000,
-    host: '0.0.0.0'
-  },
+  // server: {
+  //   port: 8000,
+  //   host: '0.0.0.0'
+  // },
+  router: { base: '/ava-ui/' },
   /*
   ** Headers of the page
   */

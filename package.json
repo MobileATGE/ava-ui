@@ -5,6 +5,7 @@
   "author": "Gwowen Fu",
   "private": true,
   "scripts": {
+    "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup",
     "dev": "nuxt --port 8080",
     "build": "nuxt build",
     "start": "nuxt start",
