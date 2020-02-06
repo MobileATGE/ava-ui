@@ -157,7 +157,6 @@ export default {
     connected(data) {
       console.log("connected response=");
       console.log(data);
-      console.log("end of response");
       if (!this.isConnected) {
         this.isConnected = true;
         this.avaReopen();
@@ -171,7 +170,7 @@ export default {
       let messages = data.messages;
       let length = messages.length;
       this.addResponseMessage(messages[length - 1].message[0], [
-        "Show open tickets",
+        "List my tickets",
         "Talk to an agent"
       ]);
     },
@@ -196,6 +195,15 @@ export default {
           "Talk with an agent!"
         ]);
       }
+    },
+    error(data) {
+      console.log("Error response received:");
+      console.log(data);
+      
+      this.addResponseMessage('Communication failed!', [
+        "Help!",
+        "Talk with an agent!"
+      ]);
     }
   },
   methods: {
