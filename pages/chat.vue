@@ -138,7 +138,7 @@ export default {
     document.querySelector('.sc-header--close-button').style.display='none';
     document.querySelector('.sc-launcher').style.display='none';
 
-    // this.resize();
+    this.resize();
 
     window.addEventListener("resize", function() {
       parent.resize();
@@ -147,8 +147,10 @@ export default {
   sockets: {
     connect() {
       console.log("Socket connected");
-      this.isConnected = true;
-      this.avaReopen();
+      if (!this.isConnected) {
+        this.isConnected = true;
+        this.avaReopen();
+      }
     },
     disconnect() {
       console.log("Socket disconnected");
@@ -181,7 +183,6 @@ export default {
       this.socketMessage = data;
       let messages = data.messages;
       let length = messages.length;
-      console.log("length=" + length);
       let message =
         typeof messages[0] === "string" ? messages[0] : messages[0].message[0];
 

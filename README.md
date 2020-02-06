@@ -22,7 +22,7 @@ $ npm run generate
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
 
 # sample Ava UI URL
-http://localhost:8000/chat?name=Test&id=D40905817&email=test%40test.com
+http://localhost:8080/chat?name=Test&id=D40905817&email=test%40test.com
 
 https://mobileatge.github.io/ava-ui/chat/?name=Test&id=D40905817&email=test%40test.com
 
