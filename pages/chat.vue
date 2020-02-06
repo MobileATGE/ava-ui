@@ -22,6 +22,9 @@
       @edit="editMessage"
       @remove="removeMessage"
     >
+      <template v-slot:header>
+        <div class='sc-header--title enabled'>Ava</div>
+      </template>
       <template v-slot:user-avatar="{ message, user }">
         <div
           class="sc-message--avatar"
@@ -40,13 +43,6 @@
           :style="{ color: scopedProps.messageColors.color }"
         >
           {{ scopedProps.message.data.meta }}
-        </p>
-        <p
-          v-if="scopedProps.message.isEdited || scopedProps.message.liked"
-          class="sc-message--edited"
-        >
-          <template v-if="scopedProps.message.isEdited">✎</template>
-          <template v-if="scopedProps.message.liked">👍</template>
         </p>
       </template>
     </beautiful-chat>
@@ -142,17 +138,11 @@ export default {
     this.user = this.$route.query;
     let parent = this;
 
-    this.participants.push(
-      {
-        id: "me",
-        name: "You",
-        imageUrl:
-          this.user.avatar || ""
-      }
-    );
-
-    document.querySelector(".sc-header--close-button").style.display = "none";
-    document.querySelector(".sc-launcher").style.display = "none";
+    this.participants.push({
+      id: "me",
+      name: "You",
+      imageUrl: this.user.avatar || ""
+    });
 
     this.resize();
 
@@ -331,6 +321,11 @@ export default {
 <style>
 .sc-message {
   width: 90%;
+}
+
+.sc-header--close-button,
+.sc-launcher {
+  display: none;
 }
 
 .sc-message--content.sent .sc-message--avatar {
