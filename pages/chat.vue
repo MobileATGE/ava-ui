@@ -335,5 +335,8 @@ export default {
 
 .sc-message--content.sent .sc-message--avatar {
   display: inline-block;
+  order: 2;
+  margin-left: 15px;
+  margin-right: 0;
 }
 </style>
