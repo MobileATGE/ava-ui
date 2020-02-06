@@ -24,14 +24,8 @@
     >
       <template v-slot:user-avatar="{ message, user }">
         <div
-          style="border-radius:50%; color: pink; font-size: 15px; line-height:25px; text-align:center;background: tomato; width: 25px !important; height: 25px !important; min-width: 30px;min-height: 30px;margin: 5px; font-weight:bold"
-          v-if="message.type === 'text' && user && user.name"
-        >
-          {{ user.name.toUpperCase()[0] }}
-        </div>
-        <div
           class="sc-message--avatar"
-          :style="{ backgroundImage: 'url(' + user.avatar + ')' }"
+          :style="{ backgroundImage: 'url(' + user.imageUrl + ')' }"
         ></div>
       </template>
 
@@ -147,6 +141,15 @@ export default {
     console.log("***Mounted ---");
     this.user = this.$route.query;
     let parent = this;
+
+    this.participants.push(
+      {
+        id: "me",
+        name: "You",
+        imageUrl:
+          this.user.avatar || ""
+      }
+    );
 
     document.querySelector(".sc-header--close-button").style.display = "none";
     document.querySelector(".sc-launcher").style.display = "none";
@@ -308,7 +311,7 @@ export default {
       // leverage pagination for loading another page of messages
     },
     handleOnType() {
-      console.log("Emit typing event");
+      // console.log("Emit typing event");
     },
     editMessage(message) {
       const m = this.messageList.find(m => m.id === message.id);
@@ -328,5 +331,9 @@ export default {
 <style>
 .sc-message {
   width: 90%;
+}
+
+.sc-message--content.sent .sc-message--avatar {
+  display: inline-block;
 }
 </style>
