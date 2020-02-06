@@ -10,11 +10,11 @@
       :close="closeChat"
       :icons="icons"
       :open="openChat"
-      :showCloseButton="false"
-      :showLauncher="false"
       :showEmoji="true"
       :showFile="true"
       :showTypingIndicator="showTypingIndicator"
+      :showLauncher="false"
+      :showCloseButton="false"
       :colors="colors"
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :messageStyling="messageStyling"
@@ -135,7 +135,10 @@ export default {
     this.user = this.$route.query;
     let parent = this;
 
-    this.resize();
+    document.querySelector('.sc-header--close-button').style.display='none';
+    document.querySelector('.sc-launcher').style.display='none';
+
+    // this.resize();
 
     window.addEventListener("resize", function() {
       parent.resize();
