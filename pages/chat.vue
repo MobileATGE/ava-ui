@@ -10,6 +10,8 @@
       :close="closeChat"
       :icons="icons"
       :open="openChat"
+      :showCloseButton="false"
+      :showLauncher="false"
       :showEmoji="true"
       :showFile="true"
       :showTypingIndicator="showTypingIndicator"
@@ -58,7 +60,7 @@ export default {
   data() {
     return {
       user: {},
-      conversationId: 'mobile' + new Date().getTime(),
+      conversationId: "mobile" + new Date().getTime(),
       isConnected: false,
       socketMessage: "",
       icons: {
@@ -177,22 +179,25 @@ export default {
       this.socketMessage = data;
       let messages = data.messages;
       let length = messages.length;
-      console.log('length=' + length);
+      console.log("length=" + length);
       let message =
         typeof messages[0] === "string" ? messages[0] : messages[0].message[0];
 
       if (typeof messages[0] === "string") {
         messages.forEach(message => {
           this.addResponseMessage(message);
-        })
+        });
       } else {
-        this.addResponseMessage(messages[0].message[0], ["Help!", "Talk with an agent!"]);
+        this.addResponseMessage(messages[0].message[0], [
+          "Help!",
+          "Talk with an agent!"
+        ]);
       }
     }
   },
   methods: {
     resize() {
-      document.querySelector(".sc-chat-window").style.maxHeight = '80%';
+      document.querySelector(".sc-chat-window").style.maxHeight = "80%";
 
       if (window.matchMedia("(max-width: 640px)").matches) {
         document.querySelector(".sc-chat-window").style.width = "90%";
@@ -212,8 +217,8 @@ export default {
     },
     avaReopen() {
       console.log("in avaReopen");
-      console.log('this.user=');
-      console.log(this.user)
+      console.log("this.user=");
+      console.log(this.user);
       let options = {
         conversationId: this.conversationId.toString(),
         from: {
@@ -225,9 +230,9 @@ export default {
           email_address: this.user.email
         },
         message: "Hello!"
-      }
+      };
 
-      console.log('options=');
+      console.log("options=");
       console.log(options);
 
       this.$socket.client.emit("reopen", options);
@@ -245,8 +250,8 @@ export default {
           email_address: this.user.email
         },
         message: message.data.text || ""
-      }
-      console.log('options=');
+      };
+      console.log("options=");
       console.log(options);
 
       this.$socket.client.emit("normal", options);
