@@ -161,6 +161,7 @@ export default {
     reopen(data) {
       console.log("Socket data received:");
       console.log(data);
+      this.showTypingIndicator = "";
       this.socketMessage = data;
       let messages = data.messages;
       let length = messages.length;
