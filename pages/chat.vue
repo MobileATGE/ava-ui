@@ -22,6 +22,19 @@
       @edit="editMessage"
       @remove="removeMessage"
     >
+      <template v-slot:user-avatar="{ message, user }">
+        <div
+          style="border-radius:50%; color: pink; font-size: 15px; line-height:25px; text-align:center;background: tomato; width: 25px !important; height: 25px !important; min-width: 30px;min-height: 30px;margin: 5px; font-weight:bold"
+          v-if="message.type === 'text' && user && user.name"
+        >
+          {{ user.name.toUpperCase()[0] }}
+        </div>
+        <div
+          class="sc-message--avatar"
+          :style="{ backgroundImage: 'url(' + user.avatar + ')' }"
+        ></div>
+      </template>
+
       <template v-slot:text-message-body="scopedProps">
         <p
           class="sc-message--text-content"
@@ -135,8 +148,8 @@ export default {
     this.user = this.$route.query;
     let parent = this;
 
-    document.querySelector('.sc-header--close-button').style.display='none';
-    document.querySelector('.sc-launcher').style.display='none';
+    document.querySelector(".sc-header--close-button").style.display = "none";
+    document.querySelector(".sc-launcher").style.display = "none";
 
     this.resize();
 
@@ -200,8 +213,8 @@ export default {
     error(data) {
       console.log("Error response received:");
       console.log(data);
-      
-      this.addResponseMessage('Communication failed!', [
+
+      this.addResponseMessage("Communication failed!", [
         "Help!",
         "Talk with an agent!"
       ]);
