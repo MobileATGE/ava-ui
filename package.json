@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup",
-    "dev": "nuxt --port 8080",
+    "dev": "DEPLOY_ENV=DEV nuxt --port 8080",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "DEPLOY_ENV=GH_PAGES nuxt generate"
