@@ -211,6 +211,16 @@ export default {
         "Help!",
         "Talk with an agent!"
       ]);
+    },
+    agentStart(data) {
+      console.log('Agent start');
+      console.log(data);
+      this.addResponseMessage(data.message.message);
+    },
+    fromAgent(data) {
+      console.log('From agent');
+      console.log(data);
+      this.addResponseMessage('From agent');
     }
   },
   methods: {
