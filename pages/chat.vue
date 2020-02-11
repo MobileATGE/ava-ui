@@ -18,12 +18,9 @@
       :colors="colors"
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :messageStyling="messageStyling"
-      @onType="handleOnType"
-      @edit="editMessage"
-      @remove="removeMessage"
     >
       <template v-slot:header>
-        <div class='sc-header--title enabled'>Ava</div>
+        <div class="sc-header--title enabled">Ava</div>
       </template>
       <template v-slot:user-avatar="{ message, user }">
         <div
@@ -31,19 +28,18 @@
           :style="{ backgroundImage: 'url(' + user.imageUrl + ')' }"
         ></div>
       </template>
-
       <template v-slot:text-message-body="scopedProps">
+        <p
+          v-if="scopedProps.message.data.meta"
+          class="sc-message--meta"
+          :style="{ color: '#666666' }"
+        >
+          {{ scopedProps.message.data.meta }}
+        </p>
         <p
           class="sc-message--text-content"
           v-html="scopedProps.message.data.text"
         ></p>
-        <p
-          v-if="scopedProps.message.data.meta"
-          class="sc-message--meta"
-          :style="{ color: scopedProps.messageColors.color }"
-        >
-          {{ scopedProps.message.data.meta }}
-        </p>
       </template>
     </beautiful-chat>
   </div>
@@ -55,6 +51,9 @@ import CloseIcon from "../assets/close-icon.png";
 import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
+
+const guestImageUrl =
+  "https://chamberlain.test.instructure.com/images/messages/avatar-50.png";
 
 Vue.use(Chat);
 
@@ -89,7 +88,7 @@ export default {
           id: "support",
           name: "Ava",
           imageUrl:
-            "https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png"
+            "https://bot-framework.azureedge.net/bot-icons-v1/Ava-Prd_8l144R9t02sE5FSDfp3R6GTbBYXFxib56WV5wCAiY7Tc6Hl.png"
         }
       ], // the list of all the participant of the conversation. `name` is the user name, `id` is used to establish the author of a message, `imageUrl` is supposed to be the user avatar.
       titleImageUrl:
@@ -103,25 +102,25 @@ export default {
       showTypingIndicator: "", // when set to a value matching the participant.id it shows the typing indicator for the specific user
       colors: {
         header: {
-          bg: "#4e8cff",
+          bg: "#6064A4",
           text: "#ffffff"
         },
         launcher: {
           bg: "#4e8cff"
         },
         messageList: {
-          bg: "#ffffff"
+          bg: "#f3f2f1"
         },
         sentMessage: {
-          bg: "#4e8cff",
-          text: "#ffffff"
+          bg: "#E5E5F0",
+          text: "#000000"
         },
         receivedMessage: {
-          bg: "#C2DAFF",
+          bg: "#ffffff",
           text: "#000000"
         },
         userInput: {
-          bg: "#f4f7f9",
+          bg: "#ffffff",
           text: "#565867"
         }
       }, // specifies the color scheme for the component
@@ -141,7 +140,7 @@ export default {
     this.participants.push({
       id: "me",
       name: "You",
-      imageUrl: this.user.avatar || ""
+      imageUrl: this.user.avatar || guestImageUrl
     });
 
     this.resize();
@@ -174,13 +173,15 @@ export default {
       console.log("Socket data received:");
       console.log(data);
       this.showTypingIndicator = "";
-      this.socketMessage = data;
-      let messages = data.messages;
-      let length = messages.length;
-      this.addResponseMessage(messages[length - 1].message[0], [
-        "List my tickets",
-        "Talk to an agent"
-      ]);
+      if (data.message) {
+        this.socketMessage = data;
+        let messages = data.messages;
+        let length = messages.length;
+        this.addResponseMessage(messages[length - 1].message[0], [
+          "List my tickets",
+          "Talk to an agent"
+        ]);
+      }
     },
     normal(data) {
       console.log("Normal response received:");
@@ -213,19 +214,21 @@ export default {
       ]);
     },
     agentStart(data) {
-      console.log('Agent start');
+      console.log("Agent start");
       console.log(data);
       this.addResponseMessage(data.message.message);
     },
     fromAgent(data) {
-      console.log('From agent');
+      console.log("From agent");
       console.log(data);
-      this.addResponseMessage('From agent');
+      this.addResponseMessage("From agent");
     }
   },
   methods: {
     resize() {
-      document.querySelector(".sc-chat-window").style.maxHeight = "80%";
+      document.querySelector(".sc-chat-window").style.maxHeight = "90%";
+      document.querySelector(".sc-chat-window").style.backgroundColor =
+        "#f3f2f1";
 
       if (window.matchMedia("(max-width: 640px)").matches) {
         document.querySelector(".sc-chat-window").style.width = "90%";
@@ -238,6 +241,11 @@ export default {
     onMessageWasSent(message) {
       console.log("Here is onMessageWasSent");
       console.log(message);
+      message.data.meta = new Date().toLocaleString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true
+      });
       // called when the user sends a message
       this.showTypingIndicator = "support";
       this.avaNormal(message);
@@ -289,7 +297,16 @@ export default {
         author: "support",
         type: "text",
         id: Math.random(),
-        data: { text: message },
+        data: {
+          text: message,
+          meta:
+            "Ava " +
+            new Date().toLocaleString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true
+            })
+        },
         suggestions
       });
     },
@@ -331,8 +348,14 @@ export default {
 <style>
 .sc-message {
   width: 90%;
+  padding-bottom: 15px;
 }
 
+.sc-message--text {
+  max-width: 66%;
+  font-size: 1em;
+  font-weight: 300;
+}
 .sc-header--close-button,
 .sc-launcher {
   display: none;
@@ -343,5 +366,23 @@ export default {
   order: 2;
   margin-left: 15px;
   margin-right: 0;
+}
+
+.sc-message--avatar {
+  min-width: 40px;
+  min-height: 40px;
+}
+
+.sc-message--meta {
+  text-align: left;
+  font-size: small;
+}
+
+.sc-message-list {
+  padding: 0;
+}
+
+.sc-user-input:focus-within {
+  border-bottom: 2px solid #6064A4;
 }
 </style>
