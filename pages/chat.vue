@@ -20,7 +20,9 @@
       :messageStyling="messageStyling"
     >
       <template v-slot:header>
-        <div class="sc-header--title enabled">Ava</div>
+        <div class="sc-header--title enabled">
+          <img :src="titleImageUrl" /> <span>Ava</span>
+        </div>
       </template>
       <template v-slot:user-avatar="{ message, user }">
         <div
@@ -47,13 +49,13 @@
 <script>
 import Vue from "vue";
 import Chat from "vue-beautiful-chat";
+import TitleIcon from "../assets/atge-icon.jpeg";
+import AvaIcon from "../assets/ava-icon.png";
+import GuestIcon from "../assets/guest-icon.png";
 import CloseIcon from "../assets/close-icon.png";
 import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
-
-const guestImageUrl =
-  "https://chamberlain.test.instructure.com/images/messages/avatar-50.png";
 
 Vue.use(Chat);
 
@@ -87,12 +89,10 @@ export default {
         {
           id: "support",
           name: "Ava",
-          imageUrl:
-            "https://bot-framework.azureedge.net/bot-icons-v1/Ava-Prd_8l144R9t02sE5FSDfp3R6GTbBYXFxib56WV5wCAiY7Tc6Hl.png"
+          imageUrl: AvaIcon,
         }
       ], // the list of all the participant of the conversation. `name` is the user name, `id` is used to establish the author of a message, `imageUrl` is supposed to be the user avatar.
-      titleImageUrl:
-        "https://a.slack-edge.com/66f9/img/avatars-teams/ava_0001-34.png",
+      titleImageUrl: TitleIcon,
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
         // { type: "text", author: `user1`, data: { text: `No.` } }
@@ -140,7 +140,7 @@ export default {
     this.participants.push({
       id: "me",
       name: "You",
-      imageUrl: this.user.avatar || guestImageUrl
+      imageUrl: this.user.avatar || GuestIcon
     });
 
     this.resize();
@@ -173,7 +173,7 @@ export default {
       console.log("Socket data received:");
       console.log(data);
       this.showTypingIndicator = "";
-      if (data.message) {
+      if (data.messages) {
         this.socketMessage = data;
         let messages = data.messages;
         let length = messages.length;
@@ -383,6 +383,15 @@ export default {
 }
 
 .sc-user-input:focus-within {
-  border-bottom: 2px solid #6064A4;
+  border-bottom: 2px solid #6064a4;
+}
+
+.sc-header--title > img {
+  vertical-align: middle;
+  width: 36px;
+  height: 36px;
+}
+.sc-header--title span {
+  vertical-align: middle;
 }
 </style>
