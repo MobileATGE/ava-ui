@@ -12,7 +12,7 @@ if (isDev) {
     transports: ["websocket"]
   })
 } else {
-  socket = io("wss://mobile-common-services-qa.herokuapp.com", {
+  socket = io("wss://ava-chat-server-qa.herokuapp.com", {
     transports: ["websocket"]
   })
 } 
