@@ -89,7 +89,7 @@ export default {
         {
           id: "support",
           name: "Ava",
-          imageUrl: AvaIcon,
+          imageUrl: AvaIcon
         }
       ], // the list of all the participant of the conversation. `name` is the user name, `id` is used to establish the author of a message, `imageUrl` is supposed to be the user avatar.
       titleImageUrl: TitleIcon,
@@ -257,6 +257,7 @@ export default {
       console.log(this.user);
       let options = {
         conversationId: this.conversationId.toString(),
+        source: "canvas",
         from: {
           id: this.user.id,
           name: this.user.name,
@@ -277,6 +278,7 @@ export default {
       console.log("in avaNormal");
       let options = {
         conversationId: this.conversationId,
+        source: "canvas",
         from: {
           id: this.user.id,
           name: this.user.name,
