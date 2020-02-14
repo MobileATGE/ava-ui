@@ -7,21 +7,11 @@ const routerBase =
       }
     : {};
 
-const isLocal = process.env.NODE_ENV === "development"
-
 export default {
   mode: "spa",
-  // server: {
-  //   port: 8000,
-  //   host: '0.0.0.0'
-  // },
   ...routerBase,
-  /*
-   ** Headers of the page
-   */
   env: {
-    // socketServerURL: isLocal ? 'ws://localhost:3000' : 'wss://ava-chat-server-dev.herokuapp.com'
-    socketServerURL: 'wss://ava-chat-server-dev.herokuapp.com'
+    socketServerURL: process.env.SOCKET_SERVER || 'ws://localhost:3000'
   },
   head: {
     title: process.env.npm_package_name || "",
