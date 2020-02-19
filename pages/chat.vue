@@ -268,9 +268,6 @@ export default {
       this.messageList.push(message);
     },
     avaReopen() {
-      console.log("in avaReopen");
-      console.log("this.user=");
-      console.log(this.user);
       let options = {
         conversationId: this.conversationId.toString(),
         source: "canvas",
@@ -285,7 +282,7 @@ export default {
         message: "Hello!"
       };
 
-      console.log("options=");
+      console.log("openchat:");
       console.log(options);
 
       this.$socket.client.emit("reopen", options);
@@ -371,7 +368,7 @@ export default {
 
 .sc-message--text {
   max-width: 66%;
-  font-size: 1em;
+  font-size: 0.8em;
   font-weight: 300;
 }
 .sc-header--close-button,
