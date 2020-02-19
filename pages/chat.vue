@@ -46,11 +46,11 @@
             ></p>
             <div class="rating">
               <span>Not Satisfied</span>
-              <img src="/star.png" class="star" v-on:click="rate(1)"/>
-              <img src="/star.png" class="star" v-on:click="rate(2)"/>
-              <img src="/star.png" class="star" v-on:click="rate(3)"/>
-              <img src="/star.png" class="star" v-on:click="rate(4)"/>
-              <img src="/star.png" class="star" v-on:click="rate(5)"/>
+              <img src="/star.png" class="star" v-on:click="rate(1)" />
+              <img src="/star.png" class="star" v-on:click="rate(2)" />
+              <img src="/star.png" class="star" v-on:click="rate(3)" />
+              <img src="/star.png" class="star" v-on:click="rate(4)" />
+              <img src="/star.png" class="star" v-on:click="rate(5)" />
               <span>Satisfied</span>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default {
       titleImageUrl: TitleIcon,
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
-        // { type: "text", author: `user1`, data: { text: `No.` } }
+        // { type: 'text', author: `support`, id: 21, data: { text: `Hollo!` }, suggestions: ['Show opened tickets', 'Tickets', 'Closed tickets', 'Latest ticket'] }
       ], // the list of the messages to show, can be paginated and adjusted dynamically
       newMessagesCount: 0,
       isChatOpen: true, // to determine whether the chat window should be open or closed
@@ -159,6 +159,7 @@ export default {
     });
 
     this.resize();
+    this.updateStyle();
 
     window.addEventListener("resize", function() {
       parent.resize();
@@ -254,6 +255,16 @@ export default {
         document.querySelector(".sc-chat-window").style.width = "80%";
       } else {
         document.querySelector(".sc-chat-window").style.width = "768px";
+      }
+    },
+    updateStyle() {
+      const ary = document.getElementsByClassName("sc-suggestions-element");
+      console.log(ary);
+      console.log(ary.length);
+
+      for (let i =0; i<ary.length; i++) {
+        ary[i].style.color = 'black';
+        ary[i].style.borderColor = 'black';
       }
     },
     onMessageWasSent(message) {
@@ -427,9 +438,5 @@ export default {
   width: 32px;
   height: 32px;
   cursor: pointer;
-}
-.sc-suggestions-element {
-  border-color: #111a8e;
-  color: #111a8e;
 }
 </style>
