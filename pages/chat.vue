@@ -38,10 +38,29 @@
         >
           {{ scopedProps.message.data.meta }}
         </p>
-        <p
-          class="sc-message--text-content"
-          v-html="scopedProps.message.data.text"
-        ></p>
+        <div v-if="scopedProps.message.data.type === 'survey'">
+          <div class="card">
+            <p
+              class="sc-message--text-content"
+              v-html="scopedProps.message.data.text"
+            ></p>
+            <div class="rating">
+              <span>Not Satisfied</span>
+              <img src="/star.png" class="star" v-on:click="rate(1)"/>
+              <img src="/star.png" class="star" v-on:click="rate(2)"/>
+              <img src="/star.png" class="star" v-on:click="rate(3)"/>
+              <img src="/star.png" class="star" v-on:click="rate(4)"/>
+              <img src="/star.png" class="star" v-on:click="rate(5)"/>
+              <span>Satisfied</span>
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <p
+            class="sc-message--text-content"
+            v-html="scopedProps.message.data.text"
+          ></p>
+        </div>
       </template>
     </beautiful-chat>
   </div>
@@ -91,7 +110,7 @@ export default {
           name: "Ava",
           imageUrl: AvaIcon
         }
-      ], // the list of all the participant of the conversation. `name` is the user name, `id` is used to establish the author of a message, `imageUrl` is supposed to be the user avatar.
+      ],
       titleImageUrl: TitleIcon,
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
@@ -128,18 +147,14 @@ export default {
       messageStyling: true // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
     };
   },
-  created: () => {
-    console.log("***Created ---");
-    // this.setColor("blue");
-  },
+  created: () => {},
   mounted() {
-    console.log("***Mounted ---");
     this.user = this.$route.query;
     let parent = this;
 
     this.participants.push({
       id: "me",
-      name: "You",
+      name: "me",
       imageUrl: this.user.avatar || GuestIcon
     });
 
@@ -177,14 +192,14 @@ export default {
         this.socketMessage = data;
         let messages = data.messages;
         let length = messages.length;
-        this.addResponseMessage(messages[length - 1].message[0], [
+        this.addResponseMessage(messages[length - 1].message[0], data.type, [
           "List my tickets",
           "Talk to an agent"
         ]);
       }
     },
     normal(data) {
-      console.log("Normal response received:");
+      console.log("Response:");
       console.log(data);
       this.showTypingIndicator = "";
       this.socketMessage = data;
@@ -195,10 +210,10 @@ export default {
 
       if (typeof messages[0] === "string") {
         messages.forEach(message => {
-          this.addResponseMessage(message);
+          this.addResponseMessage(message, data.type);
         });
       } else {
-        this.addResponseMessage(messages[0].message[0], [
+        this.addResponseMessage(messages[0].message[0], data.type, [
           "Help!",
           "Talk with an agent!"
         ]);
@@ -208,7 +223,7 @@ export default {
       console.log("Error response received:");
       console.log(data);
 
-      this.addResponseMessage("Communication failed!", [
+      this.addResponseMessage("Communication failed!", data.type, [
         "Help!",
         "Talk with an agent!"
       ]);
@@ -216,15 +231,18 @@ export default {
     agentStart(data) {
       console.log("Agent start");
       console.log(data);
-      this.addResponseMessage(data.message.message);
+      this.addResponseMessage(data.message.message, data.type);
     },
     fromAgent(data) {
       console.log("From agent");
       console.log(data);
-      this.addResponseMessage("From agent");
+      this.addResponseMessage("From agent", data.type);
     }
   },
   methods: {
+    rate(rating) {
+      this.onMessageWasSent({ type: 'text', author: 'me', data: { text: `My rating is ${ rating } star${ rating > 1 ? 's' : ''}`}});
+    },
     resize() {
       document.querySelector(".sc-chat-window").style.maxHeight = "90%";
       document.querySelector(".sc-chat-window").style.backgroundColor =
@@ -239,8 +257,6 @@ export default {
       }
     },
     onMessageWasSent(message) {
-      console.log("Here is onMessageWasSent");
-      console.log(message);
       message.data.meta = new Date().toLocaleString("en-US", {
         hour: "numeric",
         minute: "numeric",
@@ -275,7 +291,6 @@ export default {
       this.$socket.client.emit("reopen", options);
     },
     avaNormal(message) {
-      console.log("in avaNormal");
       let options = {
         conversationId: this.conversationId,
         source: "canvas",
@@ -289,18 +304,19 @@ export default {
         },
         message: message.data.text || ""
       };
-      console.log("options=");
+      console.log("Send:");
       console.log(options);
 
       this.$socket.client.emit("normal", options);
     },
-    addResponseMessage(message, suggestions) {
+    addResponseMessage(message, type, suggestions) {
       this.messageList.push({
         author: "support",
         type: "text",
         id: Math.random(),
         data: {
           text: message,
+          type: type,
           meta:
             "Ava " +
             new Date().toLocaleString("en-US", {
@@ -395,5 +411,24 @@ export default {
 }
 .sc-header--title span {
   vertical-align: middle;
+}
+.card {
+  border: 1px solid rgba(189, 185, 185, 0.4);
+  padding: 15px;
+  margin: 5px 0;
+}
+.rating {
+  margin-top: 10px;
+}
+
+.rating > span {
+  vertical-align: middle;
+}
+
+.star {
+  vertical-align: middle;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
 }
 </style>
