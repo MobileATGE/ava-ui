@@ -368,7 +368,7 @@ export default {
 
 .sc-message--text {
   max-width: 66%;
-  font-size: 0.8em;
+  font-size: 0.9em;
   font-weight: 300;
 }
 .sc-header--close-button,
@@ -427,5 +427,9 @@ export default {
   width: 32px;
   height: 32px;
   cursor: pointer;
+}
+.sc-suggestions-element {
+  border-color: #111a8e;
+  color: #111a8e;
 }
 </style>
