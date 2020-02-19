@@ -158,8 +158,10 @@ export default {
       imageUrl: this.user.avatar || GuestIcon
     });
 
-    this.resize();
-    this.updateStyle();
+    this.$nextTick(() => {
+      this.resize();
+      this.updateStyle();
+    })
 
     window.addEventListener("resize", function() {
       parent.resize();
