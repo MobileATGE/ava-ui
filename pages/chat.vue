@@ -160,12 +160,14 @@ export default {
 
     this.$nextTick(() => {
       this.resize();
-      this.updateStyle();
     })
 
     window.addEventListener("resize", function() {
       parent.resize();
     });
+  },
+  updated() {
+    this.updateStyle();
   },
   sockets: {
     connect() {
@@ -213,7 +215,10 @@ export default {
 
       if (typeof messages[0] === "string") {
         messages.forEach(message => {
-          this.addResponseMessage(message, data.type);
+          this.addResponseMessage(message, data.type, [
+          "List my tickets",
+          "Talk to an agent"
+        ]);
         });
       } else {
         this.addResponseMessage(messages[0].message[0], data.type, [
@@ -260,14 +265,13 @@ export default {
       }
     },
     updateStyle() {
-      const ary = document.getElementsByClassName("sc-suggestions-element");
-      console.log(ary);
-      console.log(ary.length);
+      let htmlCollection = document.getElementsByClassName("sc-suggestions-element");
 
-      for (let i =0; i<ary.length; i++) {
-        ary[i].style.color = 'black';
-        ary[i].style.borderColor = 'black';
-      }
+      Array.from(htmlCollection).forEach(function (element) { 
+        console.log(element) 
+        element.style.color = 'black';
+        element.style.borderColor = 'black';
+      }); 
     },
     onMessageWasSent(message) {
       message.data.meta = new Date().toLocaleString("en-US", {
