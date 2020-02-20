@@ -445,4 +445,11 @@ export default {
   height: 32px;
   cursor: pointer;
 }
+.sc-suggestions-element:focus {
+  outline: none;
+}
+
+.sc-suggestions-element:hover {
+  background-color: rgb(212, 209, 209);
+}
 </style>
