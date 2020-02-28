@@ -121,7 +121,7 @@ export default {
       showTypingIndicator: "", // when set to a value matching the participant.id it shows the typing indicator for the specific user
       colors: {
         header: {
-          bg: "#6064A4",
+          bg: "#013A81",
           text: "#ffffff"
         },
         launcher: {
