@@ -452,4 +452,8 @@ export default {
 .sc-suggestions-element:hover {
   background-color: rgb(212, 209, 209);
 }
+
+.sc-user-input--text {
+  width: calc(100% - 120px);
+}
 </style>
