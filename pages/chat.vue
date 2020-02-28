@@ -111,7 +111,7 @@ export default {
           imageUrl: AvaIcon
         }
       ],
-      titleImageUrl: TitleIcon,
+      titleImageUrl: AvaIcon,
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
         // { type: 'text', author: `support`, id: 21, data: { text: `Hollo!` }, suggestions: ['Show opened tickets', 'Tickets', 'Closed tickets', 'Latest ticket'] }
