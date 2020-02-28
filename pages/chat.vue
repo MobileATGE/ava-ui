@@ -160,10 +160,41 @@ export default {
 
     this.$nextTick(() => {
       this.resize();
-    })
+    });
 
     window.addEventListener("resize", function() {
       parent.resize();
+    });
+
+    // Make chat window reaizable
+    const BORDER_SIZE = 4;
+    const panel = document.querySelector(".sc-chat-window");
+    let isResizing = false;
+    let m_pos = 0;
+
+    panel.addEventListener("mousedown",
+      (e) => {
+        console.log('mousedown');
+        if (e.offsetX < BORDER_SIZE) {
+          m_pos = e.x;
+          isResizing = true;
+          console.log('mousedown:' + e.x);
+        }
+      }
+    );
+
+    document.addEventListener("mouseup",
+      (e) => {
+        isResizing = false;
+      }
+    );
+
+    document.addEventListener("mousemove", (e) => {
+      if (isResizing) {
+        const dx = m_pos - e.x;
+        m_pos = e.x;
+        panel.style.width = (parseInt(panel.style.width) + dx) + "px";
+      }
     });
   },
   updated() {
@@ -216,9 +247,9 @@ export default {
       if (typeof messages[0] === "string") {
         messages.forEach(message => {
           this.addResponseMessage(message, data.type, [
-          "List my tickets",
-          "Talk to an agent"
-        ]);
+            "List my tickets",
+            "Talk to an agent"
+          ]);
         });
       } else {
         this.addResponseMessage(messages[0].message[0], data.type, [
@@ -249,7 +280,11 @@ export default {
   },
   methods: {
     rate(rating) {
-      this.onMessageWasSent({ type: 'text', author: 'me', data: { text: `My rating is ${ rating } star${ rating > 1 ? 's' : ''}`}});
+      this.onMessageWasSent({
+        type: "text",
+        author: "me",
+        data: { text: `My rating is ${rating} star${rating > 1 ? "s" : ""}` }
+      });
     },
     resize() {
       document.querySelector(".sc-chat-window").style.maxHeight = "90%";
@@ -265,13 +300,15 @@ export default {
       }
     },
     updateStyle() {
-      let htmlCollection = document.getElementsByClassName("sc-suggestions-element");
+      let htmlCollection = document.getElementsByClassName(
+        "sc-suggestions-element"
+      );
 
-      Array.from(htmlCollection).forEach(function (element) { 
-        console.log(element) 
-        element.style.color = 'black';
-        element.style.borderColor = 'black';
-      }); 
+      Array.from(htmlCollection).forEach(function(element) {
+        console.log(element);
+        element.style.color = "black";
+        element.style.borderColor = "black";
+      });
     },
     onMessageWasSent(message) {
       message.data.meta = new Date().toLocaleString("en-US", {
@@ -455,5 +492,15 @@ export default {
 
 .sc-user-input--text {
   width: calc(100% - 120px);
+}
+
+.sc-chat-window:after {
+  content: " ";
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  cursor: w-resize;
 }
 </style>
