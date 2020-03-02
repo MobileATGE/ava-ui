@@ -257,6 +257,8 @@ export default {
     },
     resize() {
       document.querySelector(".sc-chat-window").style.maxHeight = "90%";
+      document.querySelector(".sc-chat-window").style.minHeight = "50%";
+      document.querySelector(".sc-chat-window").style.minWidth = "50%";
       document.querySelector(".sc-chat-window").style.backgroundColor =
         "#f3f2f1";
 
