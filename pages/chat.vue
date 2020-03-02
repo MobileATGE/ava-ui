@@ -165,37 +165,6 @@ export default {
     window.addEventListener("resize", function() {
       parent.resize();
     });
-
-    // Make chat window reaizable
-    const BORDER_SIZE = 4;
-    const panel = document.querySelector(".sc-chat-window");
-    let isResizing = false;
-    let m_pos = 0;
-
-    panel.addEventListener("mousedown",
-      (e) => {
-        console.log('mousedown');
-        if (e.offsetX < BORDER_SIZE) {
-          m_pos = e.x;
-          isResizing = true;
-          console.log('mousedown:' + e.x);
-        }
-      }
-    );
-
-    document.addEventListener("mouseup",
-      (e) => {
-        isResizing = false;
-      }
-    );
-
-    document.addEventListener("mousemove", (e) => {
-      if (isResizing) {
-        const dx = m_pos - e.x;
-        m_pos = e.x;
-        panel.style.width = (parseInt(panel.style.width) + dx) + "px";
-      }
-    });
   },
   updated() {
     this.updateStyle();
@@ -294,7 +263,7 @@ export default {
       if (window.matchMedia("(max-width: 640px)").matches) {
         document.querySelector(".sc-chat-window").style.width = "90%";
       } else if (window.matchMedia("(max-width: 768px)").matches) {
-        document.querySelector(".sc-chat-window").style.width = "80%";
+        document.querySelector(".sc-chat-window").style.width = "614px";
       } else {
         document.querySelector(".sc-chat-window").style.width = "768px";
       }
@@ -305,7 +274,6 @@ export default {
       );
 
       Array.from(htmlCollection).forEach(function(element) {
-        console.log(element);
         element.style.color = "black";
         element.style.borderColor = "black";
       });
@@ -455,6 +423,11 @@ export default {
   border-bottom: 2px solid #6064a4;
 }
 
+.sc-header {
+  cursor: move;
+  z-index: 99999;
+}
+
 .sc-header--title > img {
   vertical-align: middle;
   width: 36px;
@@ -494,13 +467,9 @@ export default {
   width: calc(100% - 120px);
 }
 
-.sc-chat-window:after {
-  content: " ";
-  background-color: rgba(0, 0, 0, 0);
-  position: absolute;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  cursor: w-resize;
+.sc-chat-window {
+  resize: both;
+  border: 1px solid black;
+  overflow: auto;
 }
 </style>
