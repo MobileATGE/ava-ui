@@ -115,6 +115,7 @@ export default {
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
         // { type: 'text', author: `support`, id: 21, data: { text: `Hollo!` }, suggestions: ['Show opened tickets', 'Tickets', 'Closed tickets', 'Latest ticket'] }
+        // { type: 'text', author: 'support', data: { text: "<button class='testCssClass'>IT Help Desk</button><button class='testCssClass'>Library Help Desk</button>"}}
       ], // the list of the messages to show, can be paginated and adjusted dynamically
       newMessagesCount: 0,
       isChatOpen: true, // to determine whether the chat window should be open or closed
@@ -167,7 +168,9 @@ export default {
     });
   },
   updated() {
-    this.updateStyle();
+    let parent = this;
+    parent.updateStyle();
+    document.querySelectorAll('.testCssClass').forEach((e) => e.onclick = function(e) { parent.sendValue(e.target.textContent); });
   },
   sockets: {
     connect() {
@@ -227,11 +230,12 @@ export default {
         ]);
       }
     },
-    error(data) {
+    serverError(data) {
       console.log("Error response received:");
       console.log(data);
+      this.showTypingIndicator = "";
 
-      this.addResponseMessage("Communication failed!", data.type, [
+      this.addResponseMessage("Server error: " + data, 'text', [
         "Help!",
         "Talk with an agent!"
       ]);
@@ -255,9 +259,17 @@ export default {
         data: { text: `My rating is ${rating} star${rating > 1 ? "s" : ""}` }
       });
     },
+    sendValue(text) {
+      this.onMessageWasSent({
+        type: "text",
+        author: "me",
+        data: { text }
+      });
+    },
     resize() {
       document.querySelector(".sc-chat-window").style.maxHeight = "90%";
       document.querySelector(".sc-chat-window").style.minHeight = "50%";
+      document.querySelector(".sc-chat-window").style.maxWidth = "98%";
       document.querySelector(".sc-chat-window").style.minWidth = "50%";
       document.querySelector(".sc-chat-window").style.backgroundColor =
         "#f3f2f1";
@@ -267,6 +279,8 @@ export default {
       } else if (window.matchMedia("(max-width: 768px)").matches) {
         document.querySelector(".sc-chat-window").style.width = "614px";
       } else {
+        document.querySelector(".sc-chat-window").style.minHeight = "30%";
+        document.querySelector(".sc-chat-window").style.minWidth = "30%";
         document.querySelector(".sc-chat-window").style.width = "768px";
       }
     },
@@ -470,8 +484,16 @@ export default {
 }
 
 .sc-chat-window {
-  resize: both;
-  border: 1px solid black;
-  overflow: auto;
+  border: 1px solid gray;
+}
+
+.sc-chat-window:after {
+  content: " ";
+  background-color: rgba(0, 0, 0, 0);
+  position: absolute;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  cursor: w-resize;
 }
 </style>
