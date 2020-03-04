@@ -166,6 +166,37 @@ export default {
     window.addEventListener("resize", function() {
       parent.resize();
     });
+
+    // Make chat window reaizable
+    const BORDER_SIZE = 4;
+    const panel = document.querySelector(".sc-chat-window");
+    let isResizing = false;
+    let m_pos = 0;
+
+    panel.addEventListener("mousedown",
+      (e) => {
+        console.log('mousedown');
+        if (e.offsetX < BORDER_SIZE) {
+          m_pos = e.x;
+          isResizing = true;
+          console.log('mousedown:' + e.x);
+        }
+      }
+    );
+
+    document.addEventListener("mouseup",
+      (e) => {
+        isResizing = false;
+      }
+    );
+
+    document.addEventListener("mousemove", (e) => {
+      if (isResizing) {
+        const dx = m_pos - e.x;
+        m_pos = e.x;
+        panel.style.width = (parseInt(panel.style.width) + dx) + "px";
+      }
+    });
   },
   updated() {
     let parent = this;
