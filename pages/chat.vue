@@ -115,7 +115,17 @@ export default {
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
         // { type: 'text', author: `support`, id: 21, data: { text: `Hollo!` }, suggestions: ['Show opened tickets', 'Tickets', 'Closed tickets', 'Latest ticket'] }
-        // { type: 'text', author: 'support', data: { text: "<button class='testCssClass'>IT Help Desk</button><button class='testCssClass'>Library Help Desk</button>"}}
+        // { type: 'text', author: 'support', data: { text: "<a href='#slides'>change color to red</p>"}},
+        // { type: 'text', author: 'support', data: { text: "<p id='test1'>This is a test block</p>"}},
+        // {
+        //   type: "text",
+        //   author: "support",
+        //   data: {
+        //     text:
+        //       "<div class='btn'>IT Help Desk</div><div class='btn'>Library Help Desk</div>"
+        //   }
+        // }
+        // { type: 'text', author: 'support', data: { text: "<div class='slider'><div id='slides' class='slides'><button>IT Help Desk</button><button>Library Help Desk</button><button>Big Deal</button></div></div>"}}
       ], // the list of the messages to show, can be paginated and adjusted dynamically
       newMessagesCount: 0,
       isChatOpen: true, // to determine whether the chat window should be open or closed
@@ -173,35 +183,42 @@ export default {
     let isResizing = false;
     let m_pos = 0;
 
-    panel.addEventListener("mousedown",
-      (e) => {
-        console.log('mousedown');
-        if (e.offsetX < BORDER_SIZE) {
-          m_pos = e.x;
-          isResizing = true;
-          console.log('mousedown:' + e.x);
-        }
+    panel.addEventListener("mousedown", e => {
+      console.log("mousedown");
+      if (e.offsetX < BORDER_SIZE) {
+        m_pos = e.x;
+        isResizing = true;
+        console.log("mousedown:" + e.x);
       }
-    );
+    });
 
-    document.addEventListener("mouseup",
-      (e) => {
-        isResizing = false;
-      }
-    );
+    document.addEventListener("mouseup", e => {
+      isResizing = false;
+    });
 
-    document.addEventListener("mousemove", (e) => {
+    document.addEventListener("mousemove", e => {
       if (isResizing) {
         const dx = m_pos - e.x;
         m_pos = e.x;
-        panel.style.width = (parseInt(panel.style.width) + dx) + "px";
+        panel.style.width = parseInt(panel.style.width) + dx + "px";
       }
     });
   },
   updated() {
     let parent = this;
     parent.updateStyle();
-    document.querySelectorAll('.testCssClass').forEach((e) => e.onclick = function(e) { parent.sendValue(e.target.textContent); });
+    document.querySelectorAll(".btn").forEach(
+      e =>
+        (e.onclick = function(e) {
+          parent.sendValue(e.target.textContent);
+        })
+    );
+    document.querySelectorAll(".slides > button").forEach(
+      e =>
+        (e.onclick = function(e) {
+          parent.sendValue(e.target.textContent);
+        })
+    );
   },
   sockets: {
     connect() {
@@ -244,8 +261,6 @@ export default {
       this.socketMessage = data;
       let messages = data.messages;
       let length = messages.length;
-      let message =
-        typeof messages[0] === "string" ? messages[0] : messages[0].message[0];
 
       if (typeof messages[0] === "string") {
         messages.forEach(message => {
@@ -254,11 +269,15 @@ export default {
             "Talk to an agent"
           ]);
         });
-      } else {
+      } else if (messages[0]) {
         this.addResponseMessage(messages[0].message[0], data.type, [
           "Help!",
-          "Talk with an agent!"
+          "Talk to an agent!"
         ]);
+      }
+
+      if (data.html) {
+        this.addResponseMessage(data.html, data.type);
       }
     },
     serverError(data) {
@@ -266,7 +285,7 @@ export default {
       console.log(data);
       this.showTypingIndicator = "";
 
-      this.addResponseMessage("Server error: " + data, 'text', [
+      this.addResponseMessage("Server error: " + data, "text", [
         "Help!",
         "Talk with an agent!"
       ]);
@@ -526,5 +545,119 @@ export default {
   width: 4px;
   height: 100%;
   cursor: w-resize;
+}
+
+.sc-message--text-content > div > img {
+  max-width: 50%;
+  display:block;
+  margin: auto;
+}
+
+.btn {
+  display: inline-block;
+  color: rgb(74, 103, 199);
+  border: 1px solid rgba(74, 103, 199, 0.5);
+  cursor: pointer;
+  vertical-align: middle;
+  max-width: 200px;
+  padding: 5px;
+  text-align: center;
+  margin: 0 5px;
+  font-weight: 400;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.btn:active {
+  box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
+}
+
+.slider {
+  width: 300px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.slides {
+  display: flex;
+  overflow-x: scroll;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.slides > button {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 300px;
+  height: 100px;
+  margin-right: 10px;
+  border-radius: 10px;
+  background: #eee;
+  transform-origin: center center;
+  transform: scale(1);
+  transition: transform 0.5s;
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5em;
+}
+
+.slider::before,
+.slider::after {
+  position: absolute;
+  top: 0;
+  margin-top: 16%;
+  width: 1.5rem;
+  height: 1.5rem;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  outline: 0;
+}
+
+.slider::before {
+  left: 0rem;
+}
+
+.slider::after {
+  right: 0rem;
+}
+
+.slider::before,
+.slider::after {
+  content: "";
+  z-index: 1;
+  background-color: #333;
+  background-size: 1rem 1rem;
+  background-repeat: no-repeat;
+  background-position: center center;
+  color: #fff;
+  font-size: 2rem;
+  line-height: 4rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.slider::before {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,25 40,50 40,0' fill='%23fff'/%3E%3C/svg%3E");
+}
+
+.slider::after {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='50,20 10,50 10,0' fill='%23fff'/%3E%3C/svg%3E");
+}
+
+.slides:target > button {
+  transition: all 1s ease;
+  transform: translateX(-310px);
+}
+
+.slides::-webkit-scrollbar {
+  height: 0.5em;
+}
+
+.slides::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
 }
 </style>
