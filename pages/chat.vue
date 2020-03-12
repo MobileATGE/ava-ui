@@ -210,7 +210,7 @@ export default {
     document.querySelectorAll(".btn").forEach(
       e =>
         (e.onclick = function(e) {
-          parent.sendValue(e.target.textContent);
+          parent.sendValue(e.target.getAttribute('value'));
         })
     );
     document.querySelectorAll(".slides > button").forEach(
