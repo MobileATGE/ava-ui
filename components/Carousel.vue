@@ -1,9 +1,9 @@
 <template>
   <div class="block">
-    <el-carousel indicator-position="outside">
+    <el-carousel indicator-position="outside" :autoplay="false">
       <el-carousel-item v-for="(item, index) in items" :key="index">
         <div class="item">
-          <p class="sc-message--text-content" v-html="item.textContent"></p>
+          <p class="sc-message--text-content" v-html="item.outerHTML"></p>
         </div>
       </el-carousel-item>
     </el-carousel>
@@ -26,6 +26,16 @@ export default {
   min-width: 300px;
   min-height: 300px;
 }
+.el-carousel__arrow {
+  background-color:rgba(0,0,0,0.5);
+}
+/* .el-carousel__arrow:hover {
+  background-color:black;
+} */
+.el-carousel__arrow > i {
+  color:white;
+  font-size: 2em;
+}
 .item {
   display: flex;
   justify-content: center;
@@ -33,7 +43,7 @@ export default {
   height: 100%;
 }
 .el-carousel__item {
-  background-color: #1da3169f;
+  background-color: #caf1c89f;
   margin: 0 auto;
 }
 .el-carousel__button,

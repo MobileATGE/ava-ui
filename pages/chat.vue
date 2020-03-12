@@ -10,7 +10,7 @@
       :close="closeChat"
       :icons="icons"
       :open="openChat"
-      :showEmoji="true"
+      :showEmoji="false"
       :showFile="true"
       :showTypingIndicator="showTypingIndicator"
       :showLauncher="false"
