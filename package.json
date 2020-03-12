@@ -12,6 +12,7 @@
     "generate": "DEPLOY_ENV=GH_PAGES nuxt generate"
   },
   "dependencies": {
+    "element-ui": "^2.13.0",
     "nuxt": "^2.0.0",
     "socket.io-client": "^2.3.0",
     "vue-beautiful-chat": "^2.3.1",

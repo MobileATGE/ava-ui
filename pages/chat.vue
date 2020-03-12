@@ -18,6 +18,7 @@
       :colors="colors"
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :messageStyling="messageStyling"
+      :carouselItems="carouselItems"
     >
       <template v-slot:header>
         <div class="sc-header--title enabled">
@@ -55,6 +56,11 @@
             </div>
           </div>
         </div>
+        
+        <div v-else-if="scopedProps.message.data.type === 'carousel'">
+          <Carousel :items="carouselItems" />
+        </div>
+
         <div v-else>
           <p
             class="sc-message--text-content"
@@ -75,11 +81,15 @@ import CloseIcon from "../assets/close-icon.png";
 import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
+import Carousel from '~/components/Carousel.vue'
 
 Vue.use(Chat);
 
 export default {
   name: "app",
+  components: {
+    Carousel
+  },
   data() {
     return {
       user: {},
@@ -155,7 +165,8 @@ export default {
         }
       }, // specifies the color scheme for the component
       alwaysScrollToBottom: true, // when set to true always scrolls the chat to the bottom when new events are in (new message, user starts typing...)
-      messageStyling: true // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
+      messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
+      carouselItems: null
     };
   },
   created: () => {},
@@ -276,7 +287,17 @@ export default {
         ]);
       }
 
-      if (data.html) {
+      if (data.html && data.html.includes('carousel')) {
+        let node = data.html;
+        var div = document.createElement("DIV");
+        div.innerHTML = data.html;
+        let items = div.querySelectorAll('.carousel > div');
+        console.log(items);
+        data.type = 'carousel';
+        this.carouselItems = items;
+        this.addResponseMessage(data.html, 'carousel');
+      }
+      else if (data.html) {
         this.addResponseMessage(data.html, data.type);
       }
     },
