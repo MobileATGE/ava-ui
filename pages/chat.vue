@@ -479,6 +479,7 @@ export default {
   max-width: 66%;
   font-size: 0.9em;
   font-weight: 300;
+  align-content: stretch;
 }
 .sc-header--close-button,
 .sc-launcher {
@@ -591,94 +592,5 @@ export default {
 
 .btn:active {
   box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
-}
-
-.slider {
-  width: 300px;
-  text-align: center;
-  overflow: hidden;
-}
-
-.slides {
-  display: flex;
-  overflow-x: scroll;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-
-.slides > button {
-  scroll-snap-align: start;
-  flex-shrink: 0;
-  width: 300px;
-  height: 100px;
-  margin-right: 10px;
-  border-radius: 10px;
-  background: #eee;
-  transform-origin: center center;
-  transform: scale(1);
-  transition: transform 0.5s;
-  position: relative;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.5em;
-}
-
-.slider::before,
-.slider::after {
-  position: absolute;
-  top: 0;
-  margin-top: 16%;
-  width: 1.5rem;
-  height: 1.5rem;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  outline: 0;
-}
-
-.slider::before {
-  left: 0rem;
-}
-
-.slider::after {
-  right: 0rem;
-}
-
-.slider::before,
-.slider::after {
-  content: "";
-  z-index: 1;
-  background-color: #333;
-  background-size: 1rem 1rem;
-  background-repeat: no-repeat;
-  background-position: center center;
-  color: #fff;
-  font-size: 2rem;
-  line-height: 4rem;
-  text-align: center;
-  pointer-events: none;
-}
-
-.slider::before {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='0,25 40,50 40,0' fill='%23fff'/%3E%3C/svg%3E");
-}
-
-.slider::after {
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 50 50' xmlns='http://www.w3.org/2000/svg'%3E%3Cpolygon points='50,20 10,50 10,0' fill='%23fff'/%3E%3C/svg%3E");
-}
-
-.slides:target > button {
-  transition: all 1s ease;
-  transform: translateX(-310px);
-}
-
-.slides::-webkit-scrollbar {
-  height: 0.5em;
-}
-
-.slides::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
 }
 </style>
