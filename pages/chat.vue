@@ -172,11 +172,13 @@ export default {
     this.user = this.$route.query;
     let parent = this;
 
-    this.participants.push({
-      id: "me",
-      name: "me",
-      imageUrl: this.user.avatar || GuestIcon
-    });
+    if (this.user.id) {
+      this.participants.push({
+        id: "me",
+        name: "me",
+        imageUrl: this.user.avatar || GuestIcon
+      });
+    }
 
     this.$nextTick(() => {
       this.resize();
