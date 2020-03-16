@@ -338,7 +338,10 @@ export default {
       });
     },
     resize() {
-      document.querySelector(".sc-chat-window").style.maxHeight = "90%";
+      document.querySelector(".sc-chat-window").style.top = "25px";
+      document.querySelector(".sc-chat-window").style.bottom = "25px";
+      document.querySelector(".sc-chat-window").style.height = "calc(100% - 50px)";
+      document.querySelector(".sc-chat-window").style.maxHeight = "100%";
       document.querySelector(".sc-chat-window").style.minHeight = "50%";
       document.querySelector(".sc-chat-window").style.maxWidth = "98%";
       document.querySelector(".sc-chat-window").style.minWidth = "50%";
