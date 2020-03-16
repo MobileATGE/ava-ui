@@ -18,7 +18,6 @@
       :colors="colors"
       :alwaysScrollToBottom="alwaysScrollToBottom"
       :messageStyling="messageStyling"
-      :carouselItems="carouselItems"
     >
       <template v-slot:header>
         <div class="sc-header--title enabled">
@@ -58,7 +57,7 @@
         </div>
         
         <div v-else-if="scopedProps.message.data.type === 'carousel'">
-          <Carousel :items="carouselItems" />
+          <Carousel :items="scopedProps.message.carouselItems" />
         </div>
 
         <div v-else>
@@ -165,8 +164,7 @@ export default {
         }
       }, // specifies the color scheme for the component
       alwaysScrollToBottom: true, // when set to true always scrolls the chat to the bottom when new events are in (new message, user starts typing...)
-      messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
-      carouselItems: null
+      messageStyling: true // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
     };
   },
   created: () => {},
@@ -294,8 +292,7 @@ export default {
         let items = div.querySelectorAll('.carousel > div');
         console.log(items);
         data.type = 'carousel';
-        this.carouselItems = items;
-        this.addResponseMessage(data.html, 'carousel');
+        this.addResponseMessage(data.html, 'carousel', null, items);
       }
       else if (data.html) {
         this.addResponseMessage(data.html, data.type);
@@ -418,7 +415,7 @@ export default {
 
       this.$socket.client.emit("normal", options);
     },
-    addResponseMessage(message, type, suggestions) {
+    addResponseMessage(message, type, suggestions, carouselItems) {
       this.messageList.push({
         author: "support",
         type: "text",
@@ -434,7 +431,8 @@ export default {
               hour12: true
             })
         },
-        suggestions
+        suggestions,
+        carouselItems
       });
     },
     openChat() {
