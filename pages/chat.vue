@@ -55,9 +55,13 @@
             </div>
           </div>
         </div>
-        
+
         <div v-else-if="scopedProps.message.data.type === 'carousel'">
           <Carousel :items="scopedProps.message.carouselItems" />
+          <p
+            class="sc-message--text-content"
+            v-html="scopedProps.message.data.text"
+          ></p>
         </div>
 
         <div v-else>
@@ -80,7 +84,7 @@ import CloseIcon from "../assets/close-icon.png";
 import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
-import Carousel from '~/components/Carousel.vue'
+import Carousel from "~/components/Carousel.vue";
 
 Vue.use(Chat);
 
@@ -221,7 +225,7 @@ export default {
     document.querySelectorAll(".btn").forEach(
       e =>
         (e.onclick = function(e) {
-          parent.sendValue(e.target.getAttribute('value'));
+          parent.sendValue(e.target.getAttribute("value"));
         })
     );
     document.querySelectorAll(".slides > button").forEach(
@@ -287,16 +291,14 @@ export default {
         ]);
       }
 
-      if (data.html && data.html.includes('carousel')) {
-        let node = data.html;
+      if (data.html && data.html.includes("carousel")) {
         var div = document.createElement("DIV");
         div.innerHTML = data.html;
-        let items = div.querySelectorAll('.carousel > div');
-        console.log(items);
-        data.type = 'carousel';
-        this.addResponseMessage(data.html, 'carousel', null, items);
-      }
-      else if (data.html) {
+        let items = div.querySelectorAll(".carousel > div");
+        data.type = "carousel";
+        var child = div.removeChild(div.childNodes[0]);
+        this.addResponseMessage(div.innerHTML, "carousel", null, items);
+      } else if (data.html) {
         this.addResponseMessage(data.html, data.type);
       }
     },
@@ -339,7 +341,8 @@ export default {
     resize() {
       document.querySelector(".sc-chat-window").style.top = "25px";
       document.querySelector(".sc-chat-window").style.bottom = "25px";
-      document.querySelector(".sc-chat-window").style.height = "calc(100% - 50px)";
+      document.querySelector(".sc-chat-window").style.height =
+        "calc(100% - 50px)";
       document.querySelector(".sc-chat-window").style.maxHeight = "100%";
       document.querySelector(".sc-chat-window").style.minHeight = "50%";
       document.querySelector(".sc-chat-window").style.maxWidth = "98%";
@@ -574,7 +577,7 @@ export default {
 
 .sc-message--text-content > div > img {
   max-width: 50%;
-  display:block;
+  display: block;
   margin: auto;
 }
 
@@ -594,6 +597,6 @@ export default {
 }
 
 .btn:active {
-  box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
+  box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
 }
 </style>
