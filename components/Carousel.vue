@@ -17,7 +17,7 @@ export default {
 };
 </script>
 <style>
-/* @media only screen and (min-width: 400px) {
+@media only screen and (min-width: 400px) {
   .el-carousel {
     min-width: 220px;
   }
@@ -31,7 +31,7 @@ export default {
   .el-carousel {
     min-width: 410px;
   }
-} */
+}
 .el-carousel__arrow:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
