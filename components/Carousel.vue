@@ -1,5 +1,5 @@
 <template>
-  <el-carousel indicator-position="outside" height="200px" :autoplay="false">
+  <el-carousel indicator-position="outside" card height="200px" :autoplay="false">
     <el-carousel-item v-for="(item, index) in items" :key="index">
       <div v-html="item.outerHTML"></div>
     </el-carousel-item>
@@ -17,6 +17,21 @@ export default {
 };
 </script>
 <style>
+/* @media only screen and (min-width: 400px) {
+  .el-carousel {
+    min-width: 220px;
+  }
+}
+@media only screen and (min-width: 680px) {
+  .el-carousel {
+    min-width: 320px;
+  }
+}
+@media only screen and (min-width: 776px) {
+  .el-carousel {
+    min-width: 410px;
+  }
+} */
 .el-carousel__arrow:hover {
   background-color: rgba(0, 0, 0, 0.5);
 }
