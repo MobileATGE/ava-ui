@@ -62,6 +62,7 @@
             class="sc-message--text-content"
             v-html="scopedProps.message.data.text"
           ></p>
+          <div class="hide">...............................................................................................................................................................</div>
         </div>
 
         <div v-else>
@@ -598,5 +599,10 @@ export default {
 
 .btn:active {
   box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
+}
+
+.hide {
+  height: 0;
+  visibility:hidden;
 }
 </style>
