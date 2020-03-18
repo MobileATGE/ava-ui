@@ -287,9 +287,12 @@ export default {
         var div = document.createElement("DIV");
         div.innerHTML = data.html;
         let items = div.querySelectorAll(".carousel > div");
-        data.type = "carousel";
-        var child = div.removeChild(div.childNodes[0]);
-        this.addResponseMessage(div.innerHTML, "carousel", null, items);
+        if (items.length > 1) {
+          let child = div.removeChild(div.childNodes[0]);
+          this.addResponseMessage(div.innerHTML, "carousel", null, items);
+        } else {
+          this.addResponseMessage(data.html, data.type);
+        }
       } else if (data.html) {
         this.addResponseMessage(data.html, data.type);
       }
@@ -566,6 +569,10 @@ export default {
   width: 4px;
   height: 100%;
   cursor: w-resize;
+}
+
+.sc-message--text-content:not(.carousel) > div {
+  margin-bottom: 5px;
 }
 
 .sc-message--text-content > div > img {
