@@ -129,8 +129,6 @@ export default {
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
         // { type: 'text', author: `support`, id: 21, data: { text: `Hollo!` }, suggestions: ['Show opened tickets', 'Tickets', 'Closed tickets', 'Latest ticket'] }
-        // { type: 'text', author: 'support', data: { text: "<a href='#slides'>change color to red</p>"}},
-        // { type: 'text', author: 'support', data: { text: "<p id='test1'>This is a test block</p>"}},
         // {
         //   type: "text",
         //   author: "support",
@@ -139,7 +137,6 @@ export default {
         //       "<div class='btn'>IT Help Desk</div><div class='btn'>Library Help Desk</div>"
         //   }
         // }
-        // { type: 'text', author: 'support', data: { text: "<div class='slider'><div id='slides' class='slides'><button>IT Help Desk</button><button>Library Help Desk</button><button>Big Deal</button></div></div>"}}
       ], // the list of the messages to show, can be paginated and adjusted dynamically
       newMessagesCount: 0,
       isChatOpen: true, // to determine whether the chat window should be open or closed
@@ -226,13 +223,7 @@ export default {
     document.querySelectorAll(".btn").forEach(
       e =>
         (e.onclick = function(e) {
-          parent.sendValue(e.target.getAttribute("value"));
-        })
-    );
-    document.querySelectorAll(".slides > button").forEach(
-      e =>
-        (e.onclick = function(e) {
-          parent.sendValue(e.target.textContent);
+          parent.sendValue(e.target.textContent, e.target.getAttribute("value"));
         })
     );
   },
@@ -332,11 +323,11 @@ export default {
         data: { text: `My rating is ${rating} star${rating > 1 ? "s" : ""}` }
       });
     },
-    sendValue(text) {
+    sendValue(text, value) {
       this.onMessageWasSent({
         type: "text",
         author: "me",
-        data: { text }
+        data: { text, value }
       });
     },
     resize() {
@@ -403,6 +394,7 @@ export default {
       this.$socket.client.emit("reopen", options);
     },
     avaNormal(message) {
+      let value = message.data.value || message.data.text;
       let options = {
         conversationId: this.conversationId,
         source: "canvas",
@@ -414,7 +406,7 @@ export default {
           department: "CU",
           email_address: this.user.email
         },
-        message: message.data.text || ""
+        message: value || ""
       };
       console.log("Send:");
       console.log(options);
