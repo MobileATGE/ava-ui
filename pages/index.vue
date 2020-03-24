@@ -24,6 +24,8 @@
           GitHub
         </a>
       </div>
+
+      <n-link to="/test" class="button--grey" no-prefetch>Test Page</n-link>
     </div>
   </div>
 </template>

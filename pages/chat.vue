@@ -10,7 +10,7 @@
       :close="closeChat"
       :icons="icons"
       :open="openChat"
-      :showEmoji="true"
+      :showEmoji="false"
       :showFile="true"
       :showTypingIndicator="showTypingIndicator"
       :showLauncher="false"
@@ -55,6 +55,16 @@
             </div>
           </div>
         </div>
+
+        <div v-else-if="scopedProps.message.data.type === 'carousel'">
+          <Carousel :items="scopedProps.message.carouselItems" />
+          <p
+            class="sc-message--text-content"
+            v-html="scopedProps.message.data.text"
+          ></p>
+          <div class="hide">...............................................................................................................................................................</div>
+        </div>
+
         <div v-else>
           <p
             class="sc-message--text-content"
@@ -75,11 +85,15 @@ import CloseIcon from "../assets/close-icon.png";
 import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
+import Carousel from "~/components/Carousel.vue";
 
 Vue.use(Chat);
 
 export default {
   name: "app",
+  components: {
+    Carousel
+  },
   data() {
     return {
       user: {},
@@ -115,7 +129,14 @@ export default {
       messageList: [
         // { type: "text", author: `me`, data: { text: `Say yes!` } },
         // { type: 'text', author: `support`, id: 21, data: { text: `Hollo!` }, suggestions: ['Show opened tickets', 'Tickets', 'Closed tickets', 'Latest ticket'] }
-        // { type: 'text', author: 'support', data: { text: "<button class='testCssClass'>IT Help Desk</button><button class='testCssClass'>Library Help Desk</button>"}}
+        // {
+        //   type: "text",
+        //   author: "support",
+        //   data: {
+        //     text:
+        //       "<div class='btn'>IT Help Desk</div><div class='btn'>Library Help Desk</div>"
+        //   }
+        // }
       ], // the list of the messages to show, can be paginated and adjusted dynamically
       newMessagesCount: 0,
       isChatOpen: true, // to determine whether the chat window should be open or closed
@@ -153,11 +174,13 @@ export default {
     this.user = this.$route.query;
     let parent = this;
 
-    this.participants.push({
-      id: "me",
-      name: "me",
-      imageUrl: this.user.avatar || GuestIcon
-    });
+    if (this.user.id) {
+      this.participants.push({
+        id: "me",
+        name: "me",
+        imageUrl: this.user.avatar || GuestIcon
+      });
+    }
 
     this.$nextTick(() => {
       this.resize();
@@ -173,35 +196,36 @@ export default {
     let isResizing = false;
     let m_pos = 0;
 
-    panel.addEventListener("mousedown",
-      (e) => {
-        console.log('mousedown');
-        if (e.offsetX < BORDER_SIZE) {
-          m_pos = e.x;
-          isResizing = true;
-          console.log('mousedown:' + e.x);
-        }
+    panel.addEventListener("mousedown", e => {
+      console.log("mousedown");
+      if (e.offsetX < BORDER_SIZE) {
+        m_pos = e.x;
+        isResizing = true;
+        console.log("mousedown:" + e.x);
       }
-    );
+    });
 
-    document.addEventListener("mouseup",
-      (e) => {
-        isResizing = false;
-      }
-    );
+    document.addEventListener("mouseup", e => {
+      isResizing = false;
+    });
 
-    document.addEventListener("mousemove", (e) => {
+    document.addEventListener("mousemove", e => {
       if (isResizing) {
         const dx = m_pos - e.x;
         m_pos = e.x;
-        panel.style.width = (parseInt(panel.style.width) + dx) + "px";
+        panel.style.width = parseInt(panel.style.width) + dx + "px";
       }
     });
   },
   updated() {
     let parent = this;
     parent.updateStyle();
-    document.querySelectorAll('.testCssClass').forEach((e) => e.onclick = function(e) { parent.sendValue(e.target.textContent); });
+    document.querySelectorAll(".btn").forEach(
+      e =>
+        (e.onclick = function(e) {
+          parent.sendValue(e.target.textContent, e.target.getAttribute("value"));
+        })
+    );
   },
   sockets: {
     connect() {
@@ -244,8 +268,6 @@ export default {
       this.socketMessage = data;
       let messages = data.messages;
       let length = messages.length;
-      let message =
-        typeof messages[0] === "string" ? messages[0] : messages[0].message[0];
 
       if (typeof messages[0] === "string") {
         messages.forEach(message => {
@@ -254,11 +276,25 @@ export default {
             "Talk to an agent"
           ]);
         });
-      } else {
+      } else if (messages[0]) {
         this.addResponseMessage(messages[0].message[0], data.type, [
           "Help!",
-          "Talk with an agent!"
+          "Talk to an agent!"
         ]);
+      }
+
+      if (data.html && data.html.includes("carousel")) {
+        var div = document.createElement("DIV");
+        div.innerHTML = data.html;
+        let items = div.querySelectorAll(".carousel > div");
+        if (items.length > 1) {
+          let child = div.removeChild(div.childNodes[0]);
+          this.addResponseMessage(div.innerHTML, "carousel", null, items);
+        } else {
+          this.addResponseMessage(data.html, data.type);
+        }
+      } else if (data.html) {
+        this.addResponseMessage(data.html, data.type);
       }
     },
     serverError(data) {
@@ -266,7 +302,7 @@ export default {
       console.log(data);
       this.showTypingIndicator = "";
 
-      this.addResponseMessage("Server error: " + data, 'text', [
+      this.addResponseMessage("Server error: " + data, "text", [
         "Help!",
         "Talk with an agent!"
       ]);
@@ -290,15 +326,19 @@ export default {
         data: { text: `My rating is ${rating} star${rating > 1 ? "s" : ""}` }
       });
     },
-    sendValue(text) {
+    sendValue(text, value) {
       this.onMessageWasSent({
         type: "text",
         author: "me",
-        data: { text }
+        data: { text, value }
       });
     },
     resize() {
-      document.querySelector(".sc-chat-window").style.maxHeight = "90%";
+      document.querySelector(".sc-chat-window").style.top = "25px";
+      document.querySelector(".sc-chat-window").style.bottom = "25px";
+      document.querySelector(".sc-chat-window").style.height =
+        "calc(100% - 50px)";
+      document.querySelector(".sc-chat-window").style.maxHeight = "100%";
       document.querySelector(".sc-chat-window").style.minHeight = "50%";
       document.querySelector(".sc-chat-window").style.maxWidth = "98%";
       document.querySelector(".sc-chat-window").style.minWidth = "50%";
@@ -357,6 +397,7 @@ export default {
       this.$socket.client.emit("reopen", options);
     },
     avaNormal(message) {
+      let value = message.data.value || message.data.text;
       let options = {
         conversationId: this.conversationId,
         source: "canvas",
@@ -368,14 +409,14 @@ export default {
           department: "CU",
           email_address: this.user.email
         },
-        message: message.data.text || ""
+        message: value || ""
       };
       console.log("Send:");
       console.log(options);
 
       this.$socket.client.emit("normal", options);
     },
-    addResponseMessage(message, type, suggestions) {
+    addResponseMessage(message, type, suggestions, carouselItems) {
       this.messageList.push({
         author: "support",
         type: "text",
@@ -391,7 +432,8 @@ export default {
               hour12: true
             })
         },
-        suggestions
+        suggestions,
+        carouselItems
       });
     },
     openChat() {
@@ -439,6 +481,7 @@ export default {
   max-width: 66%;
   font-size: 0.9em;
   font-weight: 300;
+  align-content: stretch;
 }
 .sc-header--close-button,
 .sc-launcher {
@@ -526,5 +569,39 @@ export default {
   width: 4px;
   height: 100%;
   cursor: w-resize;
+}
+
+.sc-message--text-content:not(.carousel) > div {
+  margin-bottom: 5px;
+}
+
+.sc-message--text-content > div > img {
+  max-width: 50%;
+  display: block;
+  margin: auto;
+}
+
+.btn {
+  display: inline-block;
+  color: rgb(74, 103, 199);
+  border: 1px solid rgba(74, 103, 199, 0.5);
+  cursor: pointer;
+  vertical-align: middle;
+  max-width: 200px;
+  padding: 5px;
+  text-align: center;
+  margin: 0 5px;
+  font-weight: 400;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.btn:active {
+  box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
+}
+
+.hide {
+  height: 0;
+  visibility:hidden;
 }
 </style>

@@ -33,11 +33,13 @@ export default {
   /*
    ** Global CSS
    */
-  css: [],
+  css: [
+    'element-ui/lib/theme-chalk/index.css',
+  ],
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: "~/plugins/socket.io.js", ssr: false }],
+  plugins: [{ src: "~/plugins/socket.io.js", ssr: false }, '@/plugins/element-ui'],
   /*
    ** Nuxt.js dev-modules
    */
