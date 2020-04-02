@@ -78,8 +78,8 @@
 <script>
 import Vue from "vue";
 import Chat from "vue-beautiful-chat";
-import TitleIcon from "../assets/atge-icon.jpeg";
-import AvaIcon from "../assets/ava-icon.png";
+// import TitleIcon from "../assets/atge-icon.jpeg";
+import AvaIcon from "../static/ava-icon.png";
 import GuestIcon from "../assets/guest-icon.png";
 import CloseIcon from "../assets/close-icon.png";
 import OpenIcon from "../assets/logo-no-bg.svg";
@@ -522,6 +522,7 @@ export default {
   vertical-align: middle;
   width: 36px;
   height: 36px;
+  border-radius: 50%;
 }
 .sc-header--title span {
   vertical-align: middle;
