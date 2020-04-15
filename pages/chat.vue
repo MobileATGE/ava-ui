@@ -255,7 +255,8 @@ export default {
         this.socketMessage = data;
         let messages = data.messages;
         let length = messages.length;
-        this.addResponseMessage(messages[length - 1].message[0], data.type, [
+        // this.addResponseMessage(messages[length - 1].message[0], data.type, [
+        this.addResponseMessage(messages[length - 1].message[0], messages[length - 1].type, [
           "List my tickets",
           "Talk to an agent"
         ]);
