@@ -1,6 +1,8 @@
 (function() {
     'use strict';
 
+    console.log('Start AVA Webchat Client');
+  
     let options = {
       'credentials' : 'same-origin',
       'headers' : {
