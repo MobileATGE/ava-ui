@@ -60,7 +60,7 @@ class AvaUI {
     g.style.cssText = 'position:fixed;bottom:40px;right:15px;opacity:1;z-index:11;background-color:rgba(0,0,0,0);width:4em;height:4em;border-radius:50%;outline:none;';
     document.body.appendChild(g);
     document.querySelector('#avaLauncher').addEventListener('click', function () {
-      window.open(user.avaUrl, 'Ava', '_blank');
+      window.open(user.avaUrl, 'Ava', 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=680');
     });
   }
 }
