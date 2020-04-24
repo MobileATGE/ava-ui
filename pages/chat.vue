@@ -346,7 +346,8 @@ export default {
       document.querySelector(".sc-chat-window").style.minWidth = "50%";
       document.querySelector(".sc-chat-window").style.right = "0";
       document.querySelector(".sc-chat-window").style.borderRadius = "0";
-        "#f3f2f1";
+      document.querySelector(".sc-header").style.borderTopLeftRadius = "0";
+      document.querySelector(".sc-header").style.borderTopRightRadius = "0";
     },
     updateStyle() {
       let htmlCollection = document.getElementsByClassName(
@@ -506,11 +507,6 @@ export default {
   border-bottom: 2px solid #6064a4;
 }
 
-.sc-header {
-  cursor: move;
-  z-index: 99999;
-}
-
 .sc-header--title > img {
   vertical-align: middle;
   width: 36px;
@@ -549,11 +545,6 @@ export default {
 
 .sc-user-input--text {
   width: calc(100% - 120px);
-}
-
-.sc-chat-window {
-  border: 1px solid gray;
-  right: 0;
 }
 
 .sc-chat-window:after {
