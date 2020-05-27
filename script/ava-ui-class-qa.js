@@ -62,7 +62,7 @@ class AvaUI {
     document.querySelector('#avaLauncher').addEventListener('click', function () {
       let left = screen.width - 620;
       let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=680,top=0,left=' + left;
-      window.open(user.avaUrl, '', params);
+      window.open(user.avaUrl, 'Ava', params);
     });
   }
 }

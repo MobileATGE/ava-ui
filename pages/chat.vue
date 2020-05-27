@@ -169,6 +169,11 @@ export default {
       messageStyling: true // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
     };
   },
+  head () {
+    return {
+      title: 'Ava - Your Personal Virtual Assistant',
+    }
+  },
   created: () => {},
   mounted() {
     this.user = this.$route.query;

@@ -32,3 +32,8 @@ git commit -m "comment"
 git push
 npm run generate
 npm run deploy
+
+# Server WSS for dev, qa, and prod
+wss://ava-chat-server-dev.herokuapp.com
+wss://ava-chat-server-qa.herokuapp.com
+wss://ava-chat-server.herokuapp.com
