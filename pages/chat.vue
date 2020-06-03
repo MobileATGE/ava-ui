@@ -175,6 +175,13 @@ export default {
     }
   },
   created: () => {},
+  watch: {
+    messageList: function(list) {
+      console.log(`message list length=${list.length}`);
+      const lastItem = JSON.stringify(list[list.length - 1]);
+      console.log(lastItem);
+    }
+  },
   mounted() {
     this.user = this.$route.query;
     let parent = this;

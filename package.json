@@ -6,15 +6,20 @@
   "private": true,
   "scripts": {
     "deploy": "push-dir --dir=dist --branch=gh-pages --cleanup",
-    "dev": "nuxt --port 8080",
+    "dev": "PROFILE=dev nuxt --port 8080",
     "build": "nuxt build",
     "start": "nuxt start",
     "generate": "DEPLOY_ENV=GH_PAGES nuxt generate"
   },
   "dependencies": {
+    "@nuxtjs/axios": "^5.10.3",
+    "@nuxtjs/dotenv": "^1.4.1",
+    "async-redis": "^1.1.7",
     "element-ui": "^2.13.0",
-    "nuxt": "^2.0.0",
+    "net": "^1.0.2",
+    "nuxt": "^2.12.2",
     "socket.io-client": "^2.3.0",
+    "tls": "0.0.1",
     "vue-beautiful-chat": "^2.3.1",
     "vue-socket.io-extended": "^4.0.1"
   },
