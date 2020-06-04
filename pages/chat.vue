@@ -170,7 +170,7 @@ export default {
       alwaysScrollToBottom: true, // when set to true always scrolls the chat to the bottom when new events are in (new message, user starts typing...)
       messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
       host: window.location.protocol + "//" + window.location.hostname,
-      skipAvaReopen: false,
+      avaReopenSkipped: false,
     };
   },
   head() {
@@ -200,8 +200,9 @@ export default {
       const id = await this.$axios.$get(`${this.host}/api/redis/id/${this.user.name}`);
       this.user.id = id || "";
       console.log('this.user.id=', this.user.id);
-      if (this.skipAvaReopen) {
+      if (this.avaReopenSkipped) {
         this.avaReopen();
+        this.avaReopenSkipped = false;
       }
     }
 
@@ -274,10 +275,7 @@ export default {
       console.log(data);
       if (!this.isConnected) {
         this.isConnected = true;
-        if (this.user.id !== "") {
-          this.skipAvaReopen = false;
-          this.avaReopen();
-        }
+        this.avaReopen();
       }
     },
     reopen(data) {
@@ -405,6 +403,14 @@ export default {
       this.messageList.push(message);
     },
     avaReopen() {
+      console.log('avaReopen user id=', this.user.id);
+
+      if (!this.user.id || this.user.id == "null") {
+        this.avaReopenSkipped = true;
+        console.log('avaReopenSkipped=', avaReopenSkipped);
+        return;
+      }
+
       let options = {
         conversationId: this.conversationId.toString(),
         source: "canvas",
