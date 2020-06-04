@@ -20,16 +20,20 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/hello", async (req, res) => {
+app.get("/hello", async (req, res) => {  console.log('Hello is called');
   res.send("Nice to meet you!");
 });
 
-app.post("/redis/data/:username", async (req, res) => {
+app.get("/redis/id/:fullname", async (req, res) => {
+  const fullname = req.params.fullname;
+  const id = await redis.hget("id:lookup", fullname);
+  res.send(id);
+});
+
+app.post("/redis/history/:username", async (req, res) => {
   const username = req.params.username;
   const body = req.body;
-  await redis.set(username, body);
-  const value = await redis.get(username);
-  console.log(value);
+  const response = await redis.set(username, JSON.stringify(body));
   res.send("Success! 🎉\n");
 });
 
