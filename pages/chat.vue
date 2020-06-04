@@ -187,9 +187,11 @@ export default {
     }
   },
   async mounted() {
+    console.log('In mounted');
+    console.log('This host=', this.host);
+    console.log('This user=', this.user);
     this.user = this.$route.query;
     let parent = this;
-
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
       console.log(`Calling ${this.host}/api/redis/id/${this.user.name}`);
@@ -219,11 +221,9 @@ export default {
     let m_pos = 0;
 
     panel.addEventListener("mousedown", e => {
-      console.log("mousedown");
       if (e.offsetX < BORDER_SIZE) {
         m_pos = e.x;
         isResizing = true;
-        console.log("mousedown:" + e.x);
       }
     });
 
