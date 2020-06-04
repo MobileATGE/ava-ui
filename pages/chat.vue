@@ -88,7 +88,6 @@ import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
-import redisService from "@/services/redis-service";
 
 Vue.use(Chat);
 
