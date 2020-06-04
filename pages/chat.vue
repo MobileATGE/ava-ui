@@ -62,7 +62,9 @@
             class="sc-message--text-content"
             v-html="scopedProps.message.data.text"
           ></p>
-          <div class="hide">...............................................................................................................................................................</div>
+          <div class="hide">
+            ...............................................................................................................................................................
+          </div>
         </div>
 
         <div v-else>
@@ -169,23 +171,34 @@ export default {
       messageStyling: true // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
     };
   },
-  head () {
+  head() {
     return {
-      title: 'Ava - Your Personal Virtual Assistant',
-    }
+      title: "Ava - Your Personal Virtual Assistant"
+    };
   },
   created: () => {},
-  mounted() {
+  watch: {
+    messageList: async function(list) {
+      console.log(`message list length=${list.length}`);
+      const lastItem = JSON.stringify(list[list.length - 1]);
+      await this.$axios.$post(`/redis/history/${this.user.id}`, lastItem);
+    }
+  },
+  async mounted() {
     this.user = this.$route.query;
     let parent = this;
 
-    if (this.user.id) {
-      this.participants.push({
-        id: "me",
-        name: "me",
-        imageUrl: this.user.avatar || GuestIcon
-      });
+    // If id is null, get if from database.
+    if (!this.user.id || this.user.id === "null") {
+      const id = await this.$axios.$get(`/api/redis/id/${this.user.name}`);
+      this.user.id = id || "";
     }
+
+    this.participants.push({
+      id: "me",
+      name: "me",
+      imageUrl: this.user.avatar || GuestIcon
+    });
 
     this.$nextTick(() => {
       this.resize();
@@ -228,7 +241,10 @@ export default {
     document.querySelectorAll(".btn").forEach(
       e =>
         (e.onclick = function(e) {
-          parent.sendValue(e.target.textContent, e.target.getAttribute("value"));
+          parent.sendValue(
+            e.target.textContent,
+            e.target.getAttribute("value")
+          );
         })
     );
   },
@@ -261,10 +277,11 @@ export default {
         let messages = data.messages;
         let length = messages.length;
         // this.addResponseMessage(messages[length - 1].message[0], data.type, [
-        this.addResponseMessage(messages[length - 1].message[0], messages[length - 1].type, [
-          "List my tickets",
-          "Talk to an agent"
-        ]);
+        this.addResponseMessage(
+          messages[length - 1].message[0],
+          messages[length - 1].type,
+          ["List my tickets", "Talk to an agent"]
+        );
       }
     },
     normal(data) {
@@ -593,6 +610,6 @@ export default {
 
 .hide {
   height: 0;
-  visibility:hidden;
+  visibility: hidden;
 }
 </style>

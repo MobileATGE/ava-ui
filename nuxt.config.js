@@ -1,3 +1,5 @@
+import './server/env.js'
+
 const routerBase =
   process.env.DEPLOY_ENV === "GH_PAGES"
     ? {
@@ -11,8 +13,11 @@ export default {
   mode: "spa",
   ...routerBase,
   env: {
-    socketServerURL: process.env.SOCKET_SERVER || 'ws://localhost:3000'
+    socketServerURL: process.env.SOCKET_SERVER || 'ws://localhost:3000',
   },
+  serverMiddleware: [
+    '~/serverMiddleware/api/'
+  ],
   head: {
     title: process.env.npm_package_name || "",
     meta: [
@@ -39,7 +44,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: "~/plugins/socket.io.js", ssr: false }, '@/plugins/element-ui'],
+  plugins: [{ src: "~/plugins/socket.io.js", ssr: false }, '@/plugins/element-ui' ],
   /*
    ** Nuxt.js dev-modules
    */
@@ -47,7 +52,15 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [],
+  modules: [
+    // Doc: https://axios.nuxtjs.org/usage
+    '@nuxtjs/axios',
+  ],
+  /*
+   ** Axios module configuration
+   ** See https://axios.nuxtjs.org/options
+   */
+  axios: {},
   /*
    ** Build configuration
    */
@@ -56,6 +69,12 @@ export default {
      ** You can extend webpack config here
      */
     transpile: ["vue-beautiful-chat"],
-    extend(config, ctx) {}
+    watch: ['api'],
+    extend(config, ctx) {
+      if (ctx.isDev) {
+        config.devtool = ctx.isClient ? 'source-map' : 'inline-source-map'
+      }
+    },
+    serverMiddleware: ['~/api']
   }
 };
