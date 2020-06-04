@@ -192,8 +192,10 @@ export default {
 
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
+      console.log(`Calling ${this.host}/api/redis/id/${this.user.name}`);
       const id = await this.$axios.$get(`${this.host}/api/redis/id/${this.user.name}`);
       this.user.id = id || "";
+      console.log('this.user.id=', this.user.id);
     }
 
     this.participants.push({

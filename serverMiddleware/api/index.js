@@ -27,6 +27,7 @@ app.get("/hello", async (req, res) => {  console.log('Hello is called');
 app.get("/redis/id/:fullname", async (req, res) => {
   const fullname = req.params.fullname;
   const id = await redis.hget("id:lookup", fullname);
+  console.log(`Lookup ${fullname}, id=${id}`);
   res.send(id);
 });
 
