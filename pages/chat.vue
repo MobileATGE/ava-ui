@@ -181,7 +181,7 @@ export default {
     messageList: async function(list) {
       console.log(`message list length=${list.length}`);
       const lastItem = JSON.stringify(list[list.length - 1]);
-      await this.$axios.$post(`/redis/history/${this.user.id}`, lastItem);
+      await this.$axios.$post(`${location.host}/redis/history/${this.user.id}`, lastItem);
     }
   },
   async mounted() {
@@ -190,7 +190,7 @@ export default {
 
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
-      const id = await this.$axios.$get(`/api/redis/id/${this.user.name}`);
+      const id = await this.$axios.$get(`${location.host}/api/redis/id/${this.user.name}`);
       this.user.id = id || "";
     }
 
