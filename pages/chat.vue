@@ -169,7 +169,8 @@ export default {
       }, // specifies the color scheme for the component
       alwaysScrollToBottom: true, // when set to true always scrolls the chat to the bottom when new events are in (new message, user starts typing...)
       messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
-      host: window.location.protocol + "//" + window.location.hostname
+      host: window.location.protocol + "//" + window.location.hostname,
+      skipAvaReopen: false,
     };
   },
   head() {
@@ -194,10 +195,14 @@ export default {
     let parent = this;
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
+      this.user.id = "";
       console.log(`Calling ${this.host}/api/redis/id/${this.user.name}`);
       const id = await this.$axios.$get(`${this.host}/api/redis/id/${this.user.name}`);
       this.user.id = id || "";
       console.log('this.user.id=', this.user.id);
+      if (this.skipAvaReopen) {
+        this.avaReopen();
+      }
     }
 
     this.participants.push({
@@ -269,7 +274,10 @@ export default {
       console.log(data);
       if (!this.isConnected) {
         this.isConnected = true;
-        this.avaReopen();
+        if (this.user.id !== "") {
+          this.skipAvaReopen = false;
+          this.avaReopen();
+        }
       }
     },
     reopen(data) {
