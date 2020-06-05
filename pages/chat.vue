@@ -407,7 +407,7 @@ export default {
 
       if (!this.user.id || this.user.id == "null") {
         this.avaReopenSkipped = true;
-        console.log('avaReopenSkipped=', avaReopenSkipped);
+        console.log('avaReopenSkipped=', this.avaReopenSkipped);
         return;
       }
 
