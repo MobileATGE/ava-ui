@@ -17,6 +17,7 @@ class AvaUI {
       .then(this.parseJSON)
       .then(this.updateUser)
       .then(this.includeAva)
+      .then(this.includeFlyoutPanelAva)
       .catch(function(error) {
       console.log('Unable to lookup user information ', error);
     });
@@ -44,7 +45,6 @@ class AvaUI {
       avatar        : data.avatar_url,
       showAva       : false
     };
-    console.log(user);
     return user;
   }
 
@@ -53,32 +53,74 @@ class AvaUI {
     let params = '?id=' + user.login_id + '&name=' + user.name + '&email=' + user.primary_email + '&avatar=' + user.avatar;
     user.avaUrl = url + params;
 
+    if (!!document.querySelector('#avaLauncher')) {
+      return user;
+    }
+
     // Build launch button
+    let iconDiv = document.createElement('div');
+    iconDiv.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-prod.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
+    iconDiv.setAttribute('class', 'menu-item-icon-container');
+
+    let textDiv = document.createElement('div');
+    textDiv.innerHTML = 'Ava';
+    textDiv.setAttribute('class', 'menu-item__text');
+
     let g = document.createElement('a');
-    g.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-prod.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
     g.setAttribute("id", 'avaLauncher');
     g.setAttribute("href", "javascript:void(0)");
     g.setAttribute("class", "ic-app-header__menu-list-link");
     g.style.cssText = 'background-color:rgba(0,0,0,0);outline:none;';
-
-    let div = document.createElement('div');
-    div.setAttribute('class', 'menu-item-icon-container');
-    div.appendChild(g);
+    g.appendChild(iconDiv);
+    g.appendChild(textDiv);
+    
     var newLi = document.createElement('li');
     newLi.setAttribute('class', 'menu-item ic-app-header__menu-list-item');
-    newLi.appendChild(div);
+    newLi.appendChild(g);
 
     let parent = document.querySelector('.ic-app-header__menu-list');
-    parent.insertBefore(newLi, document.querySelector('.ic-app-header__menu-list li:last-child'));
+    parent.insertBefore(newLi, document.querySelector('#global_nav_help_link').parentElement);
 
     document.querySelector('#avaLauncher').addEventListener('click', function () {
         let left = screen.width - 620;
         let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=680,top=0,left=' + left;
         window.open(user.avaUrl, 'Ava', params);
     });
-  }  
+
+    return user;
+  }
+
+  includeFlyoutPanelAva(user) {
+    let p = document.querySelector('div[aria-label="Global Navigation"] > div > span > ul');
+    if (!p) return;
+
+    let firstChild = p.firstChild;
+    let newChild = firstChild.cloneNode(true);
+    newChild.querySelector('li > a').setAttribute('href', 'javascript:;');
+    
+    let targetParent = newChild.querySelector('li > a > span > span');
+    targetParent.querySelector('span:nth-child(2) > span').innerText = 'Ava';
+    targetParent.firstChild.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-prod.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
+    
+    var helpSpan = document.evaluate('//span[text()="Help"]', p, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null );
+    var helpLi = helpSpan.singleNodeValue.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+    p.insertBefore(newChild, helpLi);
+    
+    newChild.querySelector('li > a').addEventListener('click', function () {
+      let left = screen.width - 620;
+      let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=680,top=0,left=' + left;
+      window.open(user.avaUrl, 'Ava', params);
+    });
+  }
+
 }
 
 (function() {
-  new AvaUI();
+  if (!document.querySelector('#avaLauncher')) {
+    new AvaUI();
+  }
+  
+  document.querySelector('#mobile-header > button').addEventListener('click', function () {
+    new AvaUI();
+  });
 }) ();
