@@ -79,7 +79,7 @@ class AvaUI {
     newLi.appendChild(g);
 
     let parent = document.querySelector('.ic-app-header__menu-list');
-    parent.insertBefore(newLi, document.querySelector('.ic-app-header__menu-list li:last-child'));
+    parent.insertBefore(newLi, document.querySelector('#global_nav_help_link').parentElement);
 
     document.querySelector('#avaLauncher').addEventListener('click', function () {
         let left = screen.width - 620;
@@ -91,9 +91,10 @@ class AvaUI {
   }
 
   includeFlyoutPanelAva(user) {
-    if (!document.querySelector('div[role="dialog"] > div > span > ul')) return;
+    let p = document.querySelector('div[aria-label="Global Navigation"] > div > span > ul');
+    if (!p) return;
 
-    let firstChild = document.querySelector('div[role="dialog"] > div > span > ul').firstChild;
+    let firstChild = p.firstChild;
     let newChild = firstChild.cloneNode(true);
     newChild.querySelector('li > a').setAttribute('href', 'javascript:;');
     
@@ -101,8 +102,9 @@ class AvaUI {
     targetParent.querySelector('span:nth-child(2) > span').innerText = 'Ava';
     targetParent.firstChild.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-qa.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
     
-    let p = document.querySelector('div[role="dialog"] > div > span > ul');
-    p.insertBefore(newChild, p.lastChild);
+    var helpSpan = document.evaluate('//span[text()="Help"]', p, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null );
+    var helpLi = helpSpan.singleNodeValue.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
+    p.insertBefore(newChild, helpLi);
     
     newChild.querySelector('li > a').addEventListener('click', function () {
       let left = screen.width - 620;
