@@ -20,6 +20,10 @@ class RedisClient {
   getInstance() {
     return this.instance;
   }
+  
+  end() {
+    this.instance.end(true);
+  }
 }
 
 export default new RedisClient().getInstance();

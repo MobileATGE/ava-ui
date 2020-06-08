@@ -37,3 +37,17 @@ npm run deploy
 wss://ava-chat-server-dev.herokuapp.com
 wss://ava-chat-server-qa.herokuapp.com
 wss://ava-chat-server.herokuapp.com
+
+# Import login id to Redis Database
+## Import csv to Canvas DEV Redis
+```script
+cat Chamberlain_id.csv | awk 'BEGIN { FS = "," } ; FNR > 1 { print "hset id:lookup \""$8"\" " $5 }' | redis-cli --pipe -h ec2-107-21-225-183.compute-1.amazonaws.com -a password -p 24389
+```
+## Import csv to Canvas QA Redis
+```script
+cat Chamberlain_id.csv | awk 'BEGIN { FS = "," } ; FNR > 1 { print "hset id:lookup \""$8"\" " $5 }' | redis-cli --pipe -h ec2-35-153-239-108.compute-1.amazonaws.com -a password -p 31499
+```
+## Import csv to Canvas PROD Redis
+```script
+cat Chamberlain_id.csv | awk 'BEGIN { FS = "," } ; FNR > 1 { print "hset id:lookup \""$8"\" " $5 }' | redis-cli --pipe -h ec2-3-222-111-21.compute-1.amazonaws.com -a password -p 15429
+```
