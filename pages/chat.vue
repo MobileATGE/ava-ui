@@ -80,7 +80,6 @@
 <script>
 import Vue from "vue";
 import Chat from "vue-beautiful-chat";
-// import TitleIcon from "../assets/atge-icon.jpeg";
 import AvaIcon from "../static/ava-icon.png";
 import GuestIcon from "../assets/guest-icon.png";
 import CloseIcon from "../assets/close-icon.png";
@@ -169,7 +168,7 @@ export default {
       }, // specifies the color scheme for the component
       alwaysScrollToBottom: true, // when set to true always scrolls the chat to the bottom when new events are in (new message, user starts typing...)
       messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
-      host: window.location.protocol + "//" + window.location.hostname,
+      host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
     };
   },
@@ -181,29 +180,27 @@ export default {
   created: () => {},
   watch: {
     messageList: async function(list) {
-      // console.log(`message list length=${list.length}`);
-      // const lastItem = JSON.stringify(list[list.length - 1]);
-      // const host = window.location.protocol + "//" + window.location.hostname;
-      // await this.$axios.$post(`${host}/api/redis/history/${this.user.id}`, lastItem);
+      if (list.length == 0) return;
+      const lastItem = list[list.length - 1];
+      const ret = await this.$axios.$post(`${this.host}/api/redis/history/${this.user.id}`, lastItem);
     }
   },
   async mounted() {
-    console.log('In mounted');
-    console.log('This host=', this.host);
-    console.log('This user=', this.user);
     this.user = this.$route.query;
     let parent = this;
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
       this.user.id = "";
-      console.log(`Calling ${this.host}/api/redis/id/${this.user.name}`);
       const id = await this.$axios.$get(`${this.host}/api/redis/id/${this.user.name}`);
       this.user.id = id || "";
-      console.log('this.user.id=', this.user.id);
+      await this.loadChatHistory();
+
       if (this.avaReopenSkipped) {
         this.avaReopen();
         this.avaReopenSkipped = false;
       }
+    } else {
+      await this.loadChatHistory();
     }
 
     this.participants.push({
@@ -407,7 +404,6 @@ export default {
 
       if (!this.user.id || this.user.id == "null") {
         this.avaReopenSkipped = true;
-        console.log('avaReopenSkipped=', this.avaReopenSkipped);
         return;
       }
 
@@ -501,6 +497,12 @@ export default {
         m.type = "system";
         m.data.text = "This message has been removed";
       }
+    },
+    async loadChatHistory() {
+      const chatList = await this.$axios.$get(`${this.host}/api/redis/history/${this.user.id}`);
+      chatList.forEach(chat => {
+        this.messageList.push(JSON.parse(chat));
+      })
     }
   }
 };
