@@ -2,6 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import redis from "../redis-client";
 
+const MAX_HISTORY_SIZE = 50;
+
 const app = express();
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -27,15 +29,24 @@ app.get("/hello", async (req, res) => {  console.log('Hello is called');
 app.get("/redis/id/:fullname", async (req, res) => {
   const fullname = req.params.fullname;
   const id = await redis.hget("id:lookup", fullname);
-  console.log(`Lookup ${fullname}, id=${id}`);
   res.send(id);
+});
+
+app.get("/redis/history/:username", async (req, res) => {
+  const username = req.params.username;
+  let data = await redis.lrange(username, 0, -1);
+  res.send(data);
 });
 
 app.post("/redis/history/:username", async (req, res) => {
   const username = req.params.username;
-  const body = req.body;
-  const response = await redis.set(username, JSON.stringify(body));
-  res.send("Success! 🎉\n");
+  const body = JSON.stringify(req.body);
+  let size = await redis.rpush(username, body);
+  if (size > MAX_HISTORY_SIZE) {
+    await redis.ltrim(username, -MAX_HISTORY_SIZE, -1);
+    size = MAX_HISTORY_SIZE;
+  } 
+  res.json({size: size});
 });
 
 export const path = "/api";
