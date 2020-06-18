@@ -283,7 +283,6 @@ export default {
         this.socketMessage = data;
         let messages = data.messages;
         let length = messages.length;
-        // this.addResponseMessage(messages[length - 1].message[0], data.type, [
         this.addResponseMessage(
           messages[length - 1].message[0],
           messages[length - 1].type,
@@ -503,6 +502,9 @@ export default {
       chatList.forEach(chat => {
         this.messageList.push(JSON.parse(chat));
       })
+    },
+    async getSpeechToken() {
+      return await this.$axios.$get(`${this.host}/api/speech/token`);
     }
   }
 };

@@ -1,6 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import redis from "../redis-client";
+import speechHelper from "../speech_helper";
 
 const MAX_HISTORY_SIZE = 50;
 
@@ -47,6 +48,11 @@ app.post("/redis/history/:username", async (req, res) => {
     size = MAX_HISTORY_SIZE;
   } 
   res.json({size: size});
+});
+
+app.get("/speech/token", async (req, res) => {
+  const token = await speechHelper.getToken();
+  res.send(token);
 });
 
 export const path = "/api";
