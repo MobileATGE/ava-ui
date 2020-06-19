@@ -21,7 +21,7 @@
     "nuxt": "^2.12.2",
     "socket.io-client": "^2.3.0",
     "tls": "0.0.1",
-    "vue-beautiful-chat": "^2.3.1",
+    "vue-beautiful-chat": "^2.4.1",
     "vue-socket.io-extended": "^4.0.1"
   },
   "devDependencies": {
