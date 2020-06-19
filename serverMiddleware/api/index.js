@@ -51,8 +51,8 @@ app.post("/redis/history/:username", async (req, res) => {
 });
 
 app.get("/speech/token", async (req, res) => {
-  const token = await speechHelper.getToken();
-  res.send(token);
+  const data = await speechHelper.getToken();
+  res.send(data);
 });
 
 export const path = "/api";

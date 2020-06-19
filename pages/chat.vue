@@ -75,7 +75,7 @@
         </div>
       </template>
     </beautiful-chat>
-    <Speech class="cover" />
+    <Speech class="speech" />
   </div>
 </template>
 <script>
@@ -89,7 +89,6 @@ import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
 import Speech from "~/components/Speech.vue";
-// import "~/lib/microsoft.cognitiveservices.speech.sdk.bundle";
 
 Vue.use(Chat);
 
@@ -173,7 +172,6 @@ export default {
       messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
-      SpeechSDK: window.SpeechSDK,
     };
   },
   head() {
@@ -245,6 +243,10 @@ export default {
         panel.style.width = parseInt(panel.style.width) + dx + "px";
       }
     });
+
+    let p = document.querySelector('.sc-user-input--buttons');
+    let s = document.querySelector('.speech');
+    p.insertBefore( s, p.lastChild);
   },
   updated() {
     let parent = this;
@@ -352,38 +354,6 @@ export default {
     }
   },
   methods: {
-    // async stt() {
-    //   const authorizationToken = await this.getSpeechToken();
-    //   let speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(authorizationToken, "westus");
-    //   speechConfig.speechRecognitionLanguage = "en-US";
-    //   speechConfig.enableDictation();
-    //   let audioConfig  = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
-    //   let recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
-
-    //     recognizer.recognizing = function (s, e) {
-    //       if (e.result.reason !== SpeechSDK.ResultReason.NoMatch) {
-    //         document.querySelector('.sc-user-input--text').textContent = e.result.text;
-    //       }
-    //     };
-
-    //     recognizer.recognized = function (s, e) {
-    //       if (e.result.reason !== SpeechSDK.ResultReason.NoMatch) {
-    //         document.querySelector('.sc-user-input--text').textContent = e.result.text;
-    //       }
-    //     };
-
-    //     recognizer.sessionStarted = function (s, e) {
-    //       window.console.log("sessionStarted", e);
-    //     };
-
-    //     recognizer.sessionStopped = function (s, e) {
-    //       window.console.log("sessionStarted", e);
-    //       // sdkStartContinousRecognitionBtn.disabled = false;
-    //       // sdkStopContinousRecognitionBtn.disabled = true;
-    //     };
-
-    //     recognizer.startContinuousRecognitionAsync(()=>{}, (error)=>{});
-    // },
     rate(rating) {
       this.onMessageWasSent({
         type: "text",
@@ -539,9 +509,6 @@ export default {
         this.messageList.push(JSON.parse(chat));
       })
     },
-    // async getSpeechToken() {
-    //   return await this.$axios.$get(`${this.host}/api/speech/token`);
-    // }
   }
 };
 </script>
@@ -671,7 +638,9 @@ export default {
   visibility: hidden;
 }
 
-.cover {
+.speech {
   position: relative;
+  font-size: 1.3em;
+  cursor: pointer;
 }
 </style>
