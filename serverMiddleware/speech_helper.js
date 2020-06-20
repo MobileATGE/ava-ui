@@ -3,7 +3,6 @@ import axios from "axios";
 class SpeechHelper {
   constructor() {
     this.region = process.env.SPEECH_REGION;
-    console.log('region', this.region);
     this.url = process.env.SPEECH_ISSUE_TOKEN_URL.replace('SPEECH_REGION', this.region);
   }
   async getToken() {

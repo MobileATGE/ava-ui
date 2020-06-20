@@ -75,7 +75,7 @@
         </div>
       </template>
     </beautiful-chat>
-    <Speech class="speech" />
+    <Microphone class="microphone" />
   </div>
 </template>
 <script>
@@ -88,14 +88,14 @@ import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
-import Speech from "~/components/Speech.vue";
+import Microphone from "~/components/Microphone.vue";
 
 Vue.use(Chat);
 
 export default {
   name: "app",
   components: {
-    Carousel, Speech
+    Carousel, Microphone
   },
   data() {
     return {
@@ -245,7 +245,7 @@ export default {
     });
 
     let p = document.querySelector('.sc-user-input--buttons');
-    let s = document.querySelector('.speech');
+    let s = document.querySelector('.microphone');
     p.insertBefore( s, p.lastChild);
   },
   updated() {
@@ -638,7 +638,7 @@ export default {
   visibility: hidden;
 }
 
-.speech {
+.microphone {
   position: relative;
   font-size: 1.3em;
   cursor: pointer;
