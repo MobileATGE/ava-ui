@@ -89,6 +89,7 @@ import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
 import Microphone from "~/components/Microphone.vue";
+import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
 
 Vue.use(Chat);
 
@@ -451,7 +452,7 @@ export default {
 
       this.$socket.client.emit("normal", options);
     },
-    addResponseMessage(message, type, suggestions, carouselItems) {
+    async addResponseMessage(message, type, suggestions, carouselItems) {
       this.messageList.push({
         author: "support",
         type: "text",
@@ -470,6 +471,8 @@ export default {
         suggestions,
         carouselItems
       });
+
+      await SpeechSDKHelper.tts(message);
     },
     openChat() {
       // called when the user clicks on the fab button to open the chat

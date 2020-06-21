@@ -22,9 +22,10 @@ export default {
   methods: {
     async enable() {
       this.enabled = !this.enabled;
-
+      console.log('enabled=', this.enabled);
       if (this.enabled) {
         await SpeechSDKHelper.start();
+        // await SpeechSDKHelper.tts('Hello there');
       } else {
         SpeechSDKHelper.stop();
       }
