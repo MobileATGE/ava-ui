@@ -471,8 +471,7 @@ export default {
         suggestions,
         carouselItems
       });
-
-      await SpeechSDKHelper.tts(message);
+      SpeechSDKHelper.tts(message);
     },
     openChat() {
       // called when the user clicks on the fab button to open the chat
