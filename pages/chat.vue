@@ -453,6 +453,9 @@ export default {
       this.$socket.client.emit("normal", options);
     },
     async addResponseMessage(message, type, suggestions, carouselItems) {
+      if (!message || message.trim().length == 0) {
+        return;
+      }
       this.messageList.push({
         author: "support",
         type: "text",
