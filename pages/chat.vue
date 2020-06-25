@@ -471,7 +471,9 @@ export default {
         suggestions,
         carouselItems
       });
-      SpeechSDKHelper.tts(message);
+      if (!message.startsWith('<div')) {
+        SpeechSDKHelper.tts(message);
+      }     
     },
     openChat() {
       // called when the user clicks on the fab button to open the chat
