@@ -474,7 +474,7 @@ export default {
         suggestions,
         carouselItems
       });
-      if (!message.startsWith('<div')) {
+      if (SpeechSDKHelper.enabled && !message.startsWith('<div')) {
         SpeechSDKHelper.tts(message);
       }     
     },
