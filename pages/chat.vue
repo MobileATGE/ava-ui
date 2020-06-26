@@ -75,6 +75,7 @@
         </div>
       </template>
     </beautiful-chat>
+    <Microphone class="microphone" />
   </div>
 </template>
 <script>
@@ -87,13 +88,15 @@ import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
+import Microphone from "~/components/Microphone.vue";
+import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
 
 Vue.use(Chat);
 
 export default {
   name: "app",
   components: {
-    Carousel
+    Carousel, Microphone
   },
   data() {
     return {
@@ -241,6 +244,10 @@ export default {
         panel.style.width = parseInt(panel.style.width) + dx + "px";
       }
     });
+
+    let p = document.querySelector('.sc-user-input--buttons');
+    let s = document.querySelector('.microphone');
+    p.insertBefore( s, p.lastChild);
   },
   updated() {
     let parent = this;
@@ -283,7 +290,6 @@ export default {
         this.socketMessage = data;
         let messages = data.messages;
         let length = messages.length;
-        // this.addResponseMessage(messages[length - 1].message[0], data.type, [
         this.addResponseMessage(
           messages[length - 1].message[0],
           messages[length - 1].type,
@@ -446,7 +452,10 @@ export default {
 
       this.$socket.client.emit("normal", options);
     },
-    addResponseMessage(message, type, suggestions, carouselItems) {
+    async addResponseMessage(message, type, suggestions, carouselItems) {
+      if (!message || message.trim().length == 0) {
+        return;
+      }
       this.messageList.push({
         author: "support",
         type: "text",
@@ -465,6 +474,9 @@ export default {
         suggestions,
         carouselItems
       });
+      if (!message.startsWith('<div')) {
+        SpeechSDKHelper.tts(message);
+      }     
     },
     openChat() {
       // called when the user clicks on the fab button to open the chat
@@ -503,7 +515,7 @@ export default {
       chatList.forEach(chat => {
         this.messageList.push(JSON.parse(chat));
       })
-    }
+    },
   }
 };
 </script>
@@ -631,5 +643,11 @@ export default {
 .hide {
   height: 0;
   visibility: hidden;
+}
+
+.microphone {
+  position: relative;
+  font-size: 1.3em;
+  cursor: pointer;
 }
 </style>
