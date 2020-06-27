@@ -51,3 +51,6 @@ cat Chamberlain_id.csv | awk 'BEGIN { FS = "," } ; FNR > 1 { print "hset id:look
 ```script
 cat Chamberlain_id.csv | awk 'BEGIN { FS = "," } ; FNR > 1 { print "hset id:lookup \""$8"\" " $5 }' | redis-cli --pipe -h ec2-3-222-111-21.compute-1.amazonaws.com -a password -p 15429
 ```
+
+# Redis GUI Client
+Medis https://github.com/luin/medis

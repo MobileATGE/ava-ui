@@ -76,6 +76,7 @@
       </template>
     </beautiful-chat>
     <Microphone class="microphone" />
+    <Menu class="menu" />
   </div>
 </template>
 <script>
@@ -89,6 +90,7 @@ import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
 import Microphone from "~/components/Microphone.vue";
+import Menu from "~/components/Menu.vue";
 import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
 
 Vue.use(Chat);
@@ -96,7 +98,7 @@ Vue.use(Chat);
 export default {
   name: "app",
   components: {
-    Carousel, Microphone
+    Carousel, Microphone, Menu
   },
   data() {
     return {
@@ -245,9 +247,16 @@ export default {
       }
     });
 
+    // Set microphone position
     let p = document.querySelector('.sc-user-input--buttons');
     let s = document.querySelector('.microphone');
     p.insertBefore( s, p.lastChild);
+
+    // Set menu position
+    p = document.querySelector('.sc-header');
+    s = document.querySelector('.menu');
+    p.append(s);
+
   },
   updated() {
     let parent = this;
@@ -646,6 +655,12 @@ export default {
 }
 
 .microphone {
+  position: relative;
+  font-size: 1.3em;
+  cursor: pointer;
+}
+
+.menu {
   position: relative;
   font-size: 1.3em;
   cursor: pointer;
