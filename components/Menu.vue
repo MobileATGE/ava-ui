@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-button class="menuContainer" type="text" @click="showForm">
-      <img src="/bars.png" />
+      <img id="menuIcon" src="/bars.png" />
     </el-button>
 
     <el-dialog
@@ -86,10 +86,10 @@ export default {
     return {
       dialogFormVisible: false,
       suggestionForm: {
-        topic: "",
-        suggestion: "",
+        topic: '',
+        suggestion: '',
         comtactMe: false,
-        date: ""
+        date: ''
       },
       formLabelWidth: "120px",
     };
@@ -99,16 +99,21 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           this.openConfirmBox();
+          this.$refs[formName].resetFields();
         } else {
           return false;
         }
       });
     },
     showForm() {
+      document.querySelector('#menuIcon').src = "/cross.png";
       this.dialogFormVisible = true;
     },
     beforeClose() {
       this.dialogFormVisible = false;
+      this.topic = '';
+      this.suggestion = '';
+      document.querySelector('#menuIcon').src = "/bars.png";
     },
     openConfirmBox() {
       this.$confirm('Thank you for your suggestion.', '', {
@@ -117,6 +122,7 @@ export default {
         type: 'success',
         beforeClose: (action, instance, done) => {
           this.dialogFormVisible = false;
+          document.querySelector('#menuIcon').src = "/bars.png";
           done();
         }
       }).then(() => {
@@ -141,5 +147,12 @@ export default {
   font-size: 1em;
   font-weight: bold;
   color: #013a81;
+}
+.el-dialog {
+  background-color:#f6f6f6 !important;
+  border: ridge 1px;
+}
+.el-button--primary {
+  background-color:#013A81 !important;
 }
 </style>
