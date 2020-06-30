@@ -65,11 +65,14 @@
             show-word-limit
           ></el-input>
         </el-form-item>
-        <el-form-item :label-width="formLabelWidth">
-          <el-checkbox v-model="suggestionForm.comtactMe"
-            >It is OK for Ava to contact me about my suggestion</el-checkbox
-          >
-        </el-form-item>
+        <el-row>
+            <el-checkbox v-model="suggestionForm.comtactMe">
+              It is OK for Ava to contact me about my suggestion.
+            </el-checkbox>
+        </el-row>
+        <el-row v-show="suggestionForm.comtactMe">
+            We will contact you at test@chamberlain.com.
+        </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm('suggestionForm')"
@@ -110,10 +113,7 @@ export default {
       this.dialogFormVisible = true;
     },
     beforeClose() {
-      this.dialogFormVisible = false;
-      this.topic = '';
-      this.suggestion = '';
-      document.querySelector('#menuIcon').src = "/bars.png";
+      this.reset();
     },
     openConfirmBox() {
       this.$confirm('Thank you for your suggestion.', '', {
@@ -121,8 +121,7 @@ export default {
         showCancelButton: false,
         type: 'success',
         beforeClose: (action, instance, done) => {
-          this.dialogFormVisible = false;
-          document.querySelector('#menuIcon').src = "/bars.png";
+          this.reset();
           done();
         }
       }).then(() => {
@@ -130,6 +129,13 @@ export default {
         document.querySelector('.el-form').reset();
       });
     },
+    reset() {
+      this.dialogFormVisible = false;
+      this.suggestionForm.topic = '';
+      this.suggestionForm.suggestion = '';
+      this.suggestionForm.comtactMe = false;
+      document.querySelector('#menuIcon').src = "/bars.png";
+    }
   }
 };
 </script>
@@ -150,7 +156,7 @@ export default {
 }
 .el-dialog {
   background-color:#f6f6f6 !important;
-  border: ridge 1px;
+  border: solid 1px;
 }
 .el-button--primary {
   background-color:#013A81 !important;
