@@ -1,77 +1,131 @@
 <template>
   <div>
-    <!--
-    <div class="menuContainer">
-      <img src="/bars.png" @click="openMenu" />
-    </div>
-    -->
     <el-button class="menuContainer" type="text" @click="showForm">
       <img src="/bars.png" />
     </el-button>
 
-    <el-dialog title="Shipping address" :visible.sync="dialogFormVisible" v-bind:modal="false">
-      <el-form :model="form">
-        <el-form-item label="Promotion name" :label-width="formLabelWidth">
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Zones" :label-width="formLabelWidth">
-          <el-select v-model="form.region" placeholder="Please select a zone">
-            <el-option label="Zone No.1" value="shanghai"></el-option>
-            <el-option label="Zone No.2" value="beijing"></el-option>
+    <el-dialog
+      class="suggestion"
+      title="Make a suggestion"
+      :visible.sync="dialogFormVisible"
+      v-bind:modal="false"
+      :before-close="beforeClose"
+    >
+      <el-form
+        :model="suggestionForm"
+        ref="suggestionForm"
+        label-position="top"
+      >
+        <el-form-item
+          label="Select a topic."
+          prop="topic"
+          :label-width="formLabelWidth"
+          :rules="[
+            {
+              required: true,
+              message: 'Please select a topic.',
+              trigger: 'change'
+            }
+          ]"
+        >
+          <el-select
+            v-model="suggestionForm.topic"
+            placeholder="Please select a topic"
+          >
+            <el-option label="New Idea" value="idea"></el-option>
+            <el-option label="Feedback" value="feedback"></el-option>
+            <el-option label="Other" value="other"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item
+          class="sugestionLabel"
+          label="Suggestion."
+          prop="suggestion"
+          :label-width="formLabelWidth"
+          :rules="[
+            {
+              required: true,
+              message: 'Please type your suggestion here.',
+              trigger: 'blur'
+            },
+            {
+              min: 1,
+              max: 250,
+              message: 'Length should be 1 to 250',
+              trigger: 'blur'
+            }
+          ]"
+        >
+          <el-input
+            type="textarea"
+            v-model="suggestionForm.suggestion"
+            placeholder="Type your suggestion here."
+            rows="3"
+            maxlength="250"
+            show-word-limit
+          ></el-input>
+        </el-form-item>
+        <el-form-item :label-width="formLabelWidth">
+          <el-checkbox v-model="suggestionForm.comtactMe"
+            >It is OK for Ava to contact me about my suggestion</el-checkbox
+          >
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false">Confirm</el-button>
+        <el-button type="primary" @click="submitForm('suggestionForm')"
+          >Submit</el-button
+        >
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-        gridData: [{
-          date: '2016-05-02',
-          name: 'John Smith',
-          address: 'No.1518,  Jinshajiang Road, Putuo District'
-        }, {
-          date: '2016-05-04',
-          name: 'John Smith',
-          address: 'No.1518,  Jinshajiang Road, Putuo District'
-        }, {
-          date: '2016-05-01',
-          name: 'John Smith',
-          address: 'No.1518,  Jinshajiang Road, Putuo District'
-        }, {
-          date: '2016-05-03',
-          name: 'John Smith',
-          address: 'No.1518,  Jinshajiang Road, Putuo District'
-        }],
-        dialogTableVisible: false,
-        dialogFormVisible: false,
-        form: {
-          name: '',
-          region: '',
-          date1: '',
-          date2: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        },
-        formLabelWidth: '120px'
-      };
+export default {
+  data() {
+    return {
+      dialogFormVisible: false,
+      suggestionForm: {
+        topic: "",
+        suggestion: "",
+        comtactMe: false,
+        date: ""
+      },
+      formLabelWidth: "120px",
+    };
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.openConfirmBox();
+        } else {
+          return false;
+        }
+      });
     },
-    methods: {
-      showForm() {
-        this.dialogFormVisible = true;
-      }
+    showForm() {
+      this.dialogFormVisible = true;
     },
-
-  };
+    beforeClose() {
+      this.dialogFormVisible = false;
+    },
+    openConfirmBox() {
+      this.$confirm('Thank you for your suggestion.', '', {
+        confirmButtonText: 'OK',
+        showCancelButton: false,
+        type: 'success',
+        beforeClose: (action, instance, done) => {
+          this.dialogFormVisible = false;
+          done();
+        }
+      }).then(() => {
+        this.dialogFormVisible = false;
+        document.querySelector('.el-form').reset();
+      });
+    },
+  }
+};
 </script>
 <style>
 .menuContainer {
@@ -82,5 +136,10 @@
   width: 36px;
   height: 36px;
   align-self: center;
+}
+.el-dialog__title {
+  font-size: 1em;
+  font-weight: bold;
+  color: #013a81;
 }
 </style>
