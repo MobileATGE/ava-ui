@@ -28,7 +28,7 @@
     "sass-loader": "^8.0.2"
   },
   "devDependencies": {
-    "node-sass": "^4.13.1",
+    "node-sass": "^4.14.1",
     "push-dir": "^0.4.1",
     "sass-loader": "^8.0.2"
   }
