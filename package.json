@@ -24,7 +24,8 @@
     "socket.io-client": "^2.3.0",
     "tls": "0.0.1",
     "vue-beautiful-chat": "^2.4.1",
-    "vue-socket.io-extended": "^4.0.1"
+    "vue-socket.io-extended": "^4.0.1",
+    "sass-loader": "^8.0.2"
   },
   "devDependencies": {
     "node-sass": "^4.13.1",
