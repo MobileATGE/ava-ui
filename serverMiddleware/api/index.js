@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import redis from "../redis-client";
 import speechHelper from "../speech_helper";
+import canvasHelper from "../canvas_helper";
 
 const MAX_HISTORY_SIZE = 50;
 
@@ -52,6 +53,12 @@ app.post("/redis/history/:username", async (req, res) => {
 
 app.get("/speech/token", async (req, res) => {
   const data = await speechHelper.getToken();
+  res.send(data);
+});
+
+app.get("/canvas/login_id/:canvas_id", async (req, res) => {
+  const canvas_id = req.params.canvas_id;
+  const data = await canvasHelper.getLoginId(canvas_id);
   res.send(data);
 });
 

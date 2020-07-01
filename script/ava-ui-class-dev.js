@@ -58,7 +58,7 @@ class AvaUI {
 
   includeAva(user) {
     let url = 'https://ava-ui-dev.herokuapp.com/chat/';
-    let params = '?id=' + user.login_id + '&name=' + user.name + '&email=' + user.primary_email + '&avatar=' + user.avatar;
+    let params = '?id=' + user.login_id + '&canvas_id=' + user.canvas_id + '&name=' + user.name + '&email=' + user.primary_email + '&avatar=' + user.avatar;
     user.avaUrl = url + params;
 
     if (!!document.querySelector('#avaLauncher')) {

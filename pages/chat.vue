@@ -196,8 +196,10 @@ export default {
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
       this.user.id = "";
-      const id = await this.$axios.$get(`${this.host}/api/redis/id/${this.user.name}`);
-      this.user.id = id || "";
+      // const id = await this.$axios.$get(`${this.host}/api/redis/id/${this.user.name}`);
+      const data = await this.$axios.$get(`${this.host}/api/canvas/login_id/${this.user.canvas_id}`);
+
+      this.user.id = data.login_id || "";
       await this.loadChatHistory();
 
       if (this.avaReopenSkipped) {
