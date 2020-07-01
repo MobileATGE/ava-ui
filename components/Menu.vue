@@ -66,9 +66,8 @@
           ></el-input>
         </el-form-item>
         <el-row>
-            <el-checkbox v-model="suggestionForm.comtactMe">
-              It is OK for Ava to contact me about my suggestion.
-            </el-checkbox>
+            <el-checkbox v-model="suggestionForm.comtactMe" />
+            It is OK for Ava to contact me about my suggestion.
         </el-row>
         <el-row v-show="suggestionForm.comtactMe">
             We will contact you at test@chamberlain.com.
