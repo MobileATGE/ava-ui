@@ -23,8 +23,15 @@ class AvaUI {
     });
   }
 
-  parseJSON(response) {
-    return response.json();
+  async parseJSON(response) {
+    const regex = /"id":(.*),"name"/;
+    const text = await response.text();
+    let jsonObj = JSON.parse(text);
+    const found = text.match(regex);
+    if (found.length > 1) {
+      jsonObj.id = found[1];
+    }
+    return jsonObj;
   }
 
   checkStatus(response) {
@@ -39,6 +46,7 @@ class AvaUI {
 
   updateUser(data) {
     let user = {
+      canvas_id     : data.id,
       login_id      : data.login_id,
       name          : data.name,
       primary_email : data.primary_email,
@@ -50,7 +58,7 @@ class AvaUI {
 
   includeAva(user) {
     let url = 'https://ava-ui-prod.herokuapp.com/chat/';
-    let params = '?id=' + user.login_id + '&name=' + user.name + '&email=' + user.primary_email + '&avatar=' + user.avatar;
+    let params = '?id=' + user.login_id + '&canvas_id=' + user.canvas_id + '&name=' + user.name + '&email=' + user.primary_email + '&avatar=' + user.avatar;
     user.avaUrl = url + params;
 
     if (!!document.querySelector('#avaLauncher')) {
@@ -112,7 +120,6 @@ class AvaUI {
       window.open(user.avaUrl, 'Ava', params);
     });
   }
-
 }
 
 (function() {
