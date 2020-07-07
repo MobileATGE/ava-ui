@@ -1,6 +1,9 @@
 {
   "name": "ava",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "engines": {
+    "node": "12.x"
+  },
   "description": "My solid Nuxt.js project",
   "author": "Gwowen Fu",
   "private": true,
@@ -15,17 +18,19 @@
     "@nuxtjs/axios": "^5.10.3",
     "@nuxtjs/dotenv": "^1.4.1",
     "async-redis": "^1.1.7",
-    "element-ui": "^2.13.0",
+    "element-ui": "^2.13.2",
     "net": "^1.0.2",
     "nuxt": "^2.12.2",
     "socket.io-client": "^2.3.0",
     "tls": "0.0.1",
     "vue-beautiful-chat": "^2.4.1",
-    "vue-socket.io-extended": "^4.0.1"
+    "vue-socket.io-extended": "^4.0.1",
+    "sass-loader": "^8.0.2",
+    "node-sass": "^4.14.1"
   },
   "devDependencies": {
-    "node-sass": "^4.13.1",
     "push-dir": "^0.4.1",
-    "sass-loader": "^8.0.2"
+    "sass-loader": "^8.0.2",
+    "node-sass": "^4.14.1"
   }
 }
