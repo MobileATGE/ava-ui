@@ -70,7 +70,7 @@
             It is OK for Ava to contact me about my suggestion.
         </el-row>
         <el-row v-show="suggestionForm.comtactMe">
-            We will contact you at test@chamberlain.com.
+            We will contact you at {{ feedbackEmail }}.
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -84,6 +84,7 @@
 
 <script>
 export default {
+  props: ['feedbackEmail'],
   data() {
     return {
       dialogFormVisible: false,

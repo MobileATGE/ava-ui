@@ -76,7 +76,7 @@
       </template>
     </beautiful-chat>
     <Microphone class="microphone" />
-    <Menu class="menu" />
+    <Menu class="menu" :feedbackEmail=feedbackEmail />
   </div>
 </template>
 <script>
@@ -175,6 +175,7 @@ export default {
       messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
+      feedbackEmail: undefined
     };
   },
   head() {
@@ -306,7 +307,7 @@ export default {
         );
       }
       if (data.email) {
-        
+        this.feedbackEmail = data.email;
       }
     },
     normal(data) {
