@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       user: {},
-      conversationId: "mobile" + new Date().getTime(),
+      conversationId: undefined,
       isConnected: false,
       socketMessage: "",
       icons: {
@@ -292,7 +292,7 @@ export default {
       }
     },
     reopen(data) {
-      console.log("Socket data received:");
+      console.log("Reopen data response:");
       console.log(data);
       this.showTypingIndicator = "";
       if (data.messages) {
@@ -305,9 +305,12 @@ export default {
           ["List my tickets", "Talk to an agent"]
         );
       }
+      if (data.email) {
+        
+      }
     },
     normal(data) {
-      console.log("Response:");
+      console.log("Normal response:");
       console.log(data);
       this.showTypingIndicator = "";
       this.socketMessage = data;
@@ -421,6 +424,8 @@ export default {
         this.avaReopenSkipped = true;
         return;
       }
+
+      this.conversationId = "mobile" + new Date().getTime();
 
       let options = {
         conversationId: this.conversationId.toString(),
