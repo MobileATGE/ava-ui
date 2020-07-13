@@ -75,7 +75,7 @@
         </div>
       </template>
     </beautiful-chat>
-    <Microphone class="microphone" />
+    <!-- <Microphone class="microphone" /> -->
     <Menu class="menu" :dsi="user.id" :conversationId="conversationId" :feedbackEmail="feedbackEmail" :saveFeedback="saveFeedback" />
   </div>
 </template>
@@ -91,7 +91,7 @@ import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
 import Microphone from "~/components/Microphone.vue";
 import Menu from "~/components/Menu.vue";
-import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
+// import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
 
 Vue.use(Chat);
 
@@ -250,14 +250,15 @@ export default {
     });
 
     // Set microphone position
-    let p = document.querySelector('.sc-user-input--buttons');
-    let s = document.querySelector('.microphone');
-    p.insertBefore( s, p.lastChild);
+    // Disable STT
+    // let p = document.querySelector('.sc-user-input--buttons');
+    // let s = document.querySelector('.microphone');
+    // p.insertBefore( s, p.lastChild);
 
     // Set menu position
-    p = document.querySelector('.sc-header');
-    s = document.querySelector('.menu');
-    p.append(s);
+    let header = document.querySelector('.sc-header');
+    let menu = document.querySelector('.menu');
+    header.append(menu);
 
   },
   updated() {
@@ -494,9 +495,10 @@ export default {
         suggestions,
         carouselItems
       });
-      if (SpeechSDKHelper.enabled && !message.startsWith('<div')) {
-        SpeechSDKHelper.tts(message);
-      }     
+      // Disable TTS
+      // if (SpeechSDKHelper.enabled && !message.startsWith('<div')) {
+      //   SpeechSDKHelper.tts(message);
+      // }
     },
     openChat() {
       // called when the user clicks on the fab button to open the chat
