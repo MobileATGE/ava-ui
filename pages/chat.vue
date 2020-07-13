@@ -75,8 +75,8 @@
         </div>
       </template>
     </beautiful-chat>
-    <!--<Microphone class="microphone" /> -->
-    <Menu class="menu" />
+    <!-- <Microphone class="microphone" /> -->
+    <Menu class="menu" :dsi="user.id" :conversationId="conversationId" :feedbackEmail="feedbackEmail" :saveFeedback="saveFeedback" />
   </div>
 </template>
 <script>
@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       user: {},
-      conversationId: "mobile" + new Date().getTime(),
+      conversationId: undefined,
       isConnected: false,
       socketMessage: "",
       icons: {
@@ -175,6 +175,8 @@ export default {
       messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
+      socketReopenCalled: false,
+      feedbackEmail: undefined
     };
   },
   head() {
@@ -198,14 +200,14 @@ export default {
       this.user.id = "";
       const data = await this.$axios.$get(`${this.host}/api/canvas/login_id/${this.user.canvas_id}`);
       this.user.id = data.login_id || "";
-      await this.loadChatHistory();
+    }
 
-      if (this.avaReopenSkipped) {
-        this.avaReopen();
-        this.avaReopenSkipped = false;
-      }
-    } else {
-      await this.loadChatHistory();
+    await this.loadChatHistory();
+    console.log('avaReopenSkipped: ', this.avaReopenSkipped);
+    console.log('socketReopenCalled: ', this.socketReopenCalled);
+    if (!this.socketReopenCalled) {
+      this.avaReopen();
+      this.avaReopenSkipped = false;
     }
 
     this.participants.push({
@@ -293,7 +295,7 @@ export default {
       }
     },
     reopen(data) {
-      console.log("Socket data received:");
+      console.log("Reopen data response:");
       console.log(data);
       this.showTypingIndicator = "";
       if (data.messages) {
@@ -306,9 +308,12 @@ export default {
           ["List my tickets", "Talk to an agent"]
         );
       }
+      if (data.email) {
+        this.feedbackEmail = data.email;
+      }
     },
     normal(data) {
-      console.log("Response:");
+      console.log("Normal response:");
       console.log(data);
       this.showTypingIndicator = "";
       this.socketMessage = data;
@@ -342,6 +347,9 @@ export default {
       } else if (data.html) {
         this.addResponseMessage(data.html, data.type);
       }
+    },
+    feedback(data) {
+      console.log('Feedback response: ', data);
     },
     serverError(data) {
       console.log("Error response received:");
@@ -423,6 +431,8 @@ export default {
         return;
       }
 
+      this.conversationId = "mobile" + new Date().getTime();
+
       let options = {
         conversationId: this.conversationId.toString(),
         source: "canvas",
@@ -441,6 +451,7 @@ export default {
       console.log(options);
 
       this.$socket.client.emit("reopen", options);
+      this.socketReopenCalled = true;
     },
     avaNormal(message) {
       let value = message.data.value || message.data.text;
@@ -487,7 +498,7 @@ export default {
       // Disable TTS
       // if (SpeechSDKHelper.enabled && !message.startsWith('<div')) {
       //   SpeechSDKHelper.tts(message);
-      // }     
+      // }
     },
     openChat() {
       // called when the user clicks on the fab button to open the chat
@@ -527,6 +538,9 @@ export default {
         this.messageList.push(JSON.parse(chat));
       })
     },
+    saveFeedback(data) {
+      this.$socket.client.emit("feedback", data);
+    }
   }
 };
 </script>
