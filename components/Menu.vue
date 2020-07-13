@@ -40,7 +40,7 @@
         <el-form-item
           class="sugestionLabel"
           label="Suggestion."
-          prop="suggestion"
+          prop="feedback"
           :label-width="formLabelWidth"
           :rules="[
             {
@@ -58,7 +58,7 @@
         >
           <el-input
             type="textarea"
-            v-model="suggestionForm.suggestion"
+            v-model="suggestionForm.feedback"
             placeholder="Type your suggestion here."
             rows="3"
             maxlength="250"
@@ -66,10 +66,10 @@
           ></el-input>
         </el-form-item>
         <el-row>
-            <el-checkbox v-model="suggestionForm.comtactMe" />
+            <el-checkbox v-model="suggestionForm.optedForContactMe" />
             It is OK for Ava to contact me about my suggestion.
         </el-row>
-        <el-row v-show="suggestionForm.comtactMe">
+        <el-row v-show="suggestionForm.optedForContactMe">
             We will contact you at {{ feedbackEmail }}.
         </el-row>
       </el-form>
@@ -84,25 +84,31 @@
 
 <script>
 export default {
-  props: ['feedbackEmail'],
+  props: ['dsi', 'conversationId', 'feedbackEmail', 'saveFeedback'],
   data() {
     return {
       dialogFormVisible: false,
       suggestionForm: {
+        dnumber: this.dsi,
+        userId: this.conversationId,
         topic: '',
-        suggestion: '',
-        comtactMe: false,
-        date: ''
+        feedback: '',
+        optedForContactMe: false,
+        email: this.feedbackEmail,
       },
       formLabelWidth: "120px",
     };
   },
   methods: {
     submitForm(formName) {
+      this.suggestionForm.dnumber = this.dsi;
+      this.suggestionForm.userId = this.conversationId;
+      this.suggestionForm.email = this.feedbackEmail;
+      let parent = this;
       this.$refs[formName].validate(valid => {
         if (valid) {
-          this.openConfirmBox();
-          this.$refs[formName].resetFields();
+          parent.saveFeedback(parent.suggestionForm);
+          parent.openConfirmBox();
         } else {
           return false;
         }
@@ -120,20 +126,15 @@ export default {
         confirmButtonText: 'OK',
         showCancelButton: false,
         type: 'success',
-        beforeClose: (action, instance, done) => {
-          this.reset();
-          done();
-        }
       }).then(() => {
-        this.dialogFormVisible = false;
-        document.querySelector('.el-form').reset();
+        this.reset();
       });
     },
     reset() {
       this.dialogFormVisible = false;
       this.suggestionForm.topic = '';
-      this.suggestionForm.suggestion = '';
-      this.suggestionForm.comtactMe = false;
+      this.suggestionForm.feedback = '';
+      this.suggestionForm.optedForContactMe = false;
       document.querySelector('#menuIcon').src = "/bars.png";
     }
   }

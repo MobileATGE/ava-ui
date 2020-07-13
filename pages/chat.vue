@@ -76,7 +76,7 @@
       </template>
     </beautiful-chat>
     <Microphone class="microphone" />
-    <Menu class="menu" :feedbackEmail=feedbackEmail />
+    <Menu class="menu" :dsi="user.id" :conversationId="conversationId" :feedbackEmail="feedbackEmail" :saveFeedback="saveFeedback" />
   </div>
 </template>
 <script>
@@ -175,6 +175,7 @@ export default {
       messageStyling: true, // enables *bold* /emph/ _underline_ and such (more info at github.com/mattezza/msgdown)
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
+      socketReopenCalled: false,
       feedbackEmail: undefined
     };
   },
@@ -199,14 +200,14 @@ export default {
       this.user.id = "";
       const data = await this.$axios.$get(`${this.host}/api/canvas/login_id/${this.user.canvas_id}`);
       this.user.id = data.login_id || "";
-      await this.loadChatHistory();
+    }
 
-      if (this.avaReopenSkipped) {
-        this.avaReopen();
-        this.avaReopenSkipped = false;
-      }
-    } else {
-      await this.loadChatHistory();
+    await this.loadChatHistory();
+    console.log('avaReopenSkipped: ', this.avaReopenSkipped);
+    console.log('socketReopenCalled: ', this.socketReopenCalled);
+    if (!this.socketReopenCalled) {
+      this.avaReopen();
+      this.avaReopenSkipped = false;
     }
 
     this.participants.push({
@@ -346,6 +347,9 @@ export default {
         this.addResponseMessage(data.html, data.type);
       }
     },
+    feedback(data) {
+      console.log('Feedback response: ', data);
+    },
     serverError(data) {
       console.log("Error response received:");
       console.log(data);
@@ -446,6 +450,7 @@ export default {
       console.log(options);
 
       this.$socket.client.emit("reopen", options);
+      this.socketReopenCalled = true;
     },
     avaNormal(message) {
       let value = message.data.value || message.data.text;
@@ -531,6 +536,9 @@ export default {
         this.messageList.push(JSON.parse(chat));
       })
     },
+    saveFeedback(data) {
+      this.$socket.client.emit("feedback", data);
+    }
   }
 };
 </script>
