@@ -205,8 +205,6 @@ export default {
     }
 
     await this.loadChatHistory();
-    console.log('avaReopenSkipped: ', this.avaReopenSkipped);
-    console.log('socketReopenCalled: ', this.socketReopenCalled);
     if (!this.socketReopenCalled) {
       this.avaReopen();
       this.avaReopenSkipped = false;
@@ -354,8 +352,7 @@ export default {
       console.log('Feedback response: ', data);
     },
     serverError(data) {
-      console.log("Error response received:");
-      console.log(data);
+      console.log("Error response received: ", data);
       this.showTypingIndicator = "";
 
       this.addResponseMessage("Server error: " + data, "text", [
@@ -364,13 +361,11 @@ export default {
       ]);
     },
     agentStart(data) {
-      console.log("Agent start");
-      console.log(data);
+      console.log("Agent start: ", data);
       this.addResponseMessage(data.message.message, data.type);
     },
     fromAgent(data) {
-      console.log("From agent");
-      console.log(data);
+      console.log("From agent: ", data);
       this.addResponseMessage("From agent", data.type);
     }
   },
@@ -482,7 +477,7 @@ export default {
       this.$socket.client.emit("normal", options);
     },
     async addResponseMessage(message, type, suggestions, carouselItems) {
-      if (!message || message.trim().length == 0) {
+      if (type !== 'carousel' && (!message || message.trim().length == 0)) {
         return;
       }
       this.messageList.push({
