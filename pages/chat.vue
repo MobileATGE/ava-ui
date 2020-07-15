@@ -176,7 +176,9 @@ export default {
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
       socketReopenCalled: false,
-      feedbackEmail: undefined
+      feedbackEmail: undefined,
+      isUserActive: false,
+      hasGreeting: false,
     };
   },
   head() {
@@ -282,17 +284,17 @@ export default {
         this.avaReopen();
       }
     },
-    disconnect() {
-      console.log("Socket disconnected");
-      this.isConnected = false;
-    },
     connected(data) {
       console.log("connected response=");
-      console.log(data);
       if (!this.isConnected) {
         this.isConnected = true;
         this.avaReopen();
       }
+    },
+    disconnect() {
+      console.log("Socket disconnected");
+      this.isConnected = false;
+      this.isUserActive = false;
     },
     reopen(data) {
       console.log("Reopen data response:");
@@ -413,6 +415,7 @@ export default {
       });
     },
     onMessageWasSent(message) {
+      this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
         hour: "numeric",
         minute: "numeric",
@@ -424,6 +427,11 @@ export default {
       this.messageList.push(message);
     },
     avaReopen() {
+      if (this.hasGreeting && !this.isUserActive) {
+        console.log('User is inactive. Skip reopen');
+        return;
+      }
+      this.hasGreeting = true;
       console.log('avaReopen user id=', this.user.id);
 
       if (!this.user.id || this.user.id == "null") {
