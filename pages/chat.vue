@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       user: {},
-      conversationId: undefined,
+      conversationId: "mobile" + new Date().getTime(),
       isConnected: false,
       socketMessage: "",
       icons: {
@@ -176,7 +176,9 @@ export default {
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
       socketReopenCalled: false,
-      feedbackEmail: undefined
+      feedbackEmail: undefined,
+      isUserActive: false,
+      hasGreeting: false,
     };
   },
   head() {
@@ -203,8 +205,6 @@ export default {
     }
 
     await this.loadChatHistory();
-    console.log('avaReopenSkipped: ', this.avaReopenSkipped);
-    console.log('socketReopenCalled: ', this.socketReopenCalled);
     if (!this.socketReopenCalled) {
       this.avaReopen();
       this.avaReopenSkipped = false;
@@ -285,14 +285,7 @@ export default {
     disconnect() {
       console.log("Socket disconnected");
       this.isConnected = false;
-    },
-    connected(data) {
-      console.log("connected response=");
-      console.log(data);
-      if (!this.isConnected) {
-        this.isConnected = true;
-        this.avaReopen();
-      }
+      this.isUserActive = false;
     },
     reopen(data) {
       console.log("Reopen data response:");
@@ -352,8 +345,7 @@ export default {
       console.log('Feedback response: ', data);
     },
     serverError(data) {
-      console.log("Error response received:");
-      console.log(data);
+      console.log("Error response received: ", data);
       this.showTypingIndicator = "";
 
       this.addResponseMessage("Server error: " + data, "text", [
@@ -362,13 +354,11 @@ export default {
       ]);
     },
     agentStart(data) {
-      console.log("Agent start");
-      console.log(data);
+      console.log("Agent start: ", data);
       this.addResponseMessage(data.message.message, data.type);
     },
     fromAgent(data) {
-      console.log("From agent");
-      console.log(data);
+      console.log("From agent: ", data);
       this.addResponseMessage("From agent", data.type);
     }
   },
@@ -413,6 +403,7 @@ export default {
       });
     },
     onMessageWasSent(message) {
+      this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
         hour: "numeric",
         minute: "numeric",
@@ -424,14 +415,17 @@ export default {
       this.messageList.push(message);
     },
     avaReopen() {
+      if (this.hasGreeting && !this.isUserActive) {
+        console.log('User is inactive. Skip reopen');
+        return;
+      }
+      this.hasGreeting = true;
       console.log('avaReopen user id=', this.user.id);
 
       if (!this.user.id || this.user.id == "null") {
         this.avaReopenSkipped = true;
         return;
       }
-
-      this.conversationId = "mobile" + new Date().getTime();
 
       let options = {
         conversationId: this.conversationId.toString(),
@@ -474,7 +468,7 @@ export default {
       this.$socket.client.emit("normal", options);
     },
     async addResponseMessage(message, type, suggestions, carouselItems) {
-      if (!message || message.trim().length == 0) {
+      if (type !== 'carousel' && (!message || message.trim().length == 0)) {
         return;
       }
       this.messageList.push({
