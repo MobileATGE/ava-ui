@@ -103,7 +103,7 @@ export default {
   data() {
     return {
       user: {},
-      conversationId: undefined,
+      conversationId: "mobile" + new Date().getTime(),
       isConnected: false,
       socketMessage: "",
       icons: {
@@ -282,13 +282,6 @@ export default {
         this.avaReopen();
       }
     },
-    connected(data) {
-      console.log("connected response=");
-      if (!this.isConnected) {
-        this.isConnected = true;
-        this.avaReopen();
-      }
-    },
     disconnect() {
       console.log("Socket disconnected");
       this.isConnected = false;
@@ -433,8 +426,6 @@ export default {
         this.avaReopenSkipped = true;
         return;
       }
-
-      this.conversationId = "mobile" + new Date().getTime();
 
       let options = {
         conversationId: this.conversationId.toString(),
