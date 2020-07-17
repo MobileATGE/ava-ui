@@ -419,13 +419,13 @@ export default {
         console.log('User is inactive. Skip reopen');
         return;
       }
-      this.hasGreeting = true;
-      console.log('avaReopen user id=', this.user.id);
 
+      console.log('avaReopen user id=', this.user.id);
       if (!this.user.id || this.user.id == "null") {
         this.avaReopenSkipped = true;
         return;
       }
+      this.hasGreeting = true;
 
       let options = {
         conversationId: this.conversationId.toString(),
