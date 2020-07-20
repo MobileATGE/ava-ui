@@ -403,6 +403,7 @@ export default {
       });
     },
     onMessageWasSent(message) {
+      console.log('onMessageWasSent: ', message);
       this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
         hour: "numeric",
@@ -411,7 +412,12 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      this.avaNormal(message);
+      if (message.data.file) {
+        this.avaFileUpload(message);
+      } 
+      else {
+        this.avaNormal(message);
+      }
       this.messageList.push(message);
     },
     avaReopen() {
@@ -462,10 +468,44 @@ export default {
         },
         message: value || ""
       };
-      console.log("Send:");
-      console.log(options);
+      console.log("Send: ". options);
 
       this.$socket.client.emit("normal", options);
+    },
+    avaFileUpload(message) {
+      let file = message.data.file;
+      console.log('file: ', file);
+
+      var fileReader = new FileReader();
+      fileReader.onload = (evt) => {
+        var arrayBuffer = fileReader.result; 
+        let value = message.data.value || message.data.text || "";
+
+        let options = {
+          conversationId: this.conversationId,
+          source: "canvas",
+          from: {
+            id: this.user.id,
+            name: this.user.name,
+            company: "ATGE",
+            employee_type: "stu",
+            department: "CU",
+            email_address: this.user.email
+          },
+          message: value,
+          file: { 
+            name: file.name, 
+            type: file.type, 
+            size: file.size, 
+            data: arrayBuffer 
+          }
+        };
+        console.log("Send with file: ", options);
+
+        this.$socket.client.emit("fileupload", options);
+
+      }
+      fileReader.readAsArrayBuffer(file);
     },
     async addResponseMessage(message, type, suggestions, carouselItems) {
       if (type !== 'carousel' && (!message || message.trim().length == 0)) {
