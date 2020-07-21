@@ -1,5 +1,5 @@
 <template>
-  <el-card v-if="fileList.length > 0" shadow="always">
+  <el-card v-show="fileList && fileList.length > 0" shadow="always">
     <div v-for="(file, index) in fileList" :key="file.name" class="container-item">
       <i class="el-icon-document"></i>
       {{ file.name }}
