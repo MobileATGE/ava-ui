@@ -77,6 +77,8 @@
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
     <Menu class="menu" :dsi="user.id" :conversationId="conversationId" :feedbackEmail="feedbackEmail" :saveFeedback="saveFeedback" />
+    <Files class="files" @onFilesChange="onFilesChange" />
+    <FileContainer id="fileContainer" :fileList="filesSelected" />
   </div>
 </template>
 <script>
@@ -91,6 +93,8 @@ import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
 import Microphone from "~/components/Microphone.vue";
 import Menu from "~/components/Menu.vue";
+import Files from "~/components/Files.vue";
+import FileContainer from "~/components/FileContainer.vue";
 // import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
 
 Vue.use(Chat);
@@ -98,7 +102,7 @@ Vue.use(Chat);
 export default {
   name: "app",
   components: {
-    Carousel, Microphone, Menu
+    Carousel, Microphone, Menu, Files, FileContainer
   },
   data() {
     return {
@@ -179,6 +183,7 @@ export default {
       feedbackEmail: undefined,
       isUserActive: false,
       hasGreeting: false,
+      filesSelected: undefined,
     };
   },
   head() {
@@ -192,7 +197,7 @@ export default {
       if (list.length == 0) return;
       const lastItem = list[list.length - 1];
       const ret = await this.$axios.$post(`${this.host}/api/redis/history/${this.user.id}`, lastItem);
-    }
+    },
   },
   async mounted() {
     this.user = this.$route.query;
@@ -255,10 +260,21 @@ export default {
     // let s = document.querySelector('.microphone');
     // p.insertBefore( s, p.lastChild);
 
-    // Set menu position
+    // Set Files position
+    let p = document.querySelector('.sc-user-input--buttons');
+    let files = document.querySelector('.files');
+    p.insertBefore( files, p.lastChild );
+
+    // Set Menu position
     let header = document.querySelector('.sc-header');
     let menu = document.querySelector('.menu');
     header.append(menu);
+
+    // Set FileContainer position
+    let fileContainer = document.querySelector('#fileContainer');
+    let userInput = document.querySelector('.sc-user-input');
+    let userInputParent = userInput.parentNode;
+    userInputParent.insertBefore( fileContainer, userInput );
 
   },
   updated() {
@@ -412,8 +428,11 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      if (message.data.file) {
-        this.avaFileUpload(message);
+      // if (message.data.file) {
+      //   this.avaFileUpload(message);
+      // } 
+      if (this.filesSelected) {
+        this.uploadFiles(message, this.filesSelected);
       } 
       else {
         this.avaNormal(message);
@@ -471,6 +490,45 @@ export default {
       console.log("Send: ". options);
 
       this.$socket.client.emit("normal", options);
+    },
+    uploadFiles(message, files) {
+      console.log('files: ', files);
+      let promises = [];
+      for (let file of files) {
+        let filePromise = new Promise(resolve => {
+          let reader = new FileReader();
+          reader.readAsArrayBuffer(file);
+          reader.onload = () => resolve(
+            { 
+              name: file.name, 
+              type: file.type, 
+              size: file.size, 
+              data: reader.result 
+            }
+          );
+        });
+        promises.push(filePromise);
+      }
+      Promise.all(promises).then(fileContents => {
+        console.log('file contents: ', fileContents);
+        let value = message.data.value || message.data.text || "";
+        let options = {
+          conversationId: this.conversationId,
+          source: "canvas",
+          from: {
+            id: this.user.id,
+            name: this.user.name,
+            company: "ATGE",
+            employee_type: "stu",
+            department: "CU",
+            email_address: this.user.email
+          },
+          message: value,
+          files: fileContents
+        };
+        console.log("Upload file: ", options);
+        this.$socket.client.emit("fileupload", options);
+      });
     },
     avaFileUpload(message) {
       let file = message.data.file;
@@ -574,6 +632,10 @@ export default {
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
+    },
+    onFilesChange(files) {
+      this.filesSelected = Array.from(files);
+      console.log('filesSelected: ', this.filesSelected);
     }
   }
 };
@@ -711,6 +773,12 @@ export default {
 }
 
 .menu {
+  position: relative;
+  font-size: 1.3em;
+  cursor: pointer;
+}
+
+.files {
   position: relative;
   font-size: 1.3em;
   cursor: pointer;

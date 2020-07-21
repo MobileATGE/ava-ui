@@ -123,7 +123,7 @@ export default {
     },
     openConfirmBox() {
       this.$confirm('Thank you for your suggestion.', '', {
-        confirmButtonText: 'OK',
+        confirmButtonText: 'Close',
         showCancelButton: false,
         type: 'success',
       }).then(() => {
