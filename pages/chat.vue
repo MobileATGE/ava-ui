@@ -11,7 +11,7 @@
       :icons="icons"
       :open="openChat"
       :showEmoji="false"
-      :showFile="true"
+      :showFile="false"
       :showTypingIndicator="showTypingIndicator"
       :showLauncher="false"
       :showCloseButton="false"
@@ -183,7 +183,7 @@ export default {
       feedbackEmail: undefined,
       isUserActive: false,
       hasGreeting: false,
-      filesSelected: undefined,
+      filesSelected: [],
     };
   },
   head() {
@@ -304,8 +304,7 @@ export default {
       this.isUserActive = false;
     },
     reopen(data) {
-      console.log("Reopen data response:");
-      console.log(data);
+      console.log("Reopen data response:", data);
       this.showTypingIndicator = "";
       if (data.messages) {
         this.socketMessage = data;
@@ -322,9 +321,9 @@ export default {
       }
     },
     normal(data) {
-      console.log("Normal response:");
-      console.log(data);
+      console.log("Normal response: ", data);
       this.showTypingIndicator = "";
+      this.filesSelected = [];
       this.socketMessage = data;
       let messages = data.messages;
       let length = messages.length;
@@ -366,7 +365,7 @@ export default {
 
       this.addResponseMessage("Server error: " + data, "text", [
         "Help!",
-        "Talk with an agent!"
+        "Talk to an agent!"
       ]);
     },
     agentStart(data) {
@@ -428,9 +427,6 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      // if (message.data.file) {
-      //   this.avaFileUpload(message);
-      // } 
       if (this.filesSelected) {
         this.uploadFiles(message, this.filesSelected);
       } 
@@ -466,8 +462,7 @@ export default {
         message: "Hello!"
       };
 
-      console.log("openchat:");
-      console.log(options);
+      console.log("openchat:", options);
 
       this.$socket.client.emit("reopen", options);
       this.socketReopenCalled = true;
@@ -492,7 +487,6 @@ export default {
       this.$socket.client.emit("normal", options);
     },
     uploadFiles(message, files) {
-      console.log('files: ', files);
       let promises = [];
       for (let file of files) {
         let filePromise = new Promise(resolve => {
@@ -510,7 +504,6 @@ export default {
         promises.push(filePromise);
       }
       Promise.all(promises).then(fileContents => {
-        console.log('file contents: ', fileContents);
         let value = message.data.value || message.data.text || "";
         let options = {
           conversationId: this.conversationId,
@@ -526,44 +519,8 @@ export default {
           message: value,
           files: fileContents
         };
-        console.log("Upload file: ", options);
         this.$socket.client.emit("fileupload", options);
       });
-    },
-    avaFileUpload(message) {
-      let file = message.data.file;
-      console.log('file: ', file);
-
-      var fileReader = new FileReader();
-      fileReader.onload = (evt) => {
-        var arrayBuffer = fileReader.result; 
-        let value = message.data.value || message.data.text || "";
-
-        let options = {
-          conversationId: this.conversationId,
-          source: "canvas",
-          from: {
-            id: this.user.id,
-            name: this.user.name,
-            company: "ATGE",
-            employee_type: "stu",
-            department: "CU",
-            email_address: this.user.email
-          },
-          message: value,
-          file: { 
-            name: file.name, 
-            type: file.type, 
-            size: file.size, 
-            data: arrayBuffer 
-          }
-        };
-        console.log("Send with file: ", options);
-
-        this.$socket.client.emit("fileupload", options);
-
-      }
-      fileReader.readAsArrayBuffer(file);
     },
     async addResponseMessage(message, type, suggestions, carouselItems) {
       if (type !== 'carousel' && (!message || message.trim().length == 0)) {
@@ -634,8 +591,7 @@ export default {
       this.$socket.client.emit("feedback", data);
     },
     onFilesChange(files) {
-      this.filesSelected = Array.from(files);
-      console.log('filesSelected: ', this.filesSelected);
+      this.filesSelected = this.filesSelected.concat(Array.from(files));
     }
   }
 };
@@ -782,5 +738,10 @@ export default {
   position: relative;
   font-size: 1.3em;
   cursor: pointer;
+}
+
+#fileContainer {
+  background-color: rgb(86, 88, 103);
+  color: white;
 }
 </style>

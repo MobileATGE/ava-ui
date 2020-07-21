@@ -16,6 +16,7 @@ export default {
     fileSelector.addEventListener("change", event => {
       this.fileList = event.target.files;
       this.$emit('onFilesChange', this.fileList);
+      fileSelector.value = '';
     });
   },
   methods: {

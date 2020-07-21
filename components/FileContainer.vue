@@ -4,7 +4,7 @@
       <i class="el-icon-document"></i>
       {{ file.name }}
       <span class="delete-file-message" @click="cancelFile(index)">
-        <i class="el-icon-delete" height="10"></i>
+        <i class="el-icon-remove" height="10"></i>
       </span>
     </div>
   </el-card>
@@ -23,9 +23,7 @@ export default {
   },
   methods: {
     cancelFile(index) {
-      console.log('Before: ', Array.from(this.fileList));
       this.fileList.splice(index, 1);
-      console.log('After: ', Array.from(this.fileList));
     }
   }
 };
@@ -33,5 +31,16 @@ export default {
 <style>
 .container-item {
   padding: 5px 0;
+}
+
+.container-item > span {
+  font-style: normal;
+  float: right;
+  cursor: pointer;
+  color: #c8cad0;
+}
+
+.container-item > span:hover {
+  color: #c8cad0;
 }
 </style>
