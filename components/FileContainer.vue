@@ -4,7 +4,7 @@
       <i class="el-icon-document"></i>
       {{ file.name }}
       <span class="delete-file-message" @click="cancelFile(index)">
-        <i class="el-icon-remove" height="10"></i>
+        <i class="el-icon-circle-close custom-icon" height="10"></i>
       </span>
     </div>
   </el-card>
@@ -42,5 +42,9 @@ export default {
 
 .container-item > span:hover {
   color: #c8cad0;
+}
+
+.custom-icon {
+  font-size: 1.2em;
 }
 </style>

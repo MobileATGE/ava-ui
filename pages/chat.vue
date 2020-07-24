@@ -591,7 +591,7 @@ export default {
       this.$socket.client.emit("feedback", data);
     },
     onFilesChange(files) {
-      this.filesSelected = this.filesSelected.concat(Array.from(files));
+      this.filesSelected = this.filesSelected.concat(files);
     }
   }
 };
