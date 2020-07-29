@@ -389,6 +389,8 @@ export default {
     },
     agentChat(data) {
       console.log("Got emit agentChat: ", data);
+      this.showTypingIndicator = "";
+      this.filesSelected = [];
 
       data.files.forEach(file => {
         var arrayBufferView = new Uint8Array( file.buffer );
@@ -396,11 +398,10 @@ export default {
         var a = document.createElement("a"),
         url = URL.createObjectURL(blob);
         a.href = url;
-        console.log("href= ", a.href);
-        console.log("file name= ", file.originalname);
         a.download = file.originalname;
         document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
       });
     }
   },
