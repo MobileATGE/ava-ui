@@ -76,7 +76,13 @@
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
-    <Menu class="menu" :dsi="user.id" :conversationId="conversationId" :feedbackEmail="feedbackEmail" :saveFeedback="saveFeedback" />
+    <Menu
+      class="menu"
+      :dsi="user.id"
+      :conversationId="conversationId"
+      :feedbackEmail="feedbackEmail"
+      :saveFeedback="saveFeedback"
+    />
     <Files class="files" @onFilesChange="onFilesChange" />
     <FileContainer id="fileContainer" :fileList="filesSelected" />
   </div>
@@ -96,13 +102,18 @@ import Menu from "~/components/Menu.vue";
 import Files from "~/components/Files.vue";
 import FileContainer from "~/components/FileContainer.vue";
 // import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
+import FormData from "form-data";
 
 Vue.use(Chat);
 
 export default {
   name: "app",
   components: {
-    Carousel, Microphone, Menu, Files, FileContainer
+    Carousel,
+    Microphone,
+    Menu,
+    Files,
+    FileContainer
   },
   data() {
     return {
@@ -183,7 +194,7 @@ export default {
       feedbackEmail: undefined,
       isUserActive: false,
       hasGreeting: false,
-      filesSelected: [],
+      filesSelected: []
     };
   },
   head() {
@@ -196,8 +207,11 @@ export default {
     messageList: async function(list) {
       if (list.length == 0) return;
       const lastItem = list[list.length - 1];
-      const ret = await this.$axios.$post(`${this.host}/api/redis/history/${this.user.id}`, lastItem);
-    },
+      const ret = await this.$axios.$post(
+        `${this.host}/api/redis/history/${this.user.id}`,
+        lastItem
+      );
+    }
   },
   async mounted() {
     this.user = this.$route.query;
@@ -205,7 +219,9 @@ export default {
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
       this.user.id = "";
-      const data = await this.$axios.$get(`${this.host}/api/canvas/login_id/${this.user.canvas_id}`);
+      const data = await this.$axios.$get(
+        `${this.host}/api/canvas/login_id/${this.user.canvas_id}`
+      );
       this.user.id = data.login_id || "";
     }
 
@@ -261,21 +277,20 @@ export default {
     // p.insertBefore( s, p.lastChild);
 
     // Set Files position
-    let p = document.querySelector('.sc-user-input--buttons');
-    let files = document.querySelector('.files');
-    p.insertBefore( files, p.lastChild );
+    let p = document.querySelector(".sc-user-input--buttons");
+    let files = document.querySelector(".files");
+    p.insertBefore(files, p.lastChild);
 
     // Set Menu position
-    let header = document.querySelector('.sc-header');
-    let menu = document.querySelector('.menu');
+    let header = document.querySelector(".sc-header");
+    let menu = document.querySelector(".menu");
     header.append(menu);
 
     // Set FileContainer position
-    let fileContainer = document.querySelector('#fileContainer');
-    let userInput = document.querySelector('.sc-user-input');
+    let fileContainer = document.querySelector("#fileContainer");
+    let userInput = document.querySelector(".sc-user-input");
     let userInputParent = userInput.parentNode;
-    userInputParent.insertBefore( fileContainer, userInput );
-
+    userInputParent.insertBefore(fileContainer, userInput);
   },
   updated() {
     let parent = this;
@@ -357,7 +372,7 @@ export default {
       }
     },
     feedback(data) {
-      console.log('Feedback response: ', data);
+      console.log("Feedback response: ", data);
     },
     serverError(data) {
       console.log("Error response received: ", data);
@@ -372,9 +387,21 @@ export default {
       console.log("Agent start: ", data);
       this.addResponseMessage(data.message.message, data.type);
     },
-    fromAgent(data) {
-      console.log("From agent: ", data);
-      this.addResponseMessage("From agent", data.type);
+    agentChat(data) {
+      console.log("Got emit agentChat: ", data);
+
+      data.files.forEach(file => {
+        var arrayBufferView = new Uint8Array( file.buffer );
+        var blob = new Blob( [ arrayBufferView ], { type: data.files[0] } );
+        var a = document.createElement("a"),
+        url = URL.createObjectURL(blob);
+        a.href = url;
+        console.log("href= ", a.href);
+        console.log("file name= ", file.originalname);
+        a.download = file.originalname;
+        document.body.appendChild(a);
+        a.click();
+      });
     }
   },
   methods: {
@@ -418,7 +445,7 @@ export default {
       });
     },
     onMessageWasSent(message) {
-      console.log('onMessageWasSent: ', message);
+      console.log("onMessageWasSent: ", message);
       this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
         hour: "numeric",
@@ -427,21 +454,22 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      if (this.filesSelected) {
+      if (this.filesSelected.length > 0) {
+        console.log("Upload Files");
         this.uploadFiles(message, this.filesSelected);
-      } 
-      else {
+        // this.uploadFilesSocket(message, this.filesSelected);
+      } else {
         this.avaNormal(message);
       }
       this.messageList.push(message);
     },
     avaReopen() {
       if (this.hasGreeting && !this.isUserActive) {
-        console.log('User is inactive. Skip reopen');
+        console.log("User is inactive. Skip reopen");
         return;
       }
 
-      console.log('avaReopen user id=', this.user.id);
+      console.log("avaReopen user id=", this.user.id);
       if (!this.user.id || this.user.id == "null") {
         this.avaReopenSkipped = true;
         return;
@@ -482,27 +510,27 @@ export default {
         },
         message: value || ""
       };
-      console.log("Send: ". options);
+      console.log("Send: ", options);
 
       this.$socket.client.emit("normal", options);
     },
-    uploadFiles(message, files) {
+    uploadFilesSocket(message, files) {
       let promises = [];
       for (let file of files) {
         let filePromise = new Promise(resolve => {
           let reader = new FileReader();
           reader.readAsArrayBuffer(file);
-          reader.onload = () => resolve(
-            { 
-              name: file.name, 
-              type: file.type, 
-              size: file.size, 
-              data: reader.result 
-            }
-          );
+          reader.onload = () =>
+            resolve({
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              data: reader.result
+            });
         });
         promises.push(filePromise);
       }
+      let parent = this;
       Promise.all(promises).then(fileContents => {
         let value = message.data.value || message.data.text || "";
         let options = {
@@ -522,8 +550,26 @@ export default {
         this.$socket.client.emit("fileupload", options);
       });
     },
+    uploadFiles(message, files) {
+      let value = message.data.value || message.data.text || "";
+      let options = {
+        conversationId: this.conversationId,
+        source: "canvas",
+        from: {
+          id: this.user.id,
+          name: this.user.name,
+          company: "ATGE",
+          employee_type: "stu",
+          department: "CU",
+          email_address: this.user.email
+        },
+        message: value
+      };
+
+      this.postFiles(options, files);
+    },
     async addResponseMessage(message, type, suggestions, carouselItems) {
-      if (type !== 'carousel' && (!message || message.trim().length == 0)) {
+      if (type !== "carousel" && (!message || message.trim().length == 0)) {
         return;
       }
       this.messageList.push({
@@ -582,17 +628,81 @@ export default {
       }
     },
     async loadChatHistory() {
-      const chatList = await this.$axios.$get(`${this.host}/api/redis/history/${this.user.id}`);
+      const chatList = await this.$axios.$get(
+        `${this.host}/api/redis/history/${this.user.id}`
+      );
       chatList.forEach(chat => {
         this.messageList.push(JSON.parse(chat));
-      })
+      });
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
     },
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
+    },
+    async postFiles(options, files) {
+      console.log("post files: ", options);
+      let formData = new FormData();
+      files.forEach((file, index) => {
+        formData.append(`uploads`, file);
+      });
+      formData.append("data", JSON.stringify(options));
+
+      const response = await this.$axios.$post(
+        `http://localhost:3000/api/v1/ava/upload`,
+        formData,
+        {
+          headers: {
+            authorization: "AtvaUJKoloIn6yFZa08tG6u4puY9HaRS4yfOUX6a8pc=",
+            dsi: "D40373764",
+            "Content-Type": "multipart/form-data"
+          }
+        }
+      );
+      console.log("Response: ", response.data);
+      return { data: response.data };
     }
+    // async postAgentChat(files) {
+    //   console.log('*** in postAgentChat: ', files);
+    //   let data = {
+    //     "message": {
+    //       "from": "D40373764",
+    //       "message": "test"
+    //     },
+    //     "isOpen": true,
+    //     "session": {
+    //       "id": this.conversationId,
+    //       "channelId": "msteams",
+    //       "user_id": "test",
+    //       "user_name": "Gwowen Fu",
+    //       "conversation_id": "test",
+    //       "bot_id": "test",
+    //       "bot_name": "Ava [Beta]",
+    //       "serviceurl": "https://smba.trafficmanager.net/amer/"
+    //     }
+    //   };
+
+    //   let formData = new FormData();
+    //   files.forEach((file, index) => {
+    //     formData.append(`uploads`, file);
+    //   })
+    //   formData.append("data", JSON.stringify(data));
+
+    //   const response = await this.$axios.$post(
+    //     `http://localhost:3000/api/v1/ava/agent/chat`,
+    //     formData,
+    //     {
+    //       headers: {
+    //         "authorization": "AtvaUJKoloIn6yFZa08tG6u4puY9HaRS4yfOUX6a8pc=",
+    //         "dsi": "D40373764",
+    //         "Content-Type": "multipart/form-data"
+    //       }
+    //     }
+    //   );
+    //   console.log('Response: ', response.data);
+    //   return { data: response.data };
+    // }
   }
 };
 </script>
