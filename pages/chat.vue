@@ -643,67 +643,27 @@ export default {
       this.filesSelected = this.filesSelected.concat(files);
     },
     async postFiles(options, files) {
-      console.log("post files: ", options);
       let formData = new FormData();
       files.forEach((file, index) => {
         formData.append(`uploads`, file);
       });
       formData.append("data", JSON.stringify(options));
 
-      const response = await this.$axios.$post(
-        `http://localhost:3000/api/v1/ava/upload`,
+      const backend = await this.$axios.$get(`${this.host}/api/backend`);
+      const data = await this.$axios.$post(
+        `${backend.url}/api/v1/ava/upload`,
         formData,
         {
           headers: {
-            authorization: "AtvaUJKoloIn6yFZa08tG6u4puY9HaRS4yfOUX6a8pc=",
-            dsi: "D40373764",
-            "Content-Type": "multipart/form-data"
+            authorization: backend.authorization,
+            dsi: backend.dsi
           }
         }
       );
-      console.log("Response: ", response.data);
-      return { data: response.data };
+
+      console.log('data:', data);
+      this.addResponseMessage(data.message, "text");
     }
-    // async postAgentChat(files) {
-    //   console.log('*** in postAgentChat: ', files);
-    //   let data = {
-    //     "message": {
-    //       "from": "D40373764",
-    //       "message": "test"
-    //     },
-    //     "isOpen": true,
-    //     "session": {
-    //       "id": this.conversationId,
-    //       "channelId": "msteams",
-    //       "user_id": "test",
-    //       "user_name": "Gwowen Fu",
-    //       "conversation_id": "test",
-    //       "bot_id": "test",
-    //       "bot_name": "Ava [Beta]",
-    //       "serviceurl": "https://smba.trafficmanager.net/amer/"
-    //     }
-    //   };
-
-    //   let formData = new FormData();
-    //   files.forEach((file, index) => {
-    //     formData.append(`uploads`, file);
-    //   })
-    //   formData.append("data", JSON.stringify(data));
-
-    //   const response = await this.$axios.$post(
-    //     `http://localhost:3000/api/v1/ava/agent/chat`,
-    //     formData,
-    //     {
-    //       headers: {
-    //         "authorization": "AtvaUJKoloIn6yFZa08tG6u4puY9HaRS4yfOUX6a8pc=",
-    //         "dsi": "D40373764",
-    //         "Content-Type": "multipart/form-data"
-    //       }
-    //     }
-    //   );
-    //   console.log('Response: ', response.data);
-    //   return { data: response.data };
-    // }
   }
 };
 </script>
