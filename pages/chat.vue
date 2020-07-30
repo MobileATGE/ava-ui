@@ -194,7 +194,8 @@ export default {
       feedbackEmail: undefined,
       isUserActive: false,
       hasGreeting: false,
-      filesSelected: []
+      filesSelected: [],
+      canUpload: false
     };
   },
   head() {
@@ -295,12 +296,15 @@ export default {
     const sendIcon = document.querySelector(".sc-user-input--buttons").lastChild;
 
     sendIcon.addEventListener("click", function() {
-      if (document.querySelector(".sc-user-input--text").innerText.length === 0) {
-        parent.onMessageWasSent({
-          type: "text",
-          author: "me",
-          data: { text: 'Upload files' }
-        });
+      if (parent.canUpload) {
+        parent.canUpload = false;
+        if (document.querySelector(".sc-user-input--text").innerText.length === 0) {
+          parent.onMessageWasSent({
+            type: "text",
+            author: "me",
+            data: { text: 'Upload files',  }
+          });
+        }
       }
     });
   },
@@ -467,8 +471,9 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      if (this.filesSelected.length > 0) {
+      if (this.filesSelected.length > 0 && this.canUpload) {
         console.log("Upload Files");
+        this.canUpload = false;
         this.uploadFiles(message, this.filesSelected);
         // this.uploadFilesSocket(message, this.filesSelected);
       } else {
@@ -653,6 +658,7 @@ export default {
     },
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
+      this.canUpload = this.filesSelected.length > 0 ? true : false;
     },
     async postFiles(options, files) {
       let formData = new FormData();
