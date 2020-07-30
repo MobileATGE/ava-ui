@@ -291,6 +291,18 @@ export default {
     let userInput = document.querySelector(".sc-user-input");
     let userInputParent = userInput.parentNode;
     userInputParent.insertBefore(fileContainer, userInput);
+
+    const sendIcon = document.querySelector(".sc-user-input--buttons").lastChild;
+
+    sendIcon.addEventListener("click", function() {
+      if (document.querySelector(".sc-user-input--text").innerText.length === 0) {
+        parent.onMessageWasSent({
+          type: "text",
+          author: "me",
+          data: { text: 'Upload files' }
+        });
+      }
+    });
   },
   updated() {
     let parent = this;
