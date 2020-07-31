@@ -410,9 +410,13 @@ export default {
       this.addResponseMessage(data.message.message, data.type);
     },
     agentChat(data) {
+      // Files sent from Ava to Web Chat
       console.log("Got emit agentChat: ", data);
       this.showTypingIndicator = "";
       this.filesSelected = [];
+
+      this.agentMode = true;
+      this.addResponseMessage(data.message.message, data.type);
 
       data.files.forEach(file => {
         var arrayBufferView = new Uint8Array( file.buffer );
