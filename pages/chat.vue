@@ -83,7 +83,7 @@
       :feedbackEmail="feedbackEmail"
       :saveFeedback="saveFeedback"
     />
-    <Files class="files" @onFilesChange="onFilesChange" />
+    <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
     <FileContainer id="fileContainer" :fileList="filesSelected" />
   </div>
 </template>
@@ -195,7 +195,8 @@ export default {
       isUserActive: false,
       hasGreeting: false,
       filesSelected: [],
-      canUpload: false
+      canUpload: false,
+      agentMode: false,
     };
   },
   head() {
@@ -296,7 +297,7 @@ export default {
     const sendIcon = document.querySelector(".sc-user-input--buttons").lastChild;
 
     sendIcon.addEventListener("click", function() {
-      if (parent.canUpload) {
+      if (parent.agentMode && parent.canUpload) {
         parent.canUpload = false;
         if (document.querySelector(".sc-user-input--text").innerText.length === 0) {
           parent.onMessageWasSent({
@@ -353,6 +354,7 @@ export default {
     },
     normal(data) {
       console.log("Normal response: ", data);
+      this.agentMode = false;
       this.showTypingIndicator = "";
       this.filesSelected = [];
       this.socketMessage = data;
@@ -371,6 +373,9 @@ export default {
           "Help!",
           "Talk to an agent!"
         ]);
+      } else {
+        this.agentMode = true;
+        return;
       }
 
       if (data.html && data.html.includes("carousel")) {
@@ -401,6 +406,7 @@ export default {
     },
     agentStart(data) {
       console.log("Agent start: ", data);
+      this.agentMode = true;
       this.addResponseMessage(data.message.message, data.type);
     },
     agentChat(data) {
@@ -471,7 +477,7 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      if (this.filesSelected.length > 0 && this.canUpload) {
+      if (this.agentMode && this.filesSelected.length > 0 && this.canUpload) {
         console.log("Upload Files");
         this.canUpload = false;
         this.uploadFiles(message, this.filesSelected);
