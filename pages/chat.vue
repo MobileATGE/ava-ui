@@ -354,7 +354,7 @@ export default {
     },
     normal(data) {
       console.log("Normal response: ", data);
-      this.agentMode = false;
+      this.agentMode = data.isOpen || false;
       this.showTypingIndicator = "";
       this.filesSelected = [];
       this.socketMessage = data;
@@ -406,7 +406,7 @@ export default {
     },
     agentStart(data) {
       console.log("Agent start: ", data);
-      this.agentMode = true;
+      this.agentMode = data.isOpen || false;
       this.addResponseMessage(data.message.message, data.type);
     },
     agentChat(data) {
@@ -415,7 +415,7 @@ export default {
       this.showTypingIndicator = "";
       this.filesSelected = [];
 
-      this.agentMode = true;
+      this.agentMode = data.isOpen || false;
       this.addResponseMessage(data.message.message, data.type);
 
       data.files.forEach(file => {
