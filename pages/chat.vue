@@ -415,7 +415,7 @@ export default {
       this.showTypingIndicator = "";
       this.filesSelected = [];
 
-      this.agentMode = data.isOpen || false;
+      this.agentMode = data.data.isOpen || false;
       this.addResponseMessage(data.data.message.message);
 
       data.files.forEach(file => {
