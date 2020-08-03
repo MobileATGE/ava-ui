@@ -407,7 +407,7 @@ export default {
     agentStart(data) {
       console.log("Agent start: ", data);
       this.agentMode = data.isOpen || false;
-      this.addResponseMessage(data.message.message, data.type);
+      this.addResponseMessage(data.message.message);
     },
     agentChat(data) {
       // Files sent from Ava to Web Chat
@@ -416,7 +416,7 @@ export default {
       this.filesSelected = [];
 
       this.agentMode = data.isOpen || false;
-      this.addResponseMessage(data.message.message, data.type);
+      this.addResponseMessage(data.data.message.message);
 
       data.files.forEach(file => {
         var arrayBufferView = new Uint8Array( file.buffer );
