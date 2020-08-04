@@ -76,12 +76,16 @@
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
-    <Menu
+    <Menus
       class="menu"
+      @onMenuSelected="onMenuSelected"
+    />
+    <Suggestion v-show="menuSelected==1"
       :dsi="user.id"
       :conversationId="conversationId"
       :feedbackEmail="feedbackEmail"
       :saveFeedback="saveFeedback"
+      @onClose="onSuggestionClose"
     />
     <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
     <FileContainer id="fileContainer" :fileList="filesSelected" />
@@ -98,7 +102,8 @@ import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
 import Microphone from "~/components/Microphone.vue";
-import Menu from "~/components/Menu.vue";
+import Menus from "~/components/Menus.vue";
+import Suggestion from "~/components/Suggestion.vue";
 import Files from "~/components/Files.vue";
 import FileContainer from "~/components/FileContainer.vue";
 // import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
@@ -111,7 +116,8 @@ export default {
   components: {
     Carousel,
     Microphone,
-    Menu,
+    Menus,
+    Suggestion,
     Files,
     FileContainer
   },
@@ -197,6 +203,7 @@ export default {
       filesSelected: [],
       canUpload: false,
       agentMode: false,
+      menuSelected: 0,
     };
   },
   head() {
@@ -671,6 +678,15 @@ export default {
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
       this.canUpload = this.filesSelected.length > 0 ? true : false;
+    },
+    onMenuSelected(key) {
+      this.menuSelected = key;
+      console.log(`menuSelected=${this.menuSelected}`);
+    },
+    onSuggestionClose() {
+      console.log('onSuggestionClose');
+      console.log('this.menuSelected:', this.menuSelected);
+      this.menuSelected = 0;
     },
     async postFiles(options, files) {
       let formData = new FormData();
