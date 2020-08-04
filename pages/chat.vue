@@ -298,7 +298,6 @@ export default {
 
     sendIcon.addEventListener("click", function() {
       if (parent.agentMode && parent.canUpload) {
-        parent.canUpload = false;
         if (document.querySelector(".sc-user-input--text").innerText.length === 0) {
           parent.onMessageWasSent({
             type: "text",
@@ -481,6 +480,9 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
+      console.log('agentMode=', this.agentMode);
+      console.log('filesSelected.length=', this.filesSelected.length);
+      console.log('canUpload=', this.canUpload);
       if (this.agentMode && this.filesSelected.length > 0 && this.canUpload) {
         console.log("Upload Files");
         this.canUpload = false;
