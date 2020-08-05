@@ -415,19 +415,24 @@ export default {
       this.filesSelected = [];
 
       this.agentMode = data.data.isOpen || false;
-      this.addResponseMessage(data.data.message.message);
+      this.addResponseMessage(data.data.message.message, "text");
+      var downloadContainer = document.createElement("div");
 
       data.files.forEach(file => {
         var arrayBufferView = new Uint8Array( file.buffer );
-        var blob = new Blob( [ arrayBufferView ], { type: data.files[0] } );
+        var blob = new Blob( [ arrayBufferView ], { type: file.mimetype } );
         var a = document.createElement("a"),
         url = URL.createObjectURL(blob);
         a.href = url;
         a.download = file.originalname;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        a.innerText = file.originalname;
+
+        let div = document.createElement("div");
+        div.appendChild(a);
+        downloadContainer.appendChild(div);
       });
+
+      this.addResponseMessage(downloadContainer.outerHTML, "text");
     }
   },
   methods: {
