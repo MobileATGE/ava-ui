@@ -76,8 +76,14 @@
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
-    <Menu class="menu" :dsi="user.id" :conversationId="conversationId" :feedbackEmail="feedbackEmail" :saveFeedback="saveFeedback" />
-    <Files class="files" @onFilesChange="onFilesChange" />
+    <Menu
+      class="menu"
+      :dsi="user.id"
+      :conversationId="conversationId"
+      :feedbackEmail="feedbackEmail"
+      :saveFeedback="saveFeedback"
+    />
+    <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
     <FileContainer id="fileContainer" :fileList="filesSelected" />
   </div>
 </template>
@@ -96,13 +102,18 @@ import Menu from "~/components/Menu.vue";
 import Files from "~/components/Files.vue";
 import FileContainer from "~/components/FileContainer.vue";
 // import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
+import FormData from "form-data";
 
 Vue.use(Chat);
 
 export default {
   name: "app",
   components: {
-    Carousel, Microphone, Menu, Files, FileContainer
+    Carousel,
+    Microphone,
+    Menu,
+    Files,
+    FileContainer
   },
   data() {
     return {
@@ -184,6 +195,8 @@ export default {
       isUserActive: false,
       hasGreeting: false,
       filesSelected: [],
+      canUpload: false,
+      agentMode: false,
     };
   },
   head() {
@@ -196,8 +209,11 @@ export default {
     messageList: async function(list) {
       if (list.length == 0) return;
       const lastItem = list[list.length - 1];
-      const ret = await this.$axios.$post(`${this.host}/api/redis/history/${this.user.id}`, lastItem);
-    },
+      const ret = await this.$axios.$post(
+        `${this.host}/api/redis/history/${this.user.id}`,
+        lastItem
+      );
+    }
   },
   async mounted() {
     this.user = this.$route.query;
@@ -205,7 +221,9 @@ export default {
     // If id is null, get if from database.
     if (!this.user.id || this.user.id === "null") {
       this.user.id = "";
-      const data = await this.$axios.$get(`${this.host}/api/canvas/login_id/${this.user.canvas_id}`);
+      const data = await this.$axios.$get(
+        `${this.host}/api/canvas/login_id/${this.user.canvas_id}`
+      );
       this.user.id = data.login_id || "";
     }
 
@@ -261,21 +279,34 @@ export default {
     // p.insertBefore( s, p.lastChild);
 
     // Set Files position
-    let p = document.querySelector('.sc-user-input--buttons');
-    let files = document.querySelector('.files');
-    p.insertBefore( files, p.lastChild );
+    let p = document.querySelector(".sc-user-input--buttons");
+    let files = document.querySelector(".files");
+    p.insertBefore(files, p.lastChild);
 
     // Set Menu position
-    let header = document.querySelector('.sc-header');
-    let menu = document.querySelector('.menu');
+    let header = document.querySelector(".sc-header");
+    let menu = document.querySelector(".menu");
     header.append(menu);
 
     // Set FileContainer position
-    let fileContainer = document.querySelector('#fileContainer');
-    let userInput = document.querySelector('.sc-user-input');
+    let fileContainer = document.querySelector("#fileContainer");
+    let userInput = document.querySelector(".sc-user-input");
     let userInputParent = userInput.parentNode;
-    userInputParent.insertBefore( fileContainer, userInput );
+    userInputParent.insertBefore(fileContainer, userInput);
 
+    const sendIcon = document.querySelector(".sc-user-input--buttons").lastChild;
+
+    sendIcon.addEventListener("click", function() {
+      if (parent.agentMode && parent.canUpload) {
+        if (document.querySelector(".sc-user-input--text").innerText.length === 0) {
+          parent.onMessageWasSent({
+            type: "text",
+            author: "me",
+            data: { text: 'Upload files',  }
+          });
+        }
+      }
+    });
   },
   updated() {
     let parent = this;
@@ -322,6 +353,7 @@ export default {
     },
     normal(data) {
       console.log("Normal response: ", data);
+      this.agentMode = data.isOpen || false;
       this.showTypingIndicator = "";
       this.filesSelected = [];
       this.socketMessage = data;
@@ -340,6 +372,9 @@ export default {
           "Help!",
           "Talk to an agent!"
         ]);
+      } else {
+        this.agentMode = true;
+        return;
       }
 
       if (data.html && data.html.includes("carousel")) {
@@ -357,7 +392,7 @@ export default {
       }
     },
     feedback(data) {
-      console.log('Feedback response: ', data);
+      console.log("Feedback response: ", data);
     },
     serverError(data) {
       console.log("Error response received: ", data);
@@ -370,11 +405,34 @@ export default {
     },
     agentStart(data) {
       console.log("Agent start: ", data);
-      this.addResponseMessage(data.message.message, data.type);
+      this.agentMode = data.isOpen || false;
+      this.addResponseMessage(data.message.message);
     },
-    fromAgent(data) {
-      console.log("From agent: ", data);
-      this.addResponseMessage("From agent", data.type);
+    agentChat(data) {
+      // Files sent from Ava to Web Chat
+      console.log("Got emit agentChat: ", data);
+      this.showTypingIndicator = "";
+      this.filesSelected = [];
+
+      this.agentMode = data.data.isOpen || false;
+      this.addResponseMessage(data.data.message.message, "text");
+      var downloadContainer = document.createElement("div");
+
+      data.files.forEach(file => {
+        var arrayBufferView = new Uint8Array( file.buffer );
+        var blob = new Blob( [ arrayBufferView ], { type: file.mimetype } );
+        var a = document.createElement("a"),
+        url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = file.originalname;
+        a.innerText = file.originalname;
+
+        let div = document.createElement("div");
+        div.appendChild(a);
+        downloadContainer.appendChild(div);
+      });
+
+      this.addResponseMessage(downloadContainer.outerHTML, "text");
     }
   },
   methods: {
@@ -418,7 +476,7 @@ export default {
       });
     },
     onMessageWasSent(message) {
-      console.log('onMessageWasSent: ', message);
+      console.log("onMessageWasSent: ", message);
       this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
         hour: "numeric",
@@ -427,21 +485,26 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      if (this.filesSelected) {
+      console.log('agentMode=', this.agentMode);
+      console.log('filesSelected.length=', this.filesSelected.length);
+      console.log('canUpload=', this.canUpload);
+      if (this.agentMode && this.filesSelected.length > 0 && this.canUpload) {
+        console.log("Upload Files");
+        this.canUpload = false;
         this.uploadFiles(message, this.filesSelected);
-      } 
-      else {
+        // this.uploadFilesSocket(message, this.filesSelected);
+      } else {
         this.avaNormal(message);
       }
       this.messageList.push(message);
     },
     avaReopen() {
       if (this.hasGreeting && !this.isUserActive) {
-        console.log('User is inactive. Skip reopen');
+        console.log("User is inactive. Skip reopen");
         return;
       }
 
-      console.log('avaReopen user id=', this.user.id);
+      console.log("avaReopen user id=", this.user.id);
       if (!this.user.id || this.user.id == "null") {
         this.avaReopenSkipped = true;
         return;
@@ -482,27 +545,27 @@ export default {
         },
         message: value || ""
       };
-      console.log("Send: ". options);
+      console.log("Send: ", options);
 
       this.$socket.client.emit("normal", options);
     },
-    uploadFiles(message, files) {
+    uploadFilesSocket(message, files) {
       let promises = [];
       for (let file of files) {
         let filePromise = new Promise(resolve => {
           let reader = new FileReader();
           reader.readAsArrayBuffer(file);
-          reader.onload = () => resolve(
-            { 
-              name: file.name, 
-              type: file.type, 
-              size: file.size, 
-              data: reader.result 
-            }
-          );
+          reader.onload = () =>
+            resolve({
+              name: file.name,
+              type: file.type,
+              size: file.size,
+              data: reader.result
+            });
         });
         promises.push(filePromise);
       }
+      let parent = this;
       Promise.all(promises).then(fileContents => {
         let value = message.data.value || message.data.text || "";
         let options = {
@@ -522,8 +585,26 @@ export default {
         this.$socket.client.emit("fileupload", options);
       });
     },
+    uploadFiles(message, files) {
+      let value = message.data.value || message.data.text || "";
+      let options = {
+        conversationId: this.conversationId,
+        source: "canvas",
+        from: {
+          id: this.user.id,
+          name: this.user.name,
+          company: "ATGE",
+          employee_type: "stu",
+          department: "CU",
+          email_address: this.user.email
+        },
+        message: value
+      };
+
+      this.postFiles(options, files);
+    },
     async addResponseMessage(message, type, suggestions, carouselItems) {
-      if (type !== 'carousel' && (!message || message.trim().length == 0)) {
+      if (type !== "carousel" && (!message || message.trim().length == 0)) {
         return;
       }
       this.messageList.push({
@@ -582,16 +663,41 @@ export default {
       }
     },
     async loadChatHistory() {
-      const chatList = await this.$axios.$get(`${this.host}/api/redis/history/${this.user.id}`);
+      const chatList = await this.$axios.$get(
+        `${this.host}/api/redis/history/${this.user.id}`
+      );
       chatList.forEach(chat => {
         this.messageList.push(JSON.parse(chat));
-      })
+      });
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
     },
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
+      this.canUpload = this.filesSelected.length > 0 ? true : false;
+    },
+    async postFiles(options, files) {
+      let formData = new FormData();
+      files.forEach((file, index) => {
+        formData.append(`uploads`, file);
+      });
+      formData.append("data", JSON.stringify(options));
+
+      const backend = await this.$axios.$get(`${this.host}/api/backend`);
+      const data = await this.$axios.$post(
+        `${backend.url}/api/v1/ava/upload`,
+        formData,
+        {
+          headers: {
+            authorization: backend.authorization,
+            dsi: backend.dsi
+          }
+        }
+      );
+
+      console.log('data:', data);
+      this.addResponseMessage(data.message, "text");
     }
   }
 };
