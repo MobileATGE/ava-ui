@@ -1,12 +1,20 @@
 import express from "express";
 import bodyParser from "body-parser";
+import multer from 'multer';
 import redis from "../redis-client";
 import speechHelper from "../speech_helper";
 import canvasHelper from "../canvas_helper";
+const request = require('request');
 
 const MAX_HISTORY_SIZE = 50;
 
+const BACKEND_API_TOKEN = process.env.BACKEND_API_TOKEN;
+const BACKEND_API_DSI = process.env.BACKEND_API_DSI;
+const BACKEND_API_URL = process.env.BACKEND_API_URL;
+
+const upload = multer();
 const app = express();
+
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -60,6 +68,14 @@ app.get("/canvas/login_id/:canvas_id", async (req, res) => {
   const canvas_id = req.params.canvas_id;
   const data = await canvasHelper.getLoginId(canvas_id);
   res.send(data);
+});
+
+app.get("/backend", (req, res) => {
+  res.json({
+    authorization: BACKEND_API_TOKEN,
+    dsi: BACKEND_API_DSI,
+    url: BACKEND_API_URL
+  });
 });
 
 export const path = "/api";
