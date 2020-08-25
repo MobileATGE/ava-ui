@@ -21,19 +21,15 @@
           <i class="el-icon-bell"></i>
           <span>Notification preferences</span>
         </el-menu-item>
-        <el-menu-item index="3">
-          <i class="el-icon-setting"></i>
-          <span>Update method of contact</span>
-        </el-menu-item>
       </el-menu>
       <el-button
         class="menuContainer"
         slot="reference"
-        @click="visible = !visible"
+        @click="switchVisibility"
       >
         <img
           class="menuIcon"
-          v-bind:src="visible ? '/cross.png' : '/bars.png'"
+          v-bind:src="isOpen ? '/cross.png' : '/bars.png'"
         />
       </el-button>
     </el-popover>
@@ -41,14 +37,27 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
+
 export default {
   data() {
     return {
-      visible: false
+      visible: false,
+      key: 0
     };
   },
+  computed: {
+    ...mapState('menu', ['isOpen'])
+  },
   methods: {
+    ...mapActions('menu', ['showMenu']),
+    switchVisibility() {
+      this.visible = !this.visible;
+      this.showMenu(this.visible)
+    },
     handleSelect(key, keyPath) {
+      this.key = key;
+      this.visible = key == 0;
       this.$emit("onMenuSelected", key);
     }
   }

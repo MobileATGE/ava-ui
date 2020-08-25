@@ -87,11 +87,19 @@
       :saveFeedback="saveFeedback"
       @onClose="onSuggestionClose"
     />
+    <Preferences v-show="menuSelected==2"
+      :dsi="user.id"
+      :conversationId="conversationId"
+      :feedbackEmail="feedbackEmail"
+      :phone="phone"
+      @onClose="onSuggestionClose"
+    />
     <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
     <FileContainer id="fileContainer" :fileList="filesSelected" />
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex';
 import Vue from "vue";
 import Chat from "vue-beautiful-chat";
 import AvaIcon from "../static/ava-icon.png";
@@ -104,6 +112,7 @@ import Carousel from "~/components/Carousel.vue";
 import Microphone from "~/components/Microphone.vue";
 import Menus from "~/components/Menus.vue";
 import Suggestion from "~/components/Suggestion.vue";
+import Preferences from "~/components/Preferences.vue";
 import Files from "~/components/Files.vue";
 import FileContainer from "~/components/FileContainer.vue";
 // import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
@@ -118,6 +127,7 @@ export default {
     Microphone,
     Menus,
     Suggestion,
+    Preferences,
     Files,
     FileContainer
   },
@@ -198,6 +208,7 @@ export default {
       avaReopenSkipped: false,
       socketReopenCalled: false,
       feedbackEmail: undefined,
+      phone: "123-456-7890",
       isUserActive: false,
       hasGreeting: false,
       filesSelected: [],
@@ -438,6 +449,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('menu', ['showMenu']),
     rate(rating) {
       this.onMessageWasSent({
         type: "text",
@@ -684,9 +696,9 @@ export default {
       console.log(`menuSelected=${this.menuSelected}`);
     },
     onSuggestionClose() {
-      console.log('onSuggestionClose');
       console.log('this.menuSelected:', this.menuSelected);
       this.menuSelected = 0;
+      this.showMenu(false);
     },
     async postFiles(options, files) {
       let formData = new FormData();
