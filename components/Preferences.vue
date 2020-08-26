@@ -127,7 +127,7 @@ export default {
 .preferences table th,
 .preferences table td {
   padding: 0.5em 1em;
-  height: 4em;
+  height: 3em;
   text-align: left;
   width: 25%;
 }
