@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div class="suggestion">
     <el-dialog
-      class="suggestion"
       title="Make a suggestion"
+      width="80%"
       :visible.sync="dialogFormVisible"
       v-bind:modal="false"
       :before-close="beforeClose"
@@ -139,25 +139,16 @@ export default {
 };
 </script>
 <style>
-.menuContainer {
-  padding: 10px;
-  vertical-align: middle;
-}
-.menuContainer img {
-  width: 36px;
-  height: 36px;
-  align-self: center;
-}
-.el-dialog__title {
+.suggestion .el-dialog__title {
   font-size: 1em;
   font-weight: bold;
   color: #013a81;
 }
-.el-dialog {
+.suggestion .el-dialog {
   background-color:#f6f6f6 !important;
   border: solid 1px;
 }
-.el-button--primary {
+.suggestion .el-button--primary {
   background-color:#013A81 !important;
 }
 </style>

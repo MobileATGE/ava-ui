@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="menus">
     <el-popover
       placement="bottom"
       width="300"
@@ -64,26 +64,26 @@ export default {
 };
 </script>
 <style>
-.el-popover {
+.menus .el-popover {
   padding: 0;
 }
-.el-popper .popper__arrow::after {
+.menus .el-popper .popper__arrow::after {
   content: '';
   border-width: 0;
 }
-.menuContainer {
+.menus .menuContainer {
   background-color: transparent;
   border: 0;
   padding: 10px;
   vertical-align: middle;
 }
-.menuContainer:focus {
+.menus .menuContainer:focus {
   background-color: transparent;
 }
-.menuContainer:not(:focus) {
+.menus .menuContainer:not(:focus) {
   background-color: transparent;
 }
-.menuContainer .menuIcon {
+.menus .menuContainer .menuIcon {
   width: 36px;
   height: 36px;
   align-self: center;

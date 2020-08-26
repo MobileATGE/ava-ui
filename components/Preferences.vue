@@ -1,42 +1,90 @@
 <template>
-  <el-dialog
-      class="suggestion"
+  <div class="preferences">
+    <el-dialog
       title="Your current information for notifications is below:"
+      width="80%"
       :visible.sync="dialogVisible"
       v-bind:modal="false"
       :before-close="beforeClose"
-  >
-    <el-form>
-      <el-row>
-        Email: {{ feedbackEmail }}
-      </el-row>
-      <el-row>
-        Phone: {{ phone }}.
-      </el-row>
-    </el-form>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="submit('formName')">Confirm</el-button>
-    </span>
-  </el-dialog>
+    >
+      <el-form>
+        <el-row>
+          <el-col :span="12">
+            <el-row> Email: {{ feedbackEmail }} </el-row>
+            <br />
+            <el-row> Phone: {{ phone }} </el-row>
+          </el-col>
+          <!-- <el-col :span="12">
+            <el-row class="right">
+              <el-button type="primary" @click="submit('formName')"
+                >Click here to change your reference</el-button
+              >
+            </el-row>
+          </el-col> -->
+        </el-row>
+        <el-row>
+          <br />
+          <table>
+            <thead>
+              <tr>
+                <th>Notification</th>
+                <th>When</th>
+                <th>Text Notification</th>
+                <th>Email Notification</th>
+              </tr>
+            </thead>
+            <tr>
+              <td>Course Announcement</td>
+              <td>Immediately</td>
+              <td><input type="checkbox" /></td>
+              <td><input type="checkbox" /></td>
+            </tr>
+            <tr class="stripe">
+              <td>Assignment</td>
+              <td>Bi-Weekly:<br />Wednesday/Saturday</td>
+              <td><input type="checkbox" /></td>
+              <td><input type="checkbox" /></td>
+            </tr>
+            <tr>
+              <td>Discussions</td>
+              <td>Bi-Weekly:<br />Wednesday/Saturday</td>
+              <td><input type="checkbox" /></td>
+              <td><input type="checkbox" /></td>
+            </tr>
+          </table>
+        </el-row>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submit('formName')">Update</el-button>
+      </span>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 export default {
-  props: ['dsi', 'conversationId', 'feedbackEmail', 'phone'],
+  props: ["dsi", "conversationId", "feedbackEmail", "phone"],
   data() {
     return {
       dialogVisible: true,
-      formLabelWidth: "120px",
+      formLabelWidth: "120px"
     };
   },
   mounted() {
-    console.log('this.dialogVisible:', this.dialogVisible);
+    console.log("this.dialogVisible:", this.dialogVisible);
   },
   methods: {
-    submit() {
+    tableRowClassName({ row, rowIndex }) {
+      console.log("rowIndex=", rowIndex);
+      console.log("rowIndex===1", rowIndex === 1);
+      if (rowIndex === 1) {
+        return "warning-row";
+      } else {
+        return "success-row";
+      }
     },
+    submit() {},
     beforeClose() {
-      console.log('beforeClose');
       this.reset();
     },
     reset() {
@@ -46,25 +94,51 @@ export default {
 };
 </script>
 <style>
-.menuContainer {
-  padding: 10px;
-  vertical-align: middle;
+.preferences .el-dialog {
+  background-color: #c5cae5 !important;
+  border: solid 1px rgba(0, 0, 0, 0.5);
 }
-.menuContainer img {
-  width: 36px;
-  height: 36px;
-  align-self: center;
+.preferences .el-dialog__header {
+  background-color: #345bb7;
 }
-.el-dialog__title {
+.preferences .el-dialog__title {
   font-size: 1em;
   font-weight: bold;
-  color: #013a81;
-}
-.el-dialog {
-  background-color:#f6f6f6 !important;
-  border: solid 1px;
+  color: white;
 }
 .el-button--primary {
-  background-color:#013A81 !important;
+  background-color: #013a81 !important;
+}
+.right {
+  float: right;
+}
+.preferences {
+  font-family: arial, sans-serif;
+  font-weight: 600;
+}
+.preferences table {
+  width: 100%;
+  background-color: rgba(256, 256, 256, 0.5);
+}
+.preferences table > thead {
+  color: white;
+  background-color: #345bb7;
+}
+.preferences table th,
+.preferences table td {
+  padding: 0.5em 1em;
+  height: 4em;
+  text-align: left;
+  width: 25%;
+}
+.preferences table td {
+  background-color: #d0d5e8;
+}
+.stripe td {
+  background-color: #e2e9f4 !important;
+}
+.preferences input[type="checkbox"] {
+  width: 2em;
+  height: 2em;
 }
 </style>
