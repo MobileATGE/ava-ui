@@ -88,4 +88,22 @@ export default {
   height: 36px;
   align-self: center;
 }
+.el-dialog {
+  background-color: #e2e9f4 !important;
+  border: solid 1px rgba(0, 0, 0, 0.5);
+}
+.el-dialog__header {
+  background-color: #345bb7;
+}
+.el-dialog__title {
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+}
+.el-button--primary {
+  background-color: #013a81 !important;
+}
+.el-dialog__headerbtn {
+  display: none;
+}
 </style>

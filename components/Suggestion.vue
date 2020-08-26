@@ -6,6 +6,7 @@
       :visible.sync="dialogFormVisible"
       v-bind:modal="false"
       :before-close="beforeClose"
+      show-close="false"
     >
       <el-form
         :model="suggestionForm"
@@ -139,16 +140,8 @@ export default {
 };
 </script>
 <style>
-.suggestion .el-dialog__title {
-  font-size: 1em;
-  font-weight: bold;
-  color: #013a81;
-}
-.suggestion .el-dialog {
-  background-color:#f6f6f6 !important;
-  border: solid 1px;
-}
-.suggestion .el-button--primary {
-  background-color:#013A81 !important;
+.suggestion {
+  font-family: arial, sans-serif;
+  font-weight: 600;
 }
 </style>

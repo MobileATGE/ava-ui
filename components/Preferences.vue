@@ -14,13 +14,12 @@
             <br />
             <el-row> Phone: {{ phone }} </el-row>
           </el-col>
-          <!-- <el-col :span="12">
-            <el-row class="right">
-              <el-button type="primary" @click="submit('formName')"
-                >Click here to change your reference</el-button
-              >
-            </el-row>
-          </el-col> -->
+        </el-row>
+        <el-row>
+          <br />
+          <div class="statement">
+            By selecting one of the following options, you are providing concent to receive notifocations for the selected topic:
+          </div>
         </el-row>
         <el-row>
           <br />
@@ -53,6 +52,13 @@
             </tr>
           </table>
         </el-row>
+        <el-row>
+          <br />
+          <div class="statement">
+            If you want to opt out of all notifications please leave all boxes blank
+          </div>
+        </el-row>
+
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submit('formName')">Update</el-button>
@@ -94,7 +100,7 @@ export default {
 };
 </script>
 <style>
-.preferences .el-dialog {
+/* .preferences .el-dialog {
   background-color: #c5cae5 !important;
   border: solid 1px rgba(0, 0, 0, 0.5);
 }
@@ -108,10 +114,8 @@ export default {
 }
 .el-button--primary {
   background-color: #013a81 !important;
-}
-.right {
-  float: right;
-}
+} */
+
 .preferences {
   font-family: arial, sans-serif;
   font-weight: 600;
@@ -140,5 +144,10 @@ export default {
 .preferences input[type="checkbox"] {
   width: 2em;
   height: 2em;
+}
+.statement {
+  padding: 0.5em 1em;
+  border: 1px solid black;
+  background-color: white;
 }
 </style>
