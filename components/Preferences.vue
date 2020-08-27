@@ -2,11 +2,11 @@
   <div class="preferences">
     <el-dialog
       title="Your current information for notifications is below:"
-      width="80%"
+      width="90%"
       :visible.sync="dialogVisible"
       v-bind:modal="false"
       :before-close="beforeClose"
-      :show-close=false
+      :show-close="false"
     >
       <el-form>
         <el-row>
@@ -19,47 +19,50 @@
         <el-row>
           <br />
           <div class="statement">
-            By selecting one of the following options, you are providing consent to receive notifications for the selected topic:
+            By selecting one of the following options, you are providing consent
+            to receive notifications for the selected topic:
           </div>
         </el-row>
         <el-row>
           <br />
-          <table>
-            <thead>
+          <div style="width: 100%; overflow: auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>Notification</th>
+                  <th>When</th>
+                  <th>Text Notification</th>
+                  <th>Email Notification</th>
+                </tr>
+              </thead>
               <tr>
-                <th>Notification</th>
-                <th>When</th>
-                <th>Text Notification</th>
-                <th>Email Notification</th>
+                <td>Course Announcement</td>
+                <td>Immediately</td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
               </tr>
-            </thead>
-            <tr>
-              <td>Course Announcement</td>
-              <td>Immediately</td>
-              <td><input type="checkbox" /></td>
-              <td><input type="checkbox" /></td>
-            </tr>
-            <tr class="stripe">
-              <td>Assignment</td>
-              <td>Bi-Weekly:<br />Wednesday/Saturday</td>
-              <td><input type="checkbox" /></td>
-              <td><input type="checkbox" /></td>
-            </tr>
-            <tr>
-              <td>Discussions</td>
-              <td>Bi-Weekly:<br />Wednesday/Saturday</td>
-              <td><input type="checkbox" /></td>
-              <td><input type="checkbox" /></td>
-            </tr>
-          </table>
+              <tr class="stripe">
+                <td>Assignment</td>
+                <td>Bi-Weekly:<br />Wednesday/Saturday</td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+              </tr>
+              <tr>
+                <td>Discussions</td>
+                <td>Bi-Weekly:<br />Wednesday/Saturday</td>
+                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" /></td>
+              </tr>
+            </table>
+          </div>
         </el-row>
         <el-row>
           <br />
           <div class="statement">
-            If you want to opt out of all notifications please leave all boxes blank
+            If you want to opt out of all notifications please leave all boxes
+            blank
           </div>
         </el-row>
-
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submit('formName')">Update</el-button>
@@ -97,10 +100,10 @@ export default {
       this.reset();
     },
     openConfirmBox() {
-      this.$confirm('Preferences updated.', '', {
-        confirmButtonText: 'Close',
+      this.$confirm("Preferences updated.", "", {
+        confirmButtonText: "Close",
         showCancelButton: false,
-        type: 'success',
+        type: "success"
       }).then(() => {
         this.reset();
       });
@@ -145,7 +148,9 @@ export default {
   padding: 0.5em 1em;
   height: 3em;
   text-align: left;
-  width: 25%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .preferences table td {
   background-color: #d0d5e8;

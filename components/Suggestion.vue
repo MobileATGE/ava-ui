@@ -2,7 +2,7 @@
   <div class="suggestion">
     <el-dialog
       title="Make a suggestion"
-      width="80%"
+      width="90%"
       :visible.sync="dialogFormVisible"
       v-bind:modal="false"
       :before-close="beforeClose"
