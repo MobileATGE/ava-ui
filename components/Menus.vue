@@ -9,9 +9,9 @@
       <el-menu
         class="el-menu-vertical-demo"
         @select="handleSelect"
-        background-color="#545c64"
-        text-color="#fff"
-        active-text-color="#ffd04b"
+        background-color="#fff"
+        text-color="#000"
+        active-text-color="#000"
       >
         <el-menu-item index="1">
           <i class="el-icon-s-comment"></i>

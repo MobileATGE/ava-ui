@@ -9,7 +9,7 @@
     >
       <el-form>
         <el-row>
-          <el-col :span="12">
+          <el-col>
             <el-row> Email: {{ feedbackEmail }} </el-row>
             <br />
             <el-row> Phone: {{ phone }} </el-row>
@@ -89,9 +89,20 @@ export default {
         return "success-row";
       }
     },
-    submit() {},
+    submit() {
+      this.openConfirmBox();
+    },
     beforeClose() {
       this.reset();
+    },
+    openConfirmBox() {
+      this.$confirm('Preferences updated.', '', {
+        confirmButtonText: 'Close',
+        showCancelButton: false,
+        type: 'success',
+      }).then(() => {
+        this.reset();
+      });
     },
     reset() {
       this.$emit("onClose", 0);
