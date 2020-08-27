@@ -6,6 +6,7 @@
       :visible.sync="dialogVisible"
       v-bind:modal="false"
       :before-close="beforeClose"
+      :show-close=false
     >
       <el-form>
         <el-row>
@@ -18,7 +19,7 @@
         <el-row>
           <br />
           <div class="statement">
-            By selecting one of the following options, you are providing concent to receive notifocations for the selected topic:
+            By selecting one of the following options, you are providing consent to receive notifications for the selected topic:
           </div>
         </el-row>
         <el-row>

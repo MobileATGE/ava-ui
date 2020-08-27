@@ -6,7 +6,7 @@
       :visible.sync="dialogFormVisible"
       v-bind:modal="false"
       :before-close="beforeClose"
-      show-close="false"
+      :show-close=false
     >
       <el-form
         :model="suggestionForm"
@@ -95,9 +95,6 @@ export default {
       },
       formLabelWidth: "120px",
     };
-  },
-  mounted() {
-    console.log('this.dialogVisible:', this.dialogVisible);
   },
   methods: {
     submitForm(formName) {
