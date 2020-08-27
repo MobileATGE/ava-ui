@@ -390,6 +390,8 @@ export default {
           "Help!",
           "Talk to an agent!"
         ]);
+      } else if (data.type === "html") {
+        // do nothing
       } else {
         this.agentMode = true;
         return;
