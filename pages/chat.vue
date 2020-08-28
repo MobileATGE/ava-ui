@@ -379,10 +379,12 @@ export default {
       let length = messages.length;
 
       if (typeof messages[0] === "string") {
-        let newType = data.type;
+        let newType = null;
         messages.forEach((message, idx) => {
           if (data.type === "survey" && (idx + 1) < length) {
             newType = null;
+          } else {
+            newType = data.type;
           }
           this.addResponseMessage(message, newType, [
             "List my tickets",
