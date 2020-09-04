@@ -216,6 +216,7 @@ export default {
     }
   },
   async mounted() {
+    let skipGreeting = false;
     let savedId = localStorage.getItem('conversationId');
     if (!savedId) {
       localStorage.setItem('conversationId', this.conversationId);
@@ -224,6 +225,7 @@ export default {
       let lastTime = savedId.split('mobile')[1];
       if (currentTime - lastTime < 900000) {
         this.conversationId = savedId;
+        skipGreeting = true;
       } else {
         localStorage.setItem('conversationId', this.conversationId);
       }    
@@ -240,7 +242,7 @@ export default {
     }
 
     await this.loadChatHistory();
-    if (!this.socketReopenCalled) {
+    if (!this.socketReopenCalled && !skipGreeting) {
       this.avaReopen();
       this.avaReopenSkipped = false;
     }
@@ -384,6 +386,8 @@ export default {
           "Help!",
           "Talk to an agent!"
         ]);
+      } else if (data.type === "html") {
+        // do nothing
       } else {
         this.agentMode = true;
         return;
