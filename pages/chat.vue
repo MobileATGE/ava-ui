@@ -234,6 +234,18 @@ export default {
     }
   },
   async mounted() {
+    let savedId = localStorage.getItem('conversationId');
+    if (!savedId) {
+      localStorage.setItem('conversationId', this.conversationId);
+    } else {
+      let currentTime = new Date().getTime()
+      let lastTime = savedId.split('mobile')[1];
+      if (currentTime - lastTime < 900000) {
+        this.conversationId = savedId;
+      } else {
+        localStorage.setItem('conversationId', this.conversationId);
+      }    
+    }
     this.user = this.$route.query;
     let parent = this;
     // If id is null, get if from database.
