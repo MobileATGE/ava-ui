@@ -262,11 +262,9 @@ export default {
     await this.loadChatHistory();
     console.log('skipGreeting:', skipGreeting);
     console.log('socketReopenCalled:', this.socketReopenCalled);
-    if (!this.socketReopenCalled) {
-      if (!skipGreeting || this.messageList.length == 0) {
-        this.avaReopen();
-        this.avaReopenSkipped = false;
-      }
+    if (!this.socketReopenCalled && !skipGreeting) {
+      this.avaReopen();
+      this.avaReopenSkipped = false;
     }
     this.participants.push({
       id: "me",
