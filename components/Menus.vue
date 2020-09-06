@@ -17,10 +17,10 @@
           <i class="el-icon-s-comment"></i>
           <span>Make a suggestion</span>
         </el-menu-item>
-        <el-menu-item index="2">
+        <!-- <el-menu-item index="2">
           <i class="el-icon-bell"></i>
           <span>Notification preferences</span>
-        </el-menu-item>
+        </el-menu-item> -->
       </el-menu>
       <el-button
         class="menuContainer"

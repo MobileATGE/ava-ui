@@ -223,17 +223,18 @@ export default {
     };
   },
   created: () => {},
-  watch: {
-    messageList: async function(list) {
-      if (list.length == 0) return;
-      const lastItem = list[list.length - 1];
-      const ret = await this.$axios.$post(
-        `${this.host}/api/redis/history/${this.user.id}`,
-        lastItem
-      );
-    }
-  },
+  // watch: {
+  //   messageList: async function(list) {
+  //     if (list.length == 0 || !this.enableWatch) return;
+  //     const lastItem = list[list.length - 1];
+  //     const ret = await this.$axios.$post(
+  //       `${this.host}/api/redis/history/${this.user.id}`,
+  //       lastItem
+  //     );
+  //   }
+  // },
   async mounted() {
+    let skipGreeting = false;
     let savedId = localStorage.getItem('conversationId');
     if (!savedId) {
       localStorage.setItem('conversationId', this.conversationId);
@@ -242,6 +243,7 @@ export default {
       let lastTime = savedId.split('mobile')[1];
       if (currentTime - lastTime < 900000) {
         this.conversationId = savedId;
+        skipGreeting = true;
       } else {
         localStorage.setItem('conversationId', this.conversationId);
       }    
@@ -258,11 +260,13 @@ export default {
     }
 
     await this.loadChatHistory();
-    if (!this.socketReopenCalled) {
-      this.avaReopen();
-      this.avaReopenSkipped = false;
-    }
 
+    if (!this.socketReopenCalled) {
+      if (!skipGreeting || this.messageList.length == 0) {
+        this.avaReopen();
+        this.avaReopenSkipped = false;
+      }
+    }
     this.participants.push({
       id: "me",
       name: "me",
@@ -514,7 +518,7 @@ export default {
         element.style.borderColor = "black";
       });
     },
-    onMessageWasSent(message) {
+    async onMessageWasSent(message) {
       console.log("onMessageWasSent: ", message);
       this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
@@ -535,9 +539,10 @@ export default {
       } else {
         this.avaNormal(message);
       }
-      this.messageList.push(message);
+      await this.messagePush(message);
     },
     avaReopen() {
+      console.log('*** avaReopen ***');
       if (this.hasGreeting && !this.isUserActive) {
         console.log("User is inactive. Skip reopen");
         return;
@@ -646,7 +651,7 @@ export default {
       if (type !== "carousel" && (!message || message.trim().length == 0)) {
         return;
       }
-      this.messageList.push({
+      await this.messagePush({
         author: "support",
         type: "text",
         id: Math.random(),
@@ -705,8 +710,8 @@ export default {
       const chatList = await this.$axios.$get(
         `${this.host}/api/redis/history/${this.user.id}`
       );
-      chatList.forEach(chat => {
-        this.messageList.push(JSON.parse(chat));
+      chatList.forEach(async chat => {
+        await this.messageList.push(JSON.parse(chat));
       });
     },
     saveFeedback(data) {
@@ -746,6 +751,13 @@ export default {
 
       console.log('data:', data);
       this.addResponseMessage(data.message, "text");
+    },
+    async messagePush(data) {
+      this.messageList.push(data);
+      await this.$axios.$post(
+        `${this.host}/api/redis/history/${this.user.id}`,
+        data
+      );
     }
   }
 };
