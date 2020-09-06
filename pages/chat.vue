@@ -262,7 +262,9 @@ export default {
     await this.loadChatHistory();
     console.log('skipGreeting:', skipGreeting);
     console.log('socketReopenCalled:', this.socketReopenCalled);
+    console.log('!this.socketReopenCalled && !skipGreeting:', !this.socketReopenCalled && !skipGreeting);
     if (!this.socketReopenCalled && !skipGreeting) {
+      console.log('call avaReopen()');
       this.avaReopen();
       this.avaReopenSkipped = false;
     }
