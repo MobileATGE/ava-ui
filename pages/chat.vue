@@ -259,9 +259,7 @@ export default {
     }
 
     await this.loadChatHistory();
-    console.log('socketReopenCalled:', this.socketReopenCalled);
     if (!this.socketReopenCalled) {
-      console.log('call avaReopen()');
       this.avaReopen();
       this.avaReopenSkipped = false;
     }
@@ -540,7 +538,6 @@ export default {
       await this.messagePush(message);
     },
     avaReopen() {
-      console.log('*** avaReopen ***');
       if (this.hasGreeting && !this.isUserActive) {
         console.log("User is inactive. Skip reopen");
         return;
