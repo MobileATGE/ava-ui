@@ -234,7 +234,6 @@ export default {
   //   }
   // },
   async mounted() {
-    let skipGreeting = false;
     let savedId = localStorage.getItem('conversationId');
     if (!savedId) {
       localStorage.setItem('conversationId', this.conversationId);
@@ -243,7 +242,7 @@ export default {
       let lastTime = savedId.split('mobile')[1];
       if (currentTime - lastTime < 900000) {
         this.conversationId = savedId;
-        skipGreeting = true;
+        this.hasGreeting = true;
       } else {
         localStorage.setItem('conversationId', this.conversationId);
       }    
@@ -260,10 +259,8 @@ export default {
     }
 
     await this.loadChatHistory();
-    console.log('skipGreeting:', skipGreeting);
     console.log('socketReopenCalled:', this.socketReopenCalled);
-    console.log('!this.socketReopenCalled && !skipGreeting:', !this.socketReopenCalled && !skipGreeting);
-    if (!this.socketReopenCalled && !skipGreeting) {
+    if (!this.socketReopenCalled) {
       console.log('call avaReopen()');
       this.avaReopen();
       this.avaReopenSkipped = false;
