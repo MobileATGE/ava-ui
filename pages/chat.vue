@@ -234,9 +234,22 @@ export default {
   //   }
   // },
   async mounted() {
-    let savedId = localStorage.getItem('conversationId');
+    this.user = this.$route.query;
+    let parent = this;
+    // If id is null, get it from Canvas.
+    if (!this.user.id || this.user.id === "null") {
+      this.user.id = "";
+      const data = await this.$axios.$get(
+        `${this.host}/api/canvas/login_id/${this.user.canvas_id}`
+      );
+      this.user.id = data.login_id || "";
+    }
+
+    // Save conversation ID in browser for 15 minutes
+    let userId = this.user.id;
+    let savedId = localStorage.getItem(userId);
     if (!savedId) {
-      localStorage.setItem('conversationId', this.conversationId);
+      localStorage.setItem(userId, this.conversationId);
     } else {
       let currentTime = new Date().getTime()
       let lastTime = savedId.split('mobile')[1];
@@ -244,18 +257,8 @@ export default {
         this.conversationId = savedId;
         this.hasGreeting = true;
       } else {
-        localStorage.setItem('conversationId', this.conversationId);
+        localStorage.setItem(userId, this.conversationId);
       }    
-    }
-    this.user = this.$route.query;
-    let parent = this;
-    // If id is null, get if from database.
-    if (!this.user.id || this.user.id === "null") {
-      this.user.id = "";
-      const data = await this.$axios.$get(
-        `${this.host}/api/canvas/login_id/${this.user.canvas_id}`
-      );
-      this.user.id = data.login_id || "";
     }
 
     await this.loadChatHistory();
@@ -454,6 +457,10 @@ export default {
 
       this.agentMode = data.data.isOpen || false;
       this.addResponseMessage(data.data.message.message, "text");
+
+      console.log('data.files.length=', data.files.length);
+      if (data.files.length == 0) return;
+
       var downloadContainer = document.createElement("div");
 
       data.files.forEach(file => {
