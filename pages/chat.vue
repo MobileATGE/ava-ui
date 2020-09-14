@@ -512,8 +512,8 @@ export default {
 
       let elements = target.querySelectorAll(`img:nth-child(-n+${rating})`);
       let others = target.querySelectorAll(`img:nth-child(n+${rating + 1})`);
-      elements.forEach(element => element.setAttribute('src', 'star.png'));
-      others.forEach(element => element.setAttribute('src', 'starGray.png'));
+      elements.forEach(element => element.setAttribute('src', `${this.host}/star.png`));
+      others.forEach(element => element.setAttribute('src', `${this.host}/starGray.png`));
     },
     hoverStarOut() {
       let target = event.target.parentNode;
@@ -522,7 +522,7 @@ export default {
       let rating = target.getAttribute('number-of-star');
       if (Number(rating) > 0) return;
       let elements = target.querySelectorAll('img');
-      elements.forEach(element => element.setAttribute('src', 'starGray.png'));
+      elements.forEach(element => element.setAttribute('src', `${this.host}/starGray.png`));
     },
     sendValue(text, value) {
       this.onMessageWasSent({
