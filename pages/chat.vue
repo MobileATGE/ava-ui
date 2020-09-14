@@ -488,10 +488,10 @@ export default {
       let target = event.target.parentNode;
       if (target.getAttribute('history')) return;
 
-      let starBox = document.querySelector('.starBox');
       let starBoxId = target.getAttribute('star-id');      
       target.setAttribute('number-of-star', rating);
       target.setAttribute('history', true);
+      console.log('rate target:', target);
 
       await this.$axios.$post(
         `${this.host}/api/redis/star/${starBoxId}`,
