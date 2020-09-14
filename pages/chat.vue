@@ -76,18 +76,30 @@
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
-    <Menu
+    <Menus
       class="menu"
+      @onMenuSelected="onMenuSelected"
+    />
+    <Suggestion v-show="menuSelected==1"
       :dsi="user.id"
       :conversationId="conversationId"
       :feedbackEmail="feedbackEmail"
       :saveFeedback="saveFeedback"
+      @onClose="onSuggestionClose"
+    />
+    <Preferences v-show="menuSelected==2"
+      :dsi="user.id"
+      :conversationId="conversationId"
+      :feedbackEmail="feedbackEmail"
+      :phone="phone"
+      @onClose="onSuggestionClose"
     />
     <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
     <FileContainer id="fileContainer" :fileList="filesSelected" />
   </div>
 </template>
 <script>
+import { mapActions } from 'vuex';
 import Vue from "vue";
 import Chat from "vue-beautiful-chat";
 import AvaIcon from "../static/ava-icon.png";
@@ -98,7 +110,9 @@ import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
 import Microphone from "~/components/Microphone.vue";
-import Menu from "~/components/Menu.vue";
+import Menus from "~/components/Menus.vue";
+import Suggestion from "~/components/Suggestion.vue";
+import Preferences from "~/components/Preferences.vue";
 import Files from "~/components/Files.vue";
 import FileContainer from "~/components/FileContainer.vue";
 // import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
@@ -111,7 +125,9 @@ export default {
   components: {
     Carousel,
     Microphone,
-    Menu,
+    Menus,
+    Suggestion,
+    Preferences,
     Files,
     FileContainer
   },
@@ -192,11 +208,13 @@ export default {
       avaReopenSkipped: false,
       socketReopenCalled: false,
       feedbackEmail: undefined,
+      phone: "123-456-7890",
       isUserActive: false,
       hasGreeting: false,
       filesSelected: [],
       canUpload: false,
       agentMode: false,
+      menuSelected: 0,
     };
   },
   head() {
@@ -205,20 +223,20 @@ export default {
     };
   },
   created: () => {},
-  watch: {
-    messageList: async function(list) {
-      if (list.length == 0) return;
-      const lastItem = list[list.length - 1];
-      const ret = await this.$axios.$post(
-        `${this.host}/api/redis/history/${this.user.id}`,
-        lastItem
-      );
-    }
-  },
+  // watch: {
+  //   messageList: async function(list) {
+  //     if (list.length == 0 || !this.enableWatch) return;
+  //     const lastItem = list[list.length - 1];
+  //     const ret = await this.$axios.$post(
+  //       `${this.host}/api/redis/history/${this.user.id}`,
+  //       lastItem
+  //     );
+  //   }
+  // },
   async mounted() {
     this.user = this.$route.query;
     let parent = this;
-    // If id is null, get if from database.
+    // If id is null, get it from Canvas.
     if (!this.user.id || this.user.id === "null") {
       this.user.id = "";
       const data = await this.$axios.$get(
@@ -227,12 +245,27 @@ export default {
       this.user.id = data.login_id || "";
     }
 
+    // Save conversation ID in browser for 15 minutes
+    let userId = this.user.id;
+    let savedId = localStorage.getItem(userId);
+    if (!savedId) {
+      localStorage.setItem(userId, this.conversationId);
+    } else {
+      let currentTime = new Date().getTime()
+      let lastTime = savedId.split('mobile')[1];
+      if (currentTime - lastTime < 900000) {
+        this.conversationId = savedId;
+        this.hasGreeting = true;
+      } else {
+        localStorage.setItem(userId, this.conversationId);
+      }    
+    }
+
     await this.loadChatHistory();
     if (!this.socketReopenCalled) {
       this.avaReopen();
       this.avaReopenSkipped = false;
     }
-
     this.participants.push({
       id: "me",
       name: "me",
@@ -361,8 +394,14 @@ export default {
       let length = messages.length;
 
       if (typeof messages[0] === "string") {
-        messages.forEach(message => {
-          this.addResponseMessage(message, data.type, [
+        let newType = null;
+        messages.forEach((message, idx) => {
+          if (data.type === "survey" && (idx + 1) < length) {
+            newType = null;
+          } else {
+            newType = data.type;
+          }
+          this.addResponseMessage(message, newType, [
             "List my tickets",
             "Talk to an agent"
           ]);
@@ -372,6 +411,8 @@ export default {
           "Help!",
           "Talk to an agent!"
         ]);
+      } else if (data.type === "html") {
+        // do nothing
       } else {
         this.agentMode = true;
         return;
@@ -416,6 +457,10 @@ export default {
 
       this.agentMode = data.data.isOpen || false;
       this.addResponseMessage(data.data.message.message, "text");
+
+      console.log('data.files.length=', data.files.length);
+      if (data.files.length == 0) return;
+
       var downloadContainer = document.createElement("div");
 
       data.files.forEach(file => {
@@ -436,6 +481,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('menu', ['showMenu']),
     rate(rating) {
       this.onMessageWasSent({
         type: "text",
@@ -475,7 +521,7 @@ export default {
         element.style.borderColor = "black";
       });
     },
-    onMessageWasSent(message) {
+    async onMessageWasSent(message) {
       console.log("onMessageWasSent: ", message);
       this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
@@ -496,7 +542,7 @@ export default {
       } else {
         this.avaNormal(message);
       }
-      this.messageList.push(message);
+      await this.messagePush(message);
     },
     avaReopen() {
       if (this.hasGreeting && !this.isUserActive) {
@@ -607,7 +653,7 @@ export default {
       if (type !== "carousel" && (!message || message.trim().length == 0)) {
         return;
       }
-      this.messageList.push({
+      await this.messagePush({
         author: "support",
         type: "text",
         id: Math.random(),
@@ -666,8 +712,8 @@ export default {
       const chatList = await this.$axios.$get(
         `${this.host}/api/redis/history/${this.user.id}`
       );
-      chatList.forEach(chat => {
-        this.messageList.push(JSON.parse(chat));
+      chatList.forEach(async chat => {
+        await this.messageList.push(JSON.parse(chat));
       });
     },
     saveFeedback(data) {
@@ -676,6 +722,15 @@ export default {
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
       this.canUpload = this.filesSelected.length > 0 ? true : false;
+    },
+    onMenuSelected(key) {
+      this.menuSelected = key;
+      console.log(`menuSelected=${this.menuSelected}`);
+    },
+    onSuggestionClose() {
+      console.log('this.menuSelected:', this.menuSelected);
+      this.menuSelected = 0;
+      this.showMenu(false);
     },
     async postFiles(options, files) {
       let formData = new FormData();
@@ -698,6 +753,13 @@ export default {
 
       console.log('data:', data);
       this.addResponseMessage(data.message, "text");
+    },
+    async messagePush(data) {
+      this.messageList.push(data);
+      await this.$axios.$post(
+        `${this.host}/api/redis/history/${this.user.id}`,
+        data
+      );
     }
   }
 };
