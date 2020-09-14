@@ -46,11 +46,13 @@
             ></p>
             <div class="rating">
               <span>Not Satisfied</span>
-              <img src="/star.png" class="star" v-on:click="rate(1)" />
-              <img src="/star.png" class="star" v-on:click="rate(2)" />
-              <img src="/star.png" class="star" v-on:click="rate(3)" />
-              <img src="/star.png" class="star" v-on:click="rate(4)" />
-              <img src="/star.png" class="star" v-on:click="rate(5)" />
+              <span class="starBox" :star-id="scopedProps.message.id" :number-of-star="scopedProps.message.numberOfStar" :history="scopedProps.message.history">
+                <img :src="Number(scopedProps.message.numberOfStar) > 0 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(1)" @mouseover="hoverStar(1)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 1 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(2)" @mouseover="hoverStar(2)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 2 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(3)" @mouseover="hoverStar(3)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 3 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(4)" @mouseover="hoverStar(4)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 4 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(5)" @mouseover="hoverStar(5)" @mouseleave="hoverStarOut"/>
+              </span>
               <span>Satisfied</span>
             </div>
           </div>
@@ -482,12 +484,45 @@ export default {
   },
   methods: {
     ...mapActions('menu', ['showMenu']),
-    rate(rating) {
+    async rate(rating) {
+      let target = event.target.parentNode;
+      if (target.getAttribute('history')) return;
+
+      let starBox = document.querySelector('.starBox');
+      let starBoxId = target.getAttribute('star-id');      
+      target.setAttribute('number-of-star', rating);
+      target.setAttribute('history', true);
+
+      await this.$axios.$post(
+        `${this.host}/api/redis/star/${starBoxId}`,
+        {
+          "numberOfStar" : rating
+        }
+      );
+ 
       this.onMessageWasSent({
         type: "text",
         author: "me",
         data: { text: `My rating is ${rating} star${rating > 1 ? "s" : ""}` }
       });
+    },
+    hoverStar(rating) {
+      let target = event.target.parentNode;
+      if (target.getAttribute('history')) return;
+
+      let elements = target.querySelectorAll(`img:nth-child(-n+${rating})`);
+      let others = target.querySelectorAll(`img:nth-child(n+${rating + 1})`);
+      elements.forEach(element => element.setAttribute('src', 'star.png'));
+      others.forEach(element => element.setAttribute('src', 'starGray.png'));
+    },
+    hoverStarOut() {
+      let target = event.target.parentNode;
+      if (target.getAttribute('history')) return;
+
+      let rating = target.getAttribute('number-of-star');
+      if (Number(rating) > 0) return;
+      let elements = target.querySelectorAll('img');
+      elements.forEach(element => element.setAttribute('src', 'starGray.png'));
     },
     sendValue(text, value) {
       this.onMessageWasSent({
@@ -653,10 +688,10 @@ export default {
       if (type !== "carousel" && (!message || message.trim().length == 0)) {
         return;
       }
-      await this.messagePush({
+      let newData = {
         author: "support",
         type: "text",
-        id: Math.random(),
+        id: new Date().getTime(),
         data: {
           text: message,
           type: type,
@@ -670,7 +705,13 @@ export default {
         },
         suggestions,
         carouselItems
-      });
+      };
+
+      if (type === "survey") {
+        newData.numberOfStar = 0;
+      }
+
+      await this.messagePush(newData);
       // Disable TTS
       // if (SpeechSDKHelper.enabled && !message.startsWith('<div')) {
       //   SpeechSDKHelper.tts(message);
@@ -712,9 +753,17 @@ export default {
       const chatList = await this.$axios.$get(
         `${this.host}/api/redis/history/${this.user.id}`
       );
-      chatList.forEach(async chat => {
-        await this.messageList.push(JSON.parse(chat));
-      });
+      for (let i=0; i < chatList.length; i++) {
+        let chatObj = JSON.parse(chatList[i]);
+        if (chatObj.data && chatObj.data.type == 'survey') {
+          const numberOfStar = await this.$axios.$get(
+            `${this.host}/api/redis/star/${chatObj.id}`
+          );
+          chatObj.numberOfStar = numberOfStar;
+          chatObj.history = true;
+        }
+        this.messageList.push(chatObj);        
+      }
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
