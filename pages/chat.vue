@@ -460,7 +460,6 @@ export default {
       this.agentMode = data.data.isOpen || false;
       this.addResponseMessage(data.data.message.message, "text");
 
-      console.log('data.files.length=', data.files.length);
       if (data.files.length == 0) return;
 
       var downloadContainer = document.createElement("div");
@@ -491,7 +490,6 @@ export default {
       let starBoxId = target.getAttribute('star-id');      
       target.setAttribute('number-of-star', rating);
       target.setAttribute('history', true);
-      console.log('rate target:', target);
 
       await this.$axios.$post(
         `${this.host}/api/redis/star/${starBoxId}`,
@@ -709,6 +707,7 @@ export default {
 
       if (type === "survey") {
         newData.numberOfStar = 0;
+        newData.history = false;
       }
 
       await this.messagePush(newData);
