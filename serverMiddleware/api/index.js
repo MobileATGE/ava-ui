@@ -48,6 +48,19 @@ app.get("/redis/history/:username", async (req, res) => {
   res.send(data);
 });
 
+app.get("/redis/star/:id", async (req, res) => {
+  const id = req.params.id;
+  const numberOfStar = await redis.hget("star:lookup", id);
+  res.send(numberOfStar);
+});
+
+app.post("/redis/star/:id", async (req, res) => {
+  const id = req.params.id;
+  console.log('req.body.numberOfStar:', req.body.numberOfStar);
+  const data = await redis.hmset("star:lookup", id, req.body.numberOfStar);
+  res.send(data);
+});
+
 app.post("/redis/history/:username", async (req, res) => {
   const username = req.params.username;
   const body = JSON.stringify(req.body);
