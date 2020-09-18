@@ -38,20 +38,20 @@
               <tr>
                 <td>Course Announcement</td>
                 <td>Immediately</td>
-                <td><input type="checkbox" /></td>
-                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" v-model="preferences.CourseAnnouncement.Text" /></td>
+                <td><input type="checkbox" v-model="preferences.CourseAnnouncement.Email" /></td>
               </tr>
               <tr class="stripe">
                 <td>Assignment</td>
                 <td>Bi-Weekly:<br />Wednesday/Saturday</td>
-                <td><input type="checkbox" /></td>
-                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" v-model="preferences.Assignment.Text" /></td>
+                <td><input type="checkbox" v-model="preferences.Assignment.Email" /></td>
               </tr>
               <tr>
                 <td>Discussions</td>
                 <td>Bi-Weekly:<br />Wednesday/Saturday</td>
-                <td><input type="checkbox" /></td>
-                <td><input type="checkbox" /></td>
+                <td><input type="checkbox" v-model="preferences.Discussion.Text" /></td>
+                <td><input type="checkbox" v-model="preferences.Discussion.Email" /></td>
               </tr>
             </table>
           </div>
@@ -73,11 +73,25 @@
 
 <script>
 export default {
-  props: ["dsi", "conversationId", "feedbackEmail", "phone"],
+  props: ["dsi", "feedbackEmail", "phone", "savePreferences"],
   data() {
     return {
       dialogVisible: true,
-      formLabelWidth: "120px"
+      formLabelWidth: "120px",
+      preferences: {
+        "CourseAnnouncement": {
+          "Text": false,
+          "Email": false
+        },
+        "Assignment": {
+          "Text": false,
+          "Email": false
+        },
+        "Discussion": {
+          "Text": false,
+          "Email": false
+        }
+      }
     };
   },
   mounted() {
@@ -94,6 +108,14 @@ export default {
       }
     },
     submit() {
+      let data = {
+        "Dnumber": this.dsi,
+        "Notification": this.preferences
+      }
+      console.log('save data:', data);
+      this.savePreferences(data);
+      console.log('After serPreferences');
+
       this.openConfirmBox();
     },
     beforeClose() {

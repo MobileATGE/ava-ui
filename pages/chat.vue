@@ -94,6 +94,7 @@
       :conversationId="conversationId"
       :feedbackEmail="feedbackEmail"
       :phone="phone"
+      :savePreferences="savePreferences"
       @onClose="onSuggestionClose"
     />
     <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
@@ -437,11 +438,14 @@ export default {
     feedback(data) {
       console.log("Feedback response: ", data);
     },
+    preference(data) {
+      console.log("preference response: ", data);
+    },
     serverError(data) {
       console.log("Error response received: ", data);
       this.showTypingIndicator = "";
 
-      this.addResponseMessage("Server error: " + data, "text", [
+      this.addResponseMessage("Server error: " + JSON.stringify(data), "text", [
         "Help!",
         "Talk to an agent!"
       ]);
@@ -766,6 +770,10 @@ export default {
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
+    },
+    savePreferences(data) {
+      console.log('savePreferences data:', data);
+      this.$socket.client.emit("preference", data);
     },
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
