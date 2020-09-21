@@ -22,26 +22,7 @@ phases:
 # Include only the files required for your application to run.
 artifacts:
   files:
-    # - src/index.js
-    # - src/app.js
-    - .nuxt/**/*
-    - assets/**/*
-    - components/**/*
-    - dist/**/*
-    - environment/**/*
-    - layouts/**/*
-    - lib/**/*
-    - pages/**/*
-    - plugins/**/*
-    - server/**/*
-    - serverMiddleware/**/*
-    - services/**/*
-    - static/**/*
-    - store/**/*
-    - nuxt.config.js
-    - package.json
-    - Procfile
-    - node_modules/**/*
+    - '**/*'
 eb_codebuild_settings:
   CodeBuildServiceRole: CodeBuildServiceRole
   ComputeType: BUILD_GENERAL1_SMALL
