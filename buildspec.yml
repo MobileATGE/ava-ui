@@ -25,5 +25,7 @@ artifacts:
     # - src/index.js
     # - src/app.js
     - dist/**/*
+    - .nuxt/**/*
+    - lib/**/*
     - package.json
     - node_modules/**/*
