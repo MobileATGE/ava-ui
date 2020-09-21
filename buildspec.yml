@@ -22,8 +22,8 @@ phases:
 # Include only the files required for your application to run.
 artifacts:
   files:
-    - src/index.js
-    - src/app.js
+    # - src/index.js
+    # - src/app.js
     - dist/**/*
     - .nuxt/**/*
     - lib/**/*
