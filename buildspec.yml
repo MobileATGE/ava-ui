@@ -5,7 +5,7 @@ phases:
     runtime-versions:
       nodejs: 12
     commands:
-      - echo Installing Mocha...
+      # - echo Installing Mocha...
       # - npm install -g mocha
   pre_build:
     commands:
@@ -20,12 +20,12 @@ phases:
     commands:
       - echo Build completed on `date`
 # Include only the files required for your application to run.
-# artifacts:
-#   files:
-#     - src/index.js
-#     - src/app.js
-#     - dist/**/*
-#     - .nuxt/**/*
-#     - lib/**/*
-#     - package.json
-#     - node_modules/**/*
+artifacts:
+  files:
+    - src/index.js
+    - src/app.js
+    - dist/**/*
+    - .nuxt/**/*
+    - lib/**/*
+    - package.json
+    - node_modules/**/*
