@@ -38,7 +38,9 @@ artifacts:
     - services/**/*
     - static/**/*
     - store/**/*
-    # - package.json
+    - nuxt.config.js
+    - package.json
+    - Procfile
     - node_modules/**/*
 eb_codebuild_settings:
   CodeBuildServiceRole: CodeBuildServiceRole
