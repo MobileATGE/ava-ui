@@ -111,13 +111,11 @@ import OpenIcon from "../assets/logo-no-bg.svg";
 import FileIcon from "../assets/file.svg";
 import CloseIconSvg from "../assets/close.svg";
 import Carousel from "~/components/Carousel.vue";
-import Microphone from "~/components/Microphone.vue";
 import Menus from "~/components/Menus.vue";
 import Suggestion from "~/components/Suggestion.vue";
 import Preferences from "~/components/Preferences.vue";
 import Files from "~/components/Files.vue";
 import FileContainer from "~/components/FileContainer.vue";
-// import SpeechSDKHelper from  "~/lib/speech.sdk.helper";
 import FormData from "form-data";
 
 Vue.use(Chat);
@@ -126,7 +124,6 @@ export default {
   name: "app",
   components: {
     Carousel,
-    Microphone,
     Menus,
     Suggestion,
     Preferences,

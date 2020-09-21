@@ -12,6 +12,8 @@
     "dev": "PROFILE=dev nuxt --port 8080",
     "build": "nuxt build",
     "start": "nuxt start",
+    "build-dev": "PROFILE=dev nuxt build --port 8080",
+    "start-dev": "PROFILE=dev nuxt start --port 8080",
     "generate": "DEPLOY_ENV=GH_PAGES nuxt generate"
   },
   "dependencies": {

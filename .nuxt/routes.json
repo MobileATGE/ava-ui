@@ -3,14 +3,12 @@
     "name": "chat",
     "path": "/chat",
     "component": "/Users/d40373764/workspace-vue/ava-ui/pages/chat.vue",
-    "chunkName": "pages/chat",
-    "_name": "_8395d36a"
+    "chunkName": "pages/chat"
   },
   {
     "name": "index",
     "path": "/",
     "component": "/Users/d40373764/workspace-vue/ava-ui/pages/index.vue",
-    "chunkName": "pages/index",
-    "_name": "_7a5b716f"
+    "chunkName": "pages/index"
   }
 ]
