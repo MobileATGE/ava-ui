@@ -38,7 +38,7 @@ artifacts:
     - services/**/*
     - static/**/*
     - store/**/*
-    - package.json
+    # - package.json
     - node_modules/**/*
 eb_codebuild_settings:
   CodeBuildServiceRole: CodeBuildServiceRole
