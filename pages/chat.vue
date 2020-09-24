@@ -91,9 +91,9 @@
     />
     <Preferences v-show="menuSelected==2"
       :dsi="user.id"
-      :conversationId="conversationId"
       :feedbackEmail="feedbackEmail"
       :phone="phone"
+      :preferences="preferences"
       :savePreferences="savePreferences"
       @onClose="onSuggestionClose"
     />
@@ -210,8 +210,22 @@ export default {
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
       socketReopenCalled: false,
-      feedbackEmail: undefined,
-      phone: "123-456-7890",
+      feedbackEmail: '',
+      phone: '',
+      preferences: {
+        "CourseAnnouncement": {
+          "Text": false,
+          "Email": false
+        },
+        "Assignment": {
+          "Text": false,
+          "Email": false
+        },
+        "Discussion": {
+          "Text": false,
+          "Email": false
+        }
+      },
       isUserActive: false,
       hasGreeting: false,
       filesSelected: [],
@@ -385,6 +399,12 @@ export default {
       }
       if (data.email) {
         this.feedbackEmail = data.email;
+      }
+      if (data.phone) {
+        this.phone = data.phone;
+      }
+      if (data.Notification) {
+        this.preferences = data.Notification;
       }
     },
     normal(data) {

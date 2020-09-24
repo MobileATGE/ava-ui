@@ -73,25 +73,25 @@
 
 <script>
 export default {
-  props: ["dsi", "feedbackEmail", "phone", "savePreferences"],
+  props: ["dsi", "feedbackEmail", "phone", "preferences", "savePreferences"],
   data() {
     return {
       dialogVisible: true,
       formLabelWidth: "120px",
-      preferences: {
-        "CourseAnnouncement": {
-          "Text": false,
-          "Email": false
-        },
-        "Assignment": {
-          "Text": false,
-          "Email": false
-        },
-        "Discussion": {
-          "Text": false,
-          "Email": false
-        }
-      }
+      // preferences: {
+      //   "CourseAnnouncement": {
+      //     "Text": false,
+      //     "Email": false
+      //   },
+      //   "Assignment": {
+      //     "Text": false,
+      //     "Email": false
+      //   },
+      //   "Discussion": {
+      //     "Text": false,
+      //     "Email": false
+      //   }
+      // }
     };
   },
   mounted() {
