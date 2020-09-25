@@ -188,4 +188,7 @@ export default {
 .el-loading-spinner .el-loading-text, .el-loading-spinner i {
   color: #eee;
 }
+.el-loading-mask {
+  position: fixed;
+}
 </style>
