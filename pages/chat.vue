@@ -91,9 +91,10 @@
     />
     <Preferences v-show="menuSelected==2"
       :dsi="user.id"
-      :conversationId="conversationId"
       :feedbackEmail="feedbackEmail"
       :phone="phone"
+      :preferences="preferences"
+      :savePreferences="savePreferences"
       @onClose="onSuggestionClose"
     />
     <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
@@ -209,8 +210,22 @@ export default {
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
       socketReopenCalled: false,
-      feedbackEmail: undefined,
-      phone: "123-456-7890",
+      feedbackEmail: '',
+      phone: '',
+      preferences: {
+        "CourseAnnouncement": {
+          "Text": false,
+          "Email": false
+        },
+        "Assignment": {
+          "Text": false,
+          "Email": false
+        },
+        "Discussion": {
+          "Text": false,
+          "Email": false
+        }
+      },
       isUserActive: false,
       hasGreeting: false,
       filesSelected: [],
@@ -385,6 +400,25 @@ export default {
       if (data.email) {
         this.feedbackEmail = data.email;
       }
+      if (data.phone) {
+        this.phone = data.phone;
+      }
+      if (data.Notification) {
+        this.preferences = {
+          "CourseAnnouncement": {
+            "Text": data.Notification.CourseAnnouncement.Text === "true",
+            "Email": data.Notification.CourseAnnouncement.Email === "true"
+          },
+          "Assignment": {
+            "Text": data.Notification.Assignment.Text === "true",
+            "Email": data.Notification.Assignment.Email === "true"
+          },
+          "Discussion": {
+            "Text": data.Notification.Discussion.Text === "true",
+            "Email": data.Notification.Discussion.Email === "true"
+          }
+        }
+      }
     },
     normal(data) {
       console.log("Normal response: ", data);
@@ -437,11 +471,15 @@ export default {
     feedback(data) {
       console.log("Feedback response: ", data);
     },
+    preference(data) {
+      console.log("preference response: ", data);
+      this.$nuxt.$emit('preference_response', data)
+    },
     serverError(data) {
       console.log("Error response received: ", data);
       this.showTypingIndicator = "";
 
-      this.addResponseMessage("Server error: " + data, "text", [
+      this.addResponseMessage("Server error: " + JSON.stringify(data), "text", [
         "Help!",
         "Talk to an agent!"
       ]);
@@ -766,6 +804,10 @@ export default {
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
+    },
+    savePreferences(data) {
+      console.log('savePreferences data:', data);
+      this.$socket.client.emit("preference", data);
     },
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
