@@ -404,7 +404,20 @@ export default {
         this.phone = data.phone;
       }
       if (data.Notification) {
-        this.preferences = data.Notification;
+        this.preferences = {
+          "CourseAnnouncement": {
+            "Text": data.Notification.CourseAnnouncement.Text === "true",
+            "Email": data.Notification.CourseAnnouncement.Email === "true"
+          },
+          "Assignment": {
+            "Text": data.Notification.Assignment.Text === "true",
+            "Email": data.Notification.Assignment.Email === "true"
+          },
+          "Discussion": {
+            "Text": data.Notification.Discussion.Text === "true",
+            "Email": data.Notification.Discussion.Email === "true"
+          }
+        }
       }
     },
     normal(data) {
@@ -460,6 +473,7 @@ export default {
     },
     preference(data) {
       console.log("preference response: ", data);
+      this.$nuxt.$emit('preference_response', data)
     },
     serverError(data) {
       console.log("Error response received: ", data);
