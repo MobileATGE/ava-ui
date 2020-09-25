@@ -7,6 +7,10 @@
       v-bind:modal="false"
       :before-close="beforeClose"
       :show-close="false"
+      v-loading="loading"
+      element-loading-text="Updating..."
+      element-loading-spinner="el-icon-loading"
+      element-loading-background="rgba(0, 0, 0, 0.5)"
     >
       <el-form>
         <el-row>
@@ -73,34 +77,19 @@
 
 <script>
 export default {
-  props: ["dsi", "feedbackEmail", "phone", "savePreferences"],
+  props: ["dsi", "feedbackEmail", "phone", "preferences", "savePreferences"],
   data() {
     return {
       dialogVisible: true,
       formLabelWidth: "120px",
-      preferences: {
-        "CourseAnnouncement": {
-          "Text": false,
-          "Email": false
-        },
-        "Assignment": {
-          "Text": false,
-          "Email": false
-        },
-        "Discussion": {
-          "Text": false,
-          "Email": false
-        }
-      }
+      loading: false
     };
   },
   mounted() {
-    console.log("this.dialogVisible:", this.dialogVisible);
+    this.$nuxt.$on('preference_response', this.openConfirmBox);
   },
   methods: {
     tableRowClassName({ row, rowIndex }) {
-      console.log("rowIndex=", rowIndex);
-      console.log("rowIndex===1", rowIndex === 1);
       if (rowIndex === 1) {
         return "warning-row";
       } else {
@@ -108,27 +97,35 @@ export default {
       }
     },
     submit() {
+      this.loading = true;
       let data = {
         "Dnumber": this.dsi,
         "Notification": this.preferences
       }
-      console.log('save data:', data);
       this.savePreferences(data);
-      console.log('After serPreferences');
-
-      this.openConfirmBox();
     },
     beforeClose() {
       this.reset();
     },
-    openConfirmBox() {
-      this.$confirm("Preferences updated.", "", {
-        confirmButtonText: "Close",
-        showCancelButton: false,
-        type: "success"
-      }).then(() => {
-        this.reset();
-      });
+    openConfirmBox(data) {
+      this.loading = false;
+      if (data.status == 1) {
+        this.$confirm("Preferences updated.", "", {
+          confirmButtonText: "Close",
+          showCancelButton: false,
+          type: "success"
+        }).then(() => {
+          this.reset();
+        });
+      } else {
+        this.$confirm(data.message, "", {
+          confirmButtonText: "Close",
+          showCancelButton: false,
+          type: "warning"
+        }).then(() => {
+          this.reset();
+        });
+      }
     },
     reset() {
       this.$emit("onClose", 0);
@@ -137,22 +134,6 @@ export default {
 };
 </script>
 <style>
-/* .preferences .el-dialog {
-  background-color: #c5cae5 !important;
-  border: solid 1px rgba(0, 0, 0, 0.5);
-}
-.preferences .el-dialog__header {
-  background-color: #345bb7;
-}
-.preferences .el-dialog__title {
-  font-size: 1em;
-  font-weight: bold;
-  color: white;
-}
-.el-button--primary {
-  background-color: #013a81 !important;
-} */
-
 .preferences {
   font-family: arial, sans-serif;
   font-weight: 600;
@@ -188,5 +169,23 @@ export default {
   padding: 0.5em 1em;
   border: 1px solid black;
   background-color: white;
+}
+/* .el-icon-loading {
+  font-size: 2rem;
+} */
+.el-loading-spinner {
+  top: 50%;
+  left: 50%;
+  margin-left: -55px;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 4px;
+  width: auto;
+  text-align: center;
+  position: absolute;
+  font-size: 2rem;
+}
+.el-loading-spinner .el-loading-text, .el-loading-spinner i {
+  color: #eee;
 }
 </style>
