@@ -67,7 +67,7 @@ class AvaUI {
 
     // Build launch button
     let iconDiv = document.createElement('div');
-    iconDiv.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-prod.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
+    iconDiv.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-qa.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
     iconDiv.setAttribute('class', 'menu-item-icon-container');
 
     let textDiv = document.createElement('div');
@@ -87,11 +87,16 @@ class AvaUI {
     newLi.appendChild(g);
 
     let parent = document.querySelector('.ic-app-header__menu-list');
-    parent.insertBefore(newLi, document.querySelector('#global_nav_help_link').parentElement);
+    if (parent) {
+      parent.insertBefore(newLi, document.querySelector('#global_nav_help_link').parentElement);
+    }
 
     document.querySelector('#avaLauncher').addEventListener('click', function () {
         let left = screen.width - 620;
-        let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=680,top=0,left=' + left;
+        let height = (window.innerHeight + 54 >= screen.height) ? screen.height - 54 : window.innerHeight;
+        console.log('screen height:', screen.height);
+        console.log('window.innerHeight:', window.innerHeight);
+        let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=' + height + ',top=10,left=' + left;
         window.open(user.avaUrl, 'Ava', params);
     });
 
@@ -108,7 +113,7 @@ class AvaUI {
     
     let targetParent = newChild.querySelector('li > a > span > span');
     targetParent.querySelector('span:nth-child(2) > span').innerText = 'Ava';
-    targetParent.firstChild.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-prod.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
+    targetParent.firstChild.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-qa.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
     
     var helpSpan = document.evaluate('//span[text()="Help"]', p, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null );
     var helpLi = helpSpan.singleNodeValue.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
@@ -116,7 +121,9 @@ class AvaUI {
     
     newChild.querySelector('li > a').addEventListener('click', function () {
       let left = screen.width - 620;
-      let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=680,top=0,left=' + left;
+      let height = (window.innerHeight + 54 >= screen.height) ? screen.height - 54 : window.innerHeight;
+      console.log('window height:', height);
+      let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=' + height + ',top=10,left=' + left;
       window.open(user.avaUrl, 'Ava', params);
     });
   }
@@ -127,7 +134,10 @@ class AvaUI {
     new AvaUI();
   }
   
-  document.querySelector('#mobile-header > button').addEventListener('click', function () {
-    new AvaUI();
-  });
+  if (document.querySelector('#mobile-header > button')) {
+    document.querySelector('#mobile-header > button').addEventListener('click', function () {
+      new AvaUI();
+    });
+  }
+
 }) ();
