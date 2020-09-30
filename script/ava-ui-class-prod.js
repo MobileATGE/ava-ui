@@ -67,7 +67,7 @@ class AvaUI {
 
     // Build launch button
     let iconDiv = document.createElement('div');
-    iconDiv.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-qa.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
+    iconDiv.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-prod.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
     iconDiv.setAttribute('class', 'menu-item-icon-container');
 
     let textDiv = document.createElement('div');
@@ -113,7 +113,7 @@ class AvaUI {
     
     let targetParent = newChild.querySelector('li > a > span > span');
     targetParent.querySelector('span:nth-child(2) > span').innerText = 'Ava';
-    targetParent.firstChild.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-qa.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
+    targetParent.firstChild.innerHTML = '<img style="border-radius: 50%;" src="https://ava-ui-prod.herokuapp.com/ava-icon.png" class="sc-open-icon" width="30" height="30"/>';
     
     var helpSpan = document.evaluate('//span[text()="Help"]', p, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null );
     var helpLi = helpSpan.singleNodeValue.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement;
