@@ -299,6 +299,16 @@ export default {
       this.preferences = JSON.parse(cache);
     }
 
+    let email = localStorage.getItem(`${this.user.id}.email`);
+    if (email) {
+      this.feedbackEmail = email;
+    }
+
+    let phone = localStorage.getItem(`${this.user.id}.phone`);
+    if (phone) {
+      this.phone = phone;
+    }
+
     await this.loadChatHistory();
     if (!this.socketReopenCalled) {
       this.avaReopen();
@@ -420,9 +430,11 @@ export default {
       }
       if (data.email) {
         this.feedbackEmail = data.email;
+        localStorage.setItem(`${this.user.id}.email`, this.feedbackEmail);
       }
       if (data.phone) {
         this.phone = data.phone;
+        localStorage.setItem(`${this.user.id}.phone`, this.phone);
       }
       if (data.Notification) {
         this.preferences = {
@@ -439,6 +451,7 @@ export default {
             "Email": data.Notification.Discussion.Email === "true"
           }
         }
+        localStorage.setItem(`${this.user.id}.cache`, this.preferences);
       }
     },
     normal(data) {
