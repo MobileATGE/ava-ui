@@ -69,7 +69,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submit('formName')">Update</el-button>
+        <el-button @click="submit('formName')">Update</el-button>
       </span>
     </el-dialog>
   </div>
