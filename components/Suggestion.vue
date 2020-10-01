@@ -71,7 +71,7 @@
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm('suggestionForm')"
+        <el-button @click="submitForm('suggestionForm')"
           >Submit</el-button
         >
       </span>
