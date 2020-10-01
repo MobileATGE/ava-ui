@@ -75,6 +75,22 @@
             v-html="scopedProps.message.data.text"
           ></p>
         </div>
+
+        <!-- <div>
+          <div class='btn' value='Transfer to Agent'>Transfer to Agent</div>
+          <el-popover
+            placement="bottom-start"
+            title="ITSM Options"
+            trigger="hover">
+            <div>
+              <div class='btn btn-option' value='Create a ticket'>Create</div>
+              <div class='btn btn-option' value='Close a ticket'>Close</div>
+              <div class='btn btn-option' value='Reopen a ticket'>Reopen</div>
+            </div>
+            <el-button slot="reference">ITSM</el-button>
+          </el-popover>
+        </div> -->
+
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
@@ -276,6 +292,11 @@ export default {
       } else {
         localStorage.setItem(userId, this.conversationId);
       }    
+    }
+
+    let cache = localStorage.getItem(`${this.user.id}.cache`);
+    if (cache) {
+      this.preferences = JSON.parse(cache);
     }
 
     await this.loadChatHistory();
@@ -807,6 +828,7 @@ export default {
     },
     savePreferences(data) {
       console.log('savePreferences data:', data);
+      localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(data.Notification));
       this.$socket.client.emit("preference", data);
     },
     onFilesChange(files) {
@@ -850,7 +872,7 @@ export default {
         `${this.host}/api/redis/history/${this.user.id}`,
         data
       );
-    }
+    },
   }
 };
 </script>
@@ -956,6 +978,18 @@ export default {
   margin: auto;
 }
 
+.el-button {
+  color: rgb(74, 103, 199);
+  border: 1px solid rgba(74, 103, 199, 0.5);
+  vertical-align: middle;
+  padding: 8px;
+  margin: 0 5px;
+  margin-top: 5px;
+  font-weight: 400;
+  border-radius: 5px;
+  min-width: 80px;
+}
+
 .btn {
   display: inline-block;
   color: rgb(74, 103, 199);
@@ -973,6 +1007,11 @@ export default {
 
 .btn:active {
   box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
+}
+
+.btn-option {
+  color: white;
+  background-color: #6264A7;
 }
 
 .hide {
