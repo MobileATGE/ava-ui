@@ -824,9 +824,7 @@ export default {
       const chatList = await this.$axios.$get(
         `${this.host}/api/redis/history/${this.user.id}`
       );
-      console.log('chatList:', chatList);
       for (let i=0; i < chatList.length; i++) {
-        console.log('JSON.parse chatList:', chatList[i]);
         let chatObj = JSON.parse(chatList[i]);
         if (chatObj.data && chatObj.data.type == 'survey') {
           const numberOfStar = await this.$axios.$get(
@@ -842,7 +840,6 @@ export default {
       this.$socket.client.emit("feedback", data);
     },
     savePreferences(data) {
-      console.log('savePreferences data:', data);
       localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(data.Notification));
       this.$socket.client.emit("preference", data);
     },
@@ -852,10 +849,8 @@ export default {
     },
     onMenuSelected(key) {
       this.menuSelected = key;
-      console.log(`menuSelected=${this.menuSelected}`);
     },
     onSuggestionClose() {
-      console.log('this.menuSelected:', this.menuSelected);
       this.menuSelected = 0;
       this.showMenu(false);
     },
