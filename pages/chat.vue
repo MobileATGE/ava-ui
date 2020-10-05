@@ -824,7 +824,9 @@ export default {
       const chatList = await this.$axios.$get(
         `${this.host}/api/redis/history/${this.user.id}`
       );
+      console.log('chatList:', chatList);
       for (let i=0; i < chatList.length; i++) {
+        console.log('JSON.parse chatList:', chatList[i]);
         let chatObj = JSON.parse(chatList[i]);
         if (chatObj.data && chatObj.data.type == 'survey') {
           const numberOfStar = await this.$axios.$get(
