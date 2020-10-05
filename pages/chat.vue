@@ -451,7 +451,7 @@ export default {
             "Email": data.Notification.Discussion.Email === "true"
           }
         }
-        localStorage.setItem(`${this.user.id}.cache`, this.preferences);
+        localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(this.preferences));
       }
     },
     normal(data) {
