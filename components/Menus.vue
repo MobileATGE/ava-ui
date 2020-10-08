@@ -18,13 +18,13 @@
           <span>Make a suggestion</span>
         </el-menu-item>
 
-        <el-tooltip placement="bottom">
+        <!-- <el-tooltip placement="bottom">
           <div class="wrap" slot="content">Ava can send text or email notifications to let you know a course announcement has been posted and an upcoming assignment or discussion is due. You can opt into notifications below.</div>
           <el-menu-item index="2">
             <i class="el-icon-bell"></i>
             <span>Notification preferences</span>
           </el-menu-item>
-        </el-tooltip>
+        </el-tooltip> -->
       </el-menu>
       <el-button
         class="menuContainer"
