@@ -94,8 +94,6 @@ class AvaUI {
     document.querySelector('#avaLauncher').addEventListener('click', function () {
         let left = screen.width - 620;
         let height = (window.innerHeight + 54 >= screen.height) ? screen.height - 54 : window.innerHeight;
-        console.log('screen height:', screen.height);
-        console.log('window.innerHeight:', window.innerHeight);
         let params = 'toolbar=no,location=no,status=no,menubar=no,scrollbars=no,resizable=yes,width=600,height=' + height + ',top=10,left=' + left;
         window.open(user.avaUrl, 'Ava', params);
     });

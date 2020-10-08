@@ -56,7 +56,6 @@ app.get("/redis/star/:id", async (req, res) => {
 
 app.post("/redis/star/:id", async (req, res) => {
   const id = req.params.id;
-  console.log('req.body.numberOfStar:', req.body.numberOfStar);
   const data = await redis.hmset("star:lookup", id, req.body.numberOfStar);
   res.send(data);
 });

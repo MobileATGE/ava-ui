@@ -451,7 +451,7 @@ export default {
             "Email": data.Notification.Discussion.Email === "true"
           }
         }
-        localStorage.setItem(`${this.user.id}.cache`, this.preferences);
+        localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(this.preferences));
       }
     },
     normal(data) {
@@ -840,7 +840,6 @@ export default {
       this.$socket.client.emit("feedback", data);
     },
     savePreferences(data) {
-      console.log('savePreferences data:', data);
       localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(data.Notification));
       this.$socket.client.emit("preference", data);
     },
@@ -850,10 +849,8 @@ export default {
     },
     onMenuSelected(key) {
       this.menuSelected = key;
-      console.log(`menuSelected=${this.menuSelected}`);
     },
     onSuggestionClose() {
-      console.log('this.menuSelected:', this.menuSelected);
       this.menuSelected = 0;
       this.showMenu(false);
     },

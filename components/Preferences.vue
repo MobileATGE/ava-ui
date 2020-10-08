@@ -110,13 +110,47 @@ export default {
     openConfirmBox(data) {
       this.loading = false;
       if (data.status == 1) {
-        this.$confirm("Preferences updated.", "", {
-          confirmButtonText: "Close",
-          showCancelButton: false,
-          type: "success"
-        }).then(() => {
-          this.reset();
-        });
+        if (document.querySelector('.preferences input:checked')) {
+          let textTypes = [];
+          if (this.preferences.CourseAnnouncement.Text) { textTypes.push('course announcement'); }
+          if (this.preferences.Assignment.Text) { textTypes.push('assignment'); }
+          if (this.preferences.Discussion.Text) { textTypes.push('discussion'); }
+          if (textTypes.length > 1) {
+            textTypes[textTypes.length-1] = 'and ' + textTypes[textTypes.length-1];
+          }
+          
+          let emailTypes = [];
+          if (this.preferences.CourseAnnouncement.Email) { emailTypes.push('course announcement'); }
+          if (this.preferences.Assignment.Email) { emailTypes.push('assignment'); }
+          if (this.preferences.Discussion.Email) { emailTypes.push('discussion'); }
+          if (emailTypes.length > 1) {
+            emailTypes[emailTypes.length-1] = 'and ' + emailTypes[emailTypes.length-1];
+          }
+
+          let message = 'You have updated your notification preferences.';
+          if (textTypes.length > 0) {
+            message = message.concat(` You will now be notified with a text message at ${this.phone} for ${textTypes.join(', ')}.`);
+          }
+          if (emailTypes.length > 0) {
+            message = message.concat(` You will now be notified with an email at ${this.feedbackEmail} for ${emailTypes.join(', ')}.`);
+          }
+
+          this.$confirm(message, "", {
+            confirmButtonText: "Close",
+            showCancelButton: false,
+            type: "success"
+          }).then(() => {
+            this.reset();
+          });
+        } else {
+          this.$confirm("You have opt out all notifications.", "", {
+            confirmButtonText: "Close",
+            showCancelButton: false,
+            type: "success"
+          }).then(() => {
+            this.reset();
+          });         
+        }
       } else {
         this.$confirm(data.message, "", {
           confirmButtonText: "Close",
