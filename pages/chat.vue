@@ -46,11 +46,13 @@
             ></p>
             <div class="rating">
               <span>Not Satisfied</span>
-              <img src="/star.png" class="star" v-on:click="rate(1)" />
-              <img src="/star.png" class="star" v-on:click="rate(2)" />
-              <img src="/star.png" class="star" v-on:click="rate(3)" />
-              <img src="/star.png" class="star" v-on:click="rate(4)" />
-              <img src="/star.png" class="star" v-on:click="rate(5)" />
+              <span class="starBox" :star-id="scopedProps.message.id" :number-of-star="scopedProps.message.numberOfStar" :history="scopedProps.message.history">
+                <img :src="Number(scopedProps.message.numberOfStar) > 0 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(1)" @mouseover="hoverStar(1)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 1 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(2)" @mouseover="hoverStar(2)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 2 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(3)" @mouseover="hoverStar(3)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 3 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(4)" @mouseover="hoverStar(4)" @mouseleave="hoverStarOut"/>
+                <img :src="Number(scopedProps.message.numberOfStar) > 4 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(5)" @mouseover="hoverStar(5)" @mouseleave="hoverStarOut"/>
+              </span>
               <span>Satisfied</span>
             </div>
           </div>
@@ -73,6 +75,22 @@
             v-html="scopedProps.message.data.text"
           ></p>
         </div>
+
+        <!-- <div>
+          <div class='btn' value='Transfer to Agent'>Transfer to Agent</div>
+          <el-popover
+            placement="bottom-start"
+            title="ITSM Options"
+            trigger="hover">
+            <div>
+              <div class='btn btn-option' value='Create a ticket'>Create</div>
+              <div class='btn btn-option' value='Close a ticket'>Close</div>
+              <div class='btn btn-option' value='Reopen a ticket'>Reopen</div>
+            </div>
+            <el-button slot="reference">ITSM</el-button>
+          </el-popover>
+        </div> -->
+
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
@@ -89,9 +107,10 @@
     />
     <Preferences v-show="menuSelected==2"
       :dsi="user.id"
-      :conversationId="conversationId"
       :feedbackEmail="feedbackEmail"
       :phone="phone"
+      :preferences="preferences"
+      :savePreferences="savePreferences"
       @onClose="onSuggestionClose"
     />
     <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
@@ -207,8 +226,22 @@ export default {
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
       socketReopenCalled: false,
-      feedbackEmail: undefined,
-      phone: "123-456-7890",
+      feedbackEmail: '',
+      phone: '',
+      preferences: {
+        "CourseAnnouncement": {
+          "Text": false,
+          "Email": false
+        },
+        "Assignment": {
+          "Text": false,
+          "Email": false
+        },
+        "Discussion": {
+          "Text": false,
+          "Email": false
+        }
+      },
       isUserActive: false,
       hasGreeting: false,
       filesSelected: [],
@@ -259,6 +292,21 @@ export default {
       } else {
         localStorage.setItem(userId, this.conversationId);
       }    
+    }
+
+    let cache = localStorage.getItem(`${this.user.id}.cache`);
+    if (cache) {
+      this.preferences = JSON.parse(cache);
+    }
+
+    let email = localStorage.getItem(`${this.user.id}.email`);
+    if (email) {
+      this.feedbackEmail = email;
+    }
+
+    let phone = localStorage.getItem(`${this.user.id}.phone`);
+    if (phone) {
+      this.phone = phone;
     }
 
     await this.loadChatHistory();
@@ -382,6 +430,28 @@ export default {
       }
       if (data.email) {
         this.feedbackEmail = data.email;
+        localStorage.setItem(`${this.user.id}.email`, this.feedbackEmail);
+      }
+      if (data.phone) {
+        this.phone = data.phone;
+        localStorage.setItem(`${this.user.id}.phone`, this.phone);
+      }
+      if (data.Notification) {
+        this.preferences = {
+          "CourseAnnouncement": {
+            "Text": data.Notification.CourseAnnouncement.Text === "true",
+            "Email": data.Notification.CourseAnnouncement.Email === "true"
+          },
+          "Assignment": {
+            "Text": data.Notification.Assignment.Text === "true",
+            "Email": data.Notification.Assignment.Email === "true"
+          },
+          "Discussion": {
+            "Text": data.Notification.Discussion.Text === "true",
+            "Email": data.Notification.Discussion.Email === "true"
+          }
+        }
+        localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(this.preferences));
       }
     },
     normal(data) {
@@ -435,11 +505,15 @@ export default {
     feedback(data) {
       console.log("Feedback response: ", data);
     },
+    preference(data) {
+      console.log("preference response: ", data);
+      this.$nuxt.$emit('preference_response', data)
+    },
     serverError(data) {
       console.log("Error response received: ", data);
       this.showTypingIndicator = "";
 
-      this.addResponseMessage("Server error: " + data, "text", [
+      this.addResponseMessage("Server error: " + JSON.stringify(data), "text", [
         "Help!",
         "Talk to an agent!"
       ]);
@@ -458,7 +532,6 @@ export default {
       this.agentMode = data.data.isOpen || false;
       this.addResponseMessage(data.data.message.message, "text");
 
-      console.log('data.files.length=', data.files.length);
       if (data.files.length == 0) return;
 
       var downloadContainer = document.createElement("div");
@@ -482,12 +555,44 @@ export default {
   },
   methods: {
     ...mapActions('menu', ['showMenu']),
-    rate(rating) {
+    async rate(rating) {
+      let target = event.target.parentNode;
+      if (target.getAttribute('history')) return;
+
+      let starBoxId = target.getAttribute('star-id');      
+      target.setAttribute('number-of-star', rating);
+      target.setAttribute('history', true);
+
+      await this.$axios.$post(
+        `${this.host}/api/redis/star/${starBoxId}`,
+        {
+          "numberOfStar" : rating
+        }
+      );
+ 
       this.onMessageWasSent({
         type: "text",
         author: "me",
         data: { text: `My rating is ${rating} star${rating > 1 ? "s" : ""}` }
       });
+    },
+    hoverStar(rating) {
+      let target = event.target.parentNode;
+      if (target.getAttribute('history')) return;
+
+      let elements = target.querySelectorAll(`img:nth-child(-n+${rating})`);
+      let others = target.querySelectorAll(`img:nth-child(n+${rating + 1})`);
+      elements.forEach(element => element.setAttribute('src', `${this.host}/star.png`));
+      others.forEach(element => element.setAttribute('src', `${this.host}/starGray.png`));
+    },
+    hoverStarOut() {
+      let target = event.target.parentNode;
+      if (target.getAttribute('history')) return;
+
+      let rating = target.getAttribute('number-of-star');
+      if (Number(rating) > 0) return;
+      let elements = target.querySelectorAll('img');
+      elements.forEach(element => element.setAttribute('src', `${this.host}/starGray.png`));
     },
     sendValue(text, value) {
       this.onMessageWasSent({
@@ -653,10 +758,10 @@ export default {
       if (type !== "carousel" && (!message || message.trim().length == 0)) {
         return;
       }
-      await this.messagePush({
+      let newData = {
         author: "support",
         type: "text",
-        id: Math.random(),
+        id: new Date().getTime(),
         data: {
           text: message,
           type: type,
@@ -670,7 +775,14 @@ export default {
         },
         suggestions,
         carouselItems
-      });
+      };
+
+      if (type === "survey") {
+        newData.numberOfStar = 0;
+        newData.history = false;
+      }
+
+      await this.messagePush(newData);
       // Disable TTS
       // if (SpeechSDKHelper.enabled && !message.startsWith('<div')) {
       //   SpeechSDKHelper.tts(message);
@@ -712,12 +824,24 @@ export default {
       const chatList = await this.$axios.$get(
         `${this.host}/api/redis/history/${this.user.id}`
       );
-      chatList.forEach(async chat => {
-        await this.messageList.push(JSON.parse(chat));
-      });
+      for (let i=0; i < chatList.length; i++) {
+        let chatObj = JSON.parse(chatList[i]);
+        if (chatObj.data && chatObj.data.type == 'survey') {
+          const numberOfStar = await this.$axios.$get(
+            `${this.host}/api/redis/star/${chatObj.id}`
+          );
+          chatObj.numberOfStar = numberOfStar;
+          chatObj.history = true;
+        }
+        this.messageList.push(chatObj);        
+      }
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
+    },
+    savePreferences(data) {
+      localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(data.Notification));
+      this.$socket.client.emit("preference", data);
     },
     onFilesChange(files) {
       this.filesSelected = this.filesSelected.concat(files);
@@ -725,10 +849,8 @@ export default {
     },
     onMenuSelected(key) {
       this.menuSelected = key;
-      console.log(`menuSelected=${this.menuSelected}`);
     },
     onSuggestionClose() {
-      console.log('this.menuSelected:', this.menuSelected);
       this.menuSelected = 0;
       this.showMenu(false);
     },
@@ -760,7 +882,7 @@ export default {
         `${this.host}/api/redis/history/${this.user.id}`,
         data
       );
-    }
+    },
   }
 };
 </script>
@@ -866,6 +988,18 @@ export default {
   margin: auto;
 }
 
+.el-button {
+  color: rgb(74, 103, 199);
+  border: 1px solid rgba(74, 103, 199, 0.5);
+  vertical-align: middle;
+  padding: 8px;
+  margin: 0 5px;
+  margin-top: 5px;
+  font-weight: 400;
+  border-radius: 5px;
+  min-width: 80px;
+}
+
 .btn {
   display: inline-block;
   color: rgb(74, 103, 199);
@@ -883,6 +1017,11 @@ export default {
 
 .btn:active {
   box-shadow: 0 0 5px -1px rgba(0, 0, 0, 0.6);
+}
+
+.btn-option {
+  color: white;
+  background-color: #6264A7;
 }
 
 .hide {
