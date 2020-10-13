@@ -15,17 +15,17 @@
       <el-form>
         <el-row>
           <el-col>
-            <el-row> Email: {{ feedbackEmail }} </el-row>
+            <el-row> Email: {{ feedbackEmail }} &nbsp;&nbsp; <i class="el-icon-info"></i> <span class="desc">Please contact Student Services if you would like to update your Email preference.</span></el-row>
             <br />
-            <el-row> Phone: {{ phone }} </el-row>
+            <el-row> Phone: {{ phone }} &nbsp;&nbsp; <i class="el-icon-info"></i> <span class="desc">Please contact Student Services if you would like to update your Phone preference.</span></el-row>
           </el-col>
         </el-row>
         <el-row>
           <br />
-          <div class="statement">
+          <p class="statement">
             By selecting one of the following options, you are providing consent
             to receive notifications for the selected topic:
-          </div>
+          </p>
         </el-row>
         <el-row>
           <br />
@@ -47,13 +47,13 @@
               </tr>
               <tr class="stripe">
                 <td>Assignment</td>
-                <td>Bi-Weekly:<br />Wednesday/Saturday</td>
+                <td>Two Days Prior to Due Date</td>
                 <td><input type="checkbox" v-model="preferences.Assignment.Text" /></td>
                 <td><input type="checkbox" v-model="preferences.Assignment.Email" /></td>
               </tr>
               <tr>
                 <td>Discussions</td>
-                <td>Bi-Weekly:<br />Wednesday/Saturday</td>
+                <td>Two Days Prior to Due Date</td>
                 <td><input type="checkbox" v-model="preferences.Discussion.Text" /></td>
                 <td><input type="checkbox" v-model="preferences.Discussion.Email" /></td>
               </tr>
@@ -62,10 +62,10 @@
         </el-row>
         <el-row>
           <br />
-          <div class="statement">
+          <p class="statement">
             If you want to opt out of all notifications please leave all boxes
             blank
-          </div>
+          </p>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -203,6 +203,8 @@ export default {
   padding: 0.5em 1em;
   border: 1px solid black;
   background-color: white;
+  white-space: normal;
+  word-break: normal;
 }
 /* .el-icon-loading {
   font-size: 2rem;
@@ -224,5 +226,12 @@ export default {
 }
 .el-loading-mask {
   position: fixed;
+}
+i.el-icon-info {
+  color: #606266;
+}
+.desc {
+  color: #606266;
+  font-family: Arial, Helvetica, sans-serif;
 }
 </style>
