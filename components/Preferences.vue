@@ -143,7 +143,7 @@ export default {
             this.reset();
           });
         } else {
-          this.$confirm("You have opt out all notifications.", "", {
+          this.$confirm("You have opted out all notifications.", "", {
             confirmButtonText: "Close",
             showCancelButton: false,
             type: "success"
@@ -233,5 +233,7 @@ i.el-icon-info {
 .desc {
   color: #606266;
   font-family: Arial, Helvetica, sans-serif;
+  white-space: normal;
+  word-break: normal;
 }
 </style>
