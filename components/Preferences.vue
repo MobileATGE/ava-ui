@@ -143,7 +143,7 @@ export default {
             this.reset();
           });
         } else {
-          this.$confirm("You have opted out all notifications.", "", {
+          this.$confirm("You have opted out of all notifications.", "", {
             confirmButtonText: "Close",
             showCancelButton: false,
             type: "success"
