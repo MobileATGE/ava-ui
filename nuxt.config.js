@@ -10,7 +10,7 @@ const routerBase =
     : {};
 
 export default {
-  ssr: false,
+  mode: 'spa',
   ...routerBase,
   env: {
     socketServerURL: process.env.SOCKET_SERVER || 'ws://localhost:3000',
