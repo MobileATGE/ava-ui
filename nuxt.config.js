@@ -44,7 +44,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: "~/plugins/socket.io.js", ssr: false }, '@/plugins/element-ui' ],
+  plugins: [{ src: "~/plugins/socket.io.js", ssr: false }, '@/plugins/element-ui', { src: '~/plugins/amplify.js', ssr: false} ],
   /*
    ** Nuxt.js dev-modules
    */
