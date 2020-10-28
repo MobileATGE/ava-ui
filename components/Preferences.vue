@@ -15,7 +15,7 @@
       <el-form>
         <el-row>
           <el-col>
-            <el-row> Email: {{ feedbackEmail }} &nbsp;&nbsp; <i class="el-icon-info"></i> <span class="desc">Please contact Student Services if you would like to update your Email preference.</span></el-row>
+            <el-row> Email: {{ feedbackEmail }} &nbsp;&nbsp; <i class="el-icon-info"></i> <span class="desc">To forward emails to another inbox, <a href="https://cdn.brandfolder.io/991738N1/at/4txrg8hsgkb7g44cqtkfqk6s/HG_OUT_Forwarding_Email.pdf">follow these instructions</a>.</span></el-row>
             <br />
             <el-row> Phone: {{ phone }} &nbsp;&nbsp; <i class="el-icon-info"></i> <span class="desc">Please contact Student Services if you would like to update your Phone preference.</span></el-row>
           </el-col>
