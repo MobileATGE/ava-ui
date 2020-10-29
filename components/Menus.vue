@@ -19,7 +19,7 @@
         </el-menu-item>
 
         <el-tooltip placement="bottom">
-          <div class="wrap" slot="content">Ava can send text or email notifications to let you know a course announcement has been posted and an upcoming assignment or discussion is due. You can opt into notifications below.</div>
+          <div class="wrap" slot="content">Ava can send text or email notifications to let you know a course announcement has been posted and an upcoming assignment or discussion is due. You can opt into notifications here.</div>
           <el-menu-item index="2">
             <i class="el-icon-bell"></i>
             <span>Notification preferences</span>
@@ -37,7 +37,6 @@
         />
       </el-button>
     </el-popover>
-    <!-- <div class="tooltip">Ava can send text or email notifications to let you know a course announcement has been posted and an upcoming assignment or discussion is due. You can opt into notifications below.</div> -->
   </div>
 </template>
 
