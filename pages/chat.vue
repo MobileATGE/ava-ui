@@ -46,12 +46,67 @@
             ></p>
             <div class="rating">
               <span>Not Satisfied</span>
-              <span class="starBox" :star-id="scopedProps.message.id" :number-of-star="scopedProps.message.numberOfStar" :history="scopedProps.message.history">
-                <img :src="Number(scopedProps.message.numberOfStar) > 0 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(1)" @mouseover="hoverStar(1)" @mouseleave="hoverStarOut"/>
-                <img :src="Number(scopedProps.message.numberOfStar) > 1 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(2)" @mouseover="hoverStar(2)" @mouseleave="hoverStarOut"/>
-                <img :src="Number(scopedProps.message.numberOfStar) > 2 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(3)" @mouseover="hoverStar(3)" @mouseleave="hoverStarOut"/>
-                <img :src="Number(scopedProps.message.numberOfStar) > 3 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(4)" @mouseover="hoverStar(4)" @mouseleave="hoverStarOut"/>
-                <img :src="Number(scopedProps.message.numberOfStar) > 4 ? '/star.png': '/starGray.png'" class="star" v-on:click="rate(5)" @mouseover="hoverStar(5)" @mouseleave="hoverStarOut"/>
+              <span
+                class="starBox"
+                :star-id="scopedProps.message.id"
+                :number-of-star="scopedProps.message.numberOfStar"
+                :history="scopedProps.message.history"
+              >
+                <img
+                  :src="
+                    Number(scopedProps.message.numberOfStar) > 0
+                      ? '/star.png'
+                      : '/starGray.png'
+                  "
+                  class="star"
+                  v-on:click="rate(1)"
+                  @mouseover="hoverStar(1)"
+                  @mouseleave="hoverStarOut"
+                />
+                <img
+                  :src="
+                    Number(scopedProps.message.numberOfStar) > 1
+                      ? '/star.png'
+                      : '/starGray.png'
+                  "
+                  class="star"
+                  v-on:click="rate(2)"
+                  @mouseover="hoverStar(2)"
+                  @mouseleave="hoverStarOut"
+                />
+                <img
+                  :src="
+                    Number(scopedProps.message.numberOfStar) > 2
+                      ? '/star.png'
+                      : '/starGray.png'
+                  "
+                  class="star"
+                  v-on:click="rate(3)"
+                  @mouseover="hoverStar(3)"
+                  @mouseleave="hoverStarOut"
+                />
+                <img
+                  :src="
+                    Number(scopedProps.message.numberOfStar) > 3
+                      ? '/star.png'
+                      : '/starGray.png'
+                  "
+                  class="star"
+                  v-on:click="rate(4)"
+                  @mouseover="hoverStar(4)"
+                  @mouseleave="hoverStarOut"
+                />
+                <img
+                  :src="
+                    Number(scopedProps.message.numberOfStar) > 4
+                      ? '/star.png'
+                      : '/starGray.png'
+                  "
+                  class="star"
+                  v-on:click="rate(5)"
+                  @mouseover="hoverStar(5)"
+                  @mouseleave="hoverStarOut"
+                />
               </span>
               <span>Satisfied</span>
             </div>
@@ -90,22 +145,20 @@
             <el-button slot="reference">ITSM</el-button>
           </el-popover>
         </div> -->
-
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
-    <Menus
-      class="menu"
-      @onMenuSelected="onMenuSelected"
-    />
-    <Suggestion v-show="menuSelected==1"
+    <Menus class="menu" @onMenuSelected="onMenuSelected" />
+    <Suggestion
+      v-show="menuSelected == 1"
       :dsi="user.id"
       :conversationId="conversationId"
       :feedbackEmail="feedbackEmail"
       :saveFeedback="saveFeedback"
       @onClose="onSuggestionClose"
     />
-    <Preferences v-show="menuSelected==2"
+    <Preferences
+      v-show="menuSelected == 2"
       :dsi="user.id"
       :feedbackEmail="feedbackEmail"
       :phone="phone"
@@ -113,12 +166,16 @@
       :savePreferences="savePreferences"
       @onClose="onSuggestionClose"
     />
-    <Files v-show="agentMode ? true : false" class="files" @onFilesChange="onFilesChange" />
+    <Files
+      v-show="agentMode ? true : false"
+      class="files"
+      @onFilesChange="onFilesChange"
+    />
     <FileContainer id="fileContainer" :fileList="filesSelected" />
   </div>
 </template>
 <script>
-import { mapActions } from 'vuex';
+import { mapActions } from "vuex";
 import Vue from "vue";
 import Chat from "vue-beautiful-chat";
 import AvaIcon from "../static/ava-icon.png";
@@ -226,20 +283,20 @@ export default {
       host: window.location.protocol + "//" + window.location.host,
       avaReopenSkipped: false,
       socketReopenCalled: false,
-      feedbackEmail: '',
-      phone: '',
+      feedbackEmail: "",
+      phone: "",
       preferences: {
-        "CourseAnnouncement": {
-          "Text": false,
-          "Email": false
+        CourseAnnouncement: {
+          Text: false,
+          Email: false
         },
-        "Assignment": {
-          "Text": false,
-          "Email": false
+        Assignment: {
+          Text: false,
+          Email: false
         },
-        "Discussion": {
-          "Text": false,
-          "Email": false
+        Discussion: {
+          Text: false,
+          Email: false
         }
       },
       isUserActive: false,
@@ -248,6 +305,7 @@ export default {
       canUpload: false,
       agentMode: false,
       menuSelected: 0,
+      timeoutHandler: undefined,
     };
   },
   head() {
@@ -284,14 +342,14 @@ export default {
     if (!savedId) {
       localStorage.setItem(userId, this.conversationId);
     } else {
-      let currentTime = new Date().getTime()
-      let lastTime = savedId.split('mobile')[1];
+      let currentTime = new Date().getTime();
+      let lastTime = savedId.split("mobile")[1];
       if (currentTime - lastTime < 900000) {
         this.conversationId = savedId;
         this.hasGreeting = true;
       } else {
         localStorage.setItem(userId, this.conversationId);
-      }    
+      }
     }
 
     let cache = localStorage.getItem(`${this.user.id}.cache`);
@@ -375,19 +433,40 @@ export default {
     let userInputParent = userInput.parentNode;
     userInputParent.insertBefore(fileContainer, userInput);
 
-    const sendIcon = document.querySelector(".sc-user-input--buttons").lastChild;
+    const sendIcon = document.querySelector(".sc-user-input--buttons")
+      .lastChild;
 
     sendIcon.addEventListener("click", function() {
       if (parent.agentMode && parent.canUpload) {
-        if (document.querySelector(".sc-user-input--text").innerText.length === 0) {
+        if (
+          document.querySelector(".sc-user-input--text").innerText.length === 0
+        ) {
           parent.onMessageWasSent({
             type: "text",
             author: "me",
-            data: { text: 'Upload files',  }
+            data: { text: "Upload files" }
           });
         }
       }
     });
+
+    document
+      .querySelector(".sc-user-input--text")
+      .addEventListener("keyup", event => {
+        this.removeAutocompleteList();
+        if (event.isComposing || event.keyCode === 229 || event.keyCode === 13) {
+          return;
+        }
+        let text = event.target.innerText;
+        if (text.length > 0) {
+          if (this.timeoutHandler) {
+            clearTimeout(this.timeoutHandler);
+          }
+          this.timeoutHandler = setTimeout(() => {
+            this.createAutocmpleteList(text);
+          }, 600);        
+        }
+      });
   },
   updated() {
     let parent = this;
@@ -438,20 +517,23 @@ export default {
       }
       if (data.Notification) {
         this.preferences = {
-          "CourseAnnouncement": {
-            "Text": data.Notification.CourseAnnouncement.Text === "true",
-            "Email": data.Notification.CourseAnnouncement.Email === "true"
+          CourseAnnouncement: {
+            Text: data.Notification.CourseAnnouncement.Text === "true",
+            Email: data.Notification.CourseAnnouncement.Email === "true"
           },
-          "Assignment": {
-            "Text": data.Notification.Assignment.Text === "true",
-            "Email": data.Notification.Assignment.Email === "true"
+          Assignment: {
+            Text: data.Notification.Assignment.Text === "true",
+            Email: data.Notification.Assignment.Email === "true"
           },
-          "Discussion": {
-            "Text": data.Notification.Discussion.Text === "true",
-            "Email": data.Notification.Discussion.Email === "true"
+          Discussion: {
+            Text: data.Notification.Discussion.Text === "true",
+            Email: data.Notification.Discussion.Email === "true"
           }
-        }
-        localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(this.preferences));
+        };
+        localStorage.setItem(
+          `${this.user.id}.cache`,
+          JSON.stringify(this.preferences)
+        );
       }
     },
     normal(data) {
@@ -466,7 +548,7 @@ export default {
       if (typeof messages[0] === "string") {
         let newType = null;
         messages.forEach((message, idx) => {
-          if (data.type === "survey" && (idx + 1) < length) {
+          if (data.type === "survey" && idx + 1 < length) {
             newType = null;
           } else {
             newType = data.type;
@@ -507,7 +589,7 @@ export default {
     },
     preference(data) {
       console.log("preference response: ", data);
-      this.$nuxt.$emit('preference_response', data)
+      this.$nuxt.$emit("preference_response", data);
     },
     serverError(data) {
       console.log("Error response received: ", data);
@@ -537,10 +619,10 @@ export default {
       var downloadContainer = document.createElement("div");
 
       data.files.forEach(file => {
-        var arrayBufferView = new Uint8Array( file.buffer );
-        var blob = new Blob( [ arrayBufferView ], { type: file.mimetype } );
+        var arrayBufferView = new Uint8Array(file.buffer);
+        var blob = new Blob([arrayBufferView], { type: file.mimetype });
         var a = document.createElement("a"),
-        url = URL.createObjectURL(blob);
+          url = URL.createObjectURL(blob);
         a.href = url;
         a.download = file.originalname;
         a.innerText = file.originalname;
@@ -554,22 +636,19 @@ export default {
     }
   },
   methods: {
-    ...mapActions('menu', ['showMenu']),
+    ...mapActions("menu", ["showMenu"]),
     async rate(rating) {
       let target = event.target.parentNode;
-      if (target.getAttribute('history')) return;
+      if (target.getAttribute("history")) return;
 
-      let starBoxId = target.getAttribute('star-id');      
-      target.setAttribute('number-of-star', rating);
-      target.setAttribute('history', true);
+      let starBoxId = target.getAttribute("star-id");
+      target.setAttribute("number-of-star", rating);
+      target.setAttribute("history", true);
 
-      await this.$axios.$post(
-        `${this.host}/api/redis/star/${starBoxId}`,
-        {
-          "numberOfStar" : rating
-        }
-      );
- 
+      await this.$axios.$post(`${this.host}/api/redis/star/${starBoxId}`, {
+        numberOfStar: rating
+      });
+
       this.onMessageWasSent({
         type: "text",
         author: "me",
@@ -578,21 +657,27 @@ export default {
     },
     hoverStar(rating) {
       let target = event.target.parentNode;
-      if (target.getAttribute('history')) return;
+      if (target.getAttribute("history")) return;
 
       let elements = target.querySelectorAll(`img:nth-child(-n+${rating})`);
       let others = target.querySelectorAll(`img:nth-child(n+${rating + 1})`);
-      elements.forEach(element => element.setAttribute('src', `${this.host}/star.png`));
-      others.forEach(element => element.setAttribute('src', `${this.host}/starGray.png`));
+      elements.forEach(element =>
+        element.setAttribute("src", `${this.host}/star.png`)
+      );
+      others.forEach(element =>
+        element.setAttribute("src", `${this.host}/starGray.png`)
+      );
     },
     hoverStarOut() {
       let target = event.target.parentNode;
-      if (target.getAttribute('history')) return;
+      if (target.getAttribute("history")) return;
 
-      let rating = target.getAttribute('number-of-star');
+      let rating = target.getAttribute("number-of-star");
       if (Number(rating) > 0) return;
-      let elements = target.querySelectorAll('img');
-      elements.forEach(element => element.setAttribute('src', `${this.host}/starGray.png`));
+      let elements = target.querySelectorAll("img");
+      elements.forEach(element =>
+        element.setAttribute("src", `${this.host}/starGray.png`)
+      );
     },
     sendValue(text, value) {
       this.onMessageWasSent({
@@ -636,9 +721,9 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      console.log('agentMode=', this.agentMode);
-      console.log('filesSelected.length=', this.filesSelected.length);
-      console.log('canUpload=', this.canUpload);
+      console.log("agentMode=", this.agentMode);
+      console.log("filesSelected.length=", this.filesSelected.length);
+      console.log("canUpload=", this.canUpload);
       if (this.agentMode && this.filesSelected.length > 0 && this.canUpload) {
         console.log("Upload Files");
         this.canUpload = false;
@@ -824,23 +909,26 @@ export default {
       const chatList = await this.$axios.$get(
         `${this.host}/api/redis/history/${this.user.id}`
       );
-      for (let i=0; i < chatList.length; i++) {
+      for (let i = 0; i < chatList.length; i++) {
         let chatObj = JSON.parse(chatList[i]);
-        if (chatObj.data && chatObj.data.type == 'survey') {
+        if (chatObj.data && chatObj.data.type == "survey") {
           const numberOfStar = await this.$axios.$get(
             `${this.host}/api/redis/star/${chatObj.id}`
           );
           chatObj.numberOfStar = numberOfStar;
           chatObj.history = true;
         }
-        this.messageList.push(chatObj);        
+        this.messageList.push(chatObj);
       }
     },
     saveFeedback(data) {
       this.$socket.client.emit("feedback", data);
     },
     savePreferences(data) {
-      localStorage.setItem(`${this.user.id}.cache`, JSON.stringify(data.Notification));
+      localStorage.setItem(
+        `${this.user.id}.cache`,
+        JSON.stringify(data.Notification)
+      );
       this.$socket.client.emit("preference", data);
     },
     onFilesChange(files) {
@@ -873,7 +961,7 @@ export default {
         }
       );
 
-      console.log('data:', data);
+      console.log("data:", data);
       this.addResponseMessage(data.message, "text");
     },
     async messagePush(data) {
@@ -883,6 +971,48 @@ export default {
         data
       );
     },
+    removeAutocompleteList() {
+      let e = document.querySelector("#autocomplete");
+      if (e) e.remove();
+    },
+    async createAutocmpleteList(pattern) {
+      const suggestionList = await this.$axios.$get(
+        `${this.host}/api/redis/faq/*${pattern}*`
+      );
+
+      let options = suggestionList.map(s => `<option>${s}</option>`);
+      if (options.length == 0) return;
+
+      let autocomplete = document.querySelector("#autocomplete");
+      let select = null;
+      let parent = this;
+      if (!autocomplete) {
+        autocomplete = document.createElement("div");
+        autocomplete.id = "autocomplete";
+        select = document.createElement("select");
+        select.id = "autocompleteSelect";
+        select.size = options.length > 16 ? 16 : options.length;
+        select.autofocus = true;
+        select.innerHTML = options.join("");
+        select.onchange = () => {
+          document.querySelector(".sc-user-input--text").innerText =
+            select.value;
+          parent.removeAutocompleteList();
+        };
+        select.onfocus = () => {
+          document.querySelector('#autocompleteSelect').selectedIndex = -1;
+        };
+
+        autocomplete.appendChild(select);
+        this.insertAfter(
+          autocomplete,
+          document.querySelector(".sc-suggestions-row")
+        );
+      }
+    },
+    insertAfter(newNode, existingNode) {
+      existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
+    }
   }
 };
 </script>
@@ -1021,7 +1151,7 @@ export default {
 
 .btn-option {
   color: white;
-  background-color: #6264A7;
+  background-color: #6264a7;
 }
 
 .hide {
@@ -1049,6 +1179,36 @@ export default {
 
 #fileContainer {
   background-color: rgb(86, 88, 103);
+  color: white;
+}
+
+#autocomplete {
+  width: 100%;
+}
+
+#autocompleteSelect {
+  display: block;
+  width: 100%;
+  font-size: 16px;
+  color: #444;
+  line-height: 2;
+  padding: 0.6em 1.4em 0.5em 0.8em;
+  border: 1px solid rgba(59, 153, 252, 0.7);
+  box-shadow: 0 1px 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: 0.5em;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E"),
+    linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+  background-repeat: no-repeat, repeat;
+  background-position: right 0.7em top 50%, 0 0;
+  background-size: 0.65em auto, 100%;
+}
+
+#autocompleteSelect option:hover {
+  background-color:rgba(59, 132, 252, 0.7);
   color: white;
 }
 </style>
