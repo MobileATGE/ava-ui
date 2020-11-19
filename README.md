@@ -50,6 +50,16 @@ cat Chamberlain_id.csv | awk 'BEGIN { FS = "," } ; FNR > 1 { print "hset id:look
 ## Import csv to Canvas PROD Redis
 ```script
 cat Chamberlain_id.csv | awk 'BEGIN { FS = "," } ; FNR > 1 { print "hset id:lookup \""$8"\" " $5 }' | redis-cli --pipe -h ec2-3-222-111-21.compute-1.amazonaws.com -a password -p 15429
+
+cat STU_list.txt | awk 'BEGIN { FS = ",\n" } { print substr($1, 1, length($1)-1) }' > student_faq.txt
+
+cat EMP_list.txt | awk 'BEGIN { FS = ",\n" } { print substr($1, 1, length($1)-1) }' > emp_faq.txt
+
+cat STU_list.txt | awk 'BEGIN { FS = ",\n" } { print "sadd student:faq \"" substr($1, 1, length($1)-1) "\""}' | redis-cli --pipe -h ec2-3-229-46-115.compute-1.amazonaws.com -a password -p 30239
+
+cat EMP_list.txt | awk 'BEGIN { FS = ",\n" } { print "sadd emp:faq \"" substr($1, 1, length($1)-1) "\""}' | redis-cli --pipe -h ec2-3-229-46-115.compute-1.amazonaws.com -a password -p 30239
+
+sscan student:faq 0 match *office* COUNT 11000
 ```
 
 # Redis GUI Client
