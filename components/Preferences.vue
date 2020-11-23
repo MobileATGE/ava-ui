@@ -41,7 +41,7 @@
               </thead>
               <tr>
                 <td>Course Announcement</td>
-                <td>Immediately</td>
+                <td>Daily</td>
                 <td><input type="checkbox" v-model="preferences.CourseAnnouncement.Text" /></td>
                 <td><input type="checkbox" v-model="preferences.CourseAnnouncement.Email" /></td>
               </tr>
