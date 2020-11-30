@@ -449,24 +449,24 @@ export default {
         }
       }
     });
-
-    document
-      .querySelector(".sc-user-input--text")
-      .addEventListener("keyup", event => {
-        this.removeAutocompleteList();
-        if (event.isComposing || event.keyCode === 229 || event.keyCode === 13) {
-          return;
-        }
-        let text = event.target.innerText;
-        if (text.length > 0) {
-          if (this.timeoutHandler) {
-            clearTimeout(this.timeoutHandler);
-          }
-          this.timeoutHandler = setTimeout(() => {
-            this.createAutocmpleteList(text);
-          }, 600);        
-        }
-      });
+    //** Comment out autocomplete list */
+    // document
+    //   .querySelector(".sc-user-input--text")
+    //   .addEventListener("keyup", event => {
+    //     this.removeAutocompleteList();
+    //     if (event.isComposing || event.keyCode === 229 || event.keyCode === 13) {
+    //       return;
+    //     }
+    //     let text = event.target.innerText;
+    //     if (text.length > 0) {
+    //       if (this.timeoutHandler) {
+    //         clearTimeout(this.timeoutHandler);
+    //       }
+    //       this.timeoutHandler = setTimeout(() => {
+    //         this.createAutocmpleteList(text);
+    //       }, 600);        
+    //     }
+    //   });
   },
   updated() {
     let parent = this;
