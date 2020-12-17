@@ -36,6 +36,12 @@ app.get("/hello", async (req, res) => {  console.log('Hello is called');
   res.send("Nice to meet you!");
 });
 
+app.get("/redis/faq/:pattern", async (req, res) => {
+  const pattern = req.params.pattern;
+  const data = await redis.sscan("student:faq", 0, "MATCH", pattern, "COUNT", 11000);
+  res.send(data[1]);
+});
+
 app.get("/redis/id/:fullname", async (req, res) => {
   const fullname = req.params.fullname;
   const id = await redis.hget("id:lookup", fullname);
