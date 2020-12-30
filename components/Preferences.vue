@@ -112,17 +112,17 @@ export default {
       if (data.status == 1) {
         if (document.querySelector('.preferences input:checked')) {
           let textTypes = [];
-          if (this.preferences.CourseAnnouncement.Text) { textTypes.push('course announcement'); }
-          if (this.preferences.Assignment.Text) { textTypes.push('assignment'); }
-          if (this.preferences.Discussion.Text) { textTypes.push('discussion'); }
+          if (this.preferences.CourseAnnouncement.Text) { textTypes.push('course announcements'); }
+          if (this.preferences.Assignment.Text) { textTypes.push('assignments'); }
+          if (this.preferences.Discussion.Text) { textTypes.push('discussions'); }
           if (textTypes.length > 1) {
             textTypes[textTypes.length-1] = 'and ' + textTypes[textTypes.length-1];
           }
           
           let emailTypes = [];
-          if (this.preferences.CourseAnnouncement.Email) { emailTypes.push('course announcement'); }
-          if (this.preferences.Assignment.Email) { emailTypes.push('assignment'); }
-          if (this.preferences.Discussion.Email) { emailTypes.push('discussion'); }
+          if (this.preferences.CourseAnnouncement.Email) { emailTypes.push('course announcements'); }
+          if (this.preferences.Assignment.Email) { emailTypes.push('assignments'); }
+          if (this.preferences.Discussion.Email) { emailTypes.push('discussions'); }
           if (emailTypes.length > 1) {
             emailTypes[emailTypes.length-1] = 'and ' + emailTypes[emailTypes.length-1];
           }
