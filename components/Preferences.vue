@@ -40,13 +40,13 @@
                 </tr>
               </thead>
               <tr>
-                <td>Course Announcement</td>
+                <td>Course Announcements</td>
                 <td>Daily</td>
                 <td><input type="checkbox" v-model="preferences.CourseAnnouncement.Text" /></td>
                 <td><input type="checkbox" v-model="preferences.CourseAnnouncement.Email" /></td>
               </tr>
               <tr class="stripe">
-                <td>Assignment</td>
+                <td>Assignments</td>
                 <td>Two Days Prior to Due Date</td>
                 <td><input type="checkbox" v-model="preferences.Assignment.Text" /></td>
                 <td><input type="checkbox" v-model="preferences.Assignment.Email" /></td>
