@@ -148,7 +148,10 @@
       </template>
     </beautiful-chat>
     <!-- <Microphone class="microphone" /> -->
-    <Menus class="menu" @onMenuSelected="onMenuSelected" />
+    <Menus class="menu" 
+      @onMenuSelected="onMenuSelected"
+      :isStudent="isStudent"
+    />
     <Suggestion
       v-show="menuSelected == 1"
       :dsi="user.id"
@@ -306,6 +309,7 @@ export default {
       agentMode: false,
       menuSelected: 0,
       timeoutHandler: undefined,
+      isStudent: false,
     };
   },
   head() {
@@ -326,6 +330,7 @@ export default {
   // },
   async mounted() {
     this.user = this.$route.query;
+    this.isStudent = JSON.parse(this.user.is_student);
     let parent = this;
     // If id is null, get it from Canvas.
     if (!this.user.id || this.user.id === "null") {
@@ -365,6 +370,11 @@ export default {
     let phone = localStorage.getItem(`${this.user.id}.phone`);
     if (phone) {
       this.phone = phone;
+    }
+
+    let isStudent = localStorage.getItem(`${this.user.id}.isStudent`);
+    if (isStudent) {
+      this.isStudent = isStudent;
     }
 
     await this.loadChatHistory();

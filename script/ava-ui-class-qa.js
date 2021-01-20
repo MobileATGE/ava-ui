@@ -8,7 +8,7 @@ class AvaUI {
       }
     };
   
-    this.fetchProfile();  
+    this.fetchProfile();
   }
 
   fetchProfile() {
@@ -44,7 +44,7 @@ class AvaUI {
     }
   }
 
-  updateUser(data) {
+  async updateUser(data) {
     let user = {
       canvas_id     : data.id,
       login_id      : data.login_id,
@@ -53,12 +53,24 @@ class AvaUI {
       avatar        : data.avatar_url,
       showAva       : false
     };
+
+    const url = `/api/v1/users/${user.canvas_id}/enrollments?type[]=StudentEnrollment`;
+    let res = await fetch(url, {
+      'credentials' : 'same-origin',
+      'headers' : {
+        'accept' : 'application/json'
+      }
+    });
+    const jsonObj = await res.json();
+    let activeArray = jsonObj.filter(e => e.enrollment_state === 'active');
+    user.isStudent = activeArray.length > 0;
+    console.log(user);
     return user;
   }
 
   includeAva(user) {
     let url = 'https://ava-ui-qa.herokuapp.com/chat/';
-    let params = '?id=' + user.login_id + '&canvas_id=' + user.canvas_id + '&name=' + user.name + '&email=' + user.primary_email + '&avatar=' + user.avatar;
+    let params = '?id=' + user.login_id + '&canvas_id=' + user.canvas_id + '&name=' + user.name + '&email=' + user.primary_email + '&avatar=' + user.avatar + '&is_student=' + user.isStudent;
     user.avaUrl = url + params;
 
     if (!!document.querySelector('#avaLauncher')) {
