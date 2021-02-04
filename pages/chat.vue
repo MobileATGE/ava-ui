@@ -330,7 +330,9 @@ export default {
   // },
   async mounted() {
     this.user = this.$route.query;
-    this.isStudent = JSON.parse(this.user.is_student);
+    if (this.user.is_student) {
+      this.isStudent = JSON.parse(this.user.is_student);
+    }    
     let parent = this;
     // If id is null, get it from Canvas.
     if (!this.user.id || this.user.id === "null") {
