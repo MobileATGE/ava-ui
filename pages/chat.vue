@@ -310,6 +310,8 @@ export default {
       menuSelected: 0,
       timeoutHandler: undefined,
       isStudent: false,
+      currentInput: '',
+      currentInputCount: 0,
     };
   },
   head() {
@@ -733,18 +735,28 @@ export default {
       });
       // called when the user sends a message
       this.showTypingIndicator = "support";
-      console.log("agentMode=", this.agentMode);
-      console.log("filesSelected.length=", this.filesSelected.length);
-      console.log("canUpload=", this.canUpload);
       if (this.agentMode && this.filesSelected.length > 0 && this.canUpload) {
         console.log("Upload Files");
         this.canUpload = false;
         this.uploadFiles(message, this.filesSelected);
-        // this.uploadFilesSocket(message, this.filesSelected);
+        await this.messagePush(message);
       } else {
-        this.avaNormal(message);
+        if (this.currentInput === message.data.text) {
+          this.currentInputCount++;
+        } else {
+          this.currentInput = message.data.text;
+          this.currentInputCount = 1;
+        }
+        await this.messagePush(message);
+
+        // User repeats too many times. Ask for support
+        let newObj = message;
+        if (this.currentInputCount >= 10) {
+          newObj = JSON.parse(JSON.stringify(message));
+          newObj.data.text = 'transfer support';
+        }
+        this.avaNormal(newObj);
       }
-      await this.messagePush(message);
     },
     avaReopen() {
       if (this.hasGreeting && !this.isUserActive) {
