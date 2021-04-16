@@ -741,10 +741,10 @@ export default {
         this.uploadFiles(message, this.filesSelected);
         await this.messagePush(message);
       } else {
-        if (this.currentInput === message.data.text.toLowerCase()) {
+        if (this.currentInput === message.data.text.toLowerCase().trim()) {
           this.currentInputCount++;
         } else {
-          this.currentInput = message.data.text.toLowerCase();
+          this.currentInput = message.data.text.toLowerCase().trim();
           this.currentInputCount = 1;
         }
         await this.messagePush(message);
