@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div id="lightbox"></div>
     <beautiful-chat
       :participants="participants"
       :titleImageUrl="titleImageUrl"
@@ -727,6 +728,8 @@ export default {
     },
     async onMessageWasSent(message) {
       console.log("onMessageWasSent: ", message);
+      this.disableInput();
+
       this.isUserActive = true;
       message.data.meta = new Date().toLocaleString("en-US", {
         hour: "numeric",
@@ -864,6 +867,8 @@ export default {
       this.postFiles(options, files);
     },
     async addResponseMessage(message, type, suggestions, carouselItems) {
+      this.enableInput();
+
       if (type !== "carousel" && (!message || message.trim().length == 0)) {
         return;
       }
@@ -1036,7 +1041,15 @@ export default {
     },
     insertAfter(newNode, existingNode) {
       existingNode.parentNode.insertBefore(newNode, existingNode.nextSibling);
-    }
+    },
+    disableInput() {
+      document.querySelector('.sc-user-input--text').setAttribute('contenteditable','false');
+      document.querySelector('.sc-chat-window').style.zIndex = -1000;
+    },
+    enableInput() {
+      document.querySelector('.sc-user-input--text').setAttribute('contenteditable','true')
+      document.querySelector('.sc-chat-window').style.zIndex = '';
+    },
   }
 };
 </script>
@@ -1234,5 +1247,11 @@ export default {
 #autocompleteSelect option:hover {
   background-color:rgba(59, 132, 252, 0.7);
   color: white;
+}
+
+#lightbox {
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
 }
 </style>
