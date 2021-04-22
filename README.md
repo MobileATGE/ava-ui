@@ -22,10 +22,9 @@ $ npm run generate
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
 
 # sample Ava UI URL
-http://localhost:8080/chat?name=Test&id=D40905817&email=test%40test.com
+http://localhost:8080/chat/?id=D41130760&canvas_id=175891&name=Jeremy%20DelArmente&email=jeremy.delarmente%40my.chamberlain.edu&avatar=https%3A%2F%2Fchamberlain.test.instructure.com%2Fimages%2Fmessages%2Favatar-50.png&is_student=true
 
-https://mobileatge.github.io/ava-ui/chat/?name=Test&id=D40905817&email=test%40test.com
-
+https://ava-ui-qa.herokuapp.com/chat/?id=D41130760&canvas_id=175891&name=Jeremy%20DelArmente&email=jeremy.delarmente%40my.chamberlain.edu&avatar=https%3A%2F%2Fchamberlain.test.instructure.com%2Fimages%2Fmessages%2Favatar-50.png&is_student=true
 # update change on Github
 git add .
 git commit -m "comment"
